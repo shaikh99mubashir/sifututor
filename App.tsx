@@ -1,118 +1,52 @@
-/**
- * Sample React Native App
- * https://github.com/facebook/react-native
- *
- * @format
- */
+import {StyleSheet, Text, View} from 'react-native';
+import React, { useEffect } from 'react';
+import AppNavigation from './Navigation/AppNavigation';
+import TutorDetailsState from './context/tutorDetailsState';
+import UpcomingClassState from './context/upcomingClassState';
+import BannerState from './context/bannerState';
+import NoteState from './context/noteState';
+import ReportSubmissionState from './context/reportSubmissionState';
+import ScheduleState from './context/ScheduleState';
+import NotificationState from './context/notificationState';
+import ScheduleNotificationState from './context/scheduleNotificationState';
+import PaymentState from './context/paymentState';
+import StudentState from './context/studentState';
+import FilterState from './context/filterState';
+import IdleTimerManager from 'react-native-idle-timer';
+const App = () => {
+  useEffect(() => {
+    IdleTimerManager.setIdleTimerDisabled(true);
 
-import React from 'react';
-import type {PropsWithChildren} from 'react';
-import {
-  SafeAreaView,
-  ScrollView,
-  StatusBar,
-  StyleSheet,
-  Text,
-  useColorScheme,
-  View,
-} from 'react-native';
-
-import {
-  Colors,
-  DebugInstructions,
-  Header,
-  LearnMoreLinks,
-  ReloadInstructions,
-} from 'react-native/Libraries/NewAppScreen';
-
-type SectionProps = PropsWithChildren<{
-  title: string;
-}>;
-
-function Section({children, title}: SectionProps): React.JSX.Element {
-  const isDarkMode = useColorScheme() === 'dark';
+    return () => IdleTimerManager.setIdleTimerDisabled(false);
+  }, []);
   return (
-    <View style={styles.sectionContainer}>
-      <Text
-        style={[
-          styles.sectionTitle,
-          {
-            color: isDarkMode ? Colors.white : Colors.black,
-          },
-        ]}>
-        {title}
-      </Text>
-      <Text
-        style={[
-          styles.sectionDescription,
-          {
-            color: isDarkMode ? Colors.light : Colors.dark,
-          },
-        ]}>
-        {children}
-      </Text>
-    </View>
+    <UpcomingClassState>
+    <BannerState>
+      <NoteState>
+        <ReportSubmissionState>
+          <ScheduleState>
+            <NotificationState>
+              <ScheduleNotificationState>
+                <PaymentState>
+                  <TutorDetailsState>
+                    <StudentState>
+                      <FilterState>
+                        <AppNavigation />
+                        {/* <Timer show="false" /> */}
+                      </FilterState>
+                    </StudentState>
+                  </TutorDetailsState>
+                </PaymentState>
+              </ScheduleNotificationState>
+            </NotificationState>
+          </ScheduleState>
+        </ReportSubmissionState>
+      </NoteState>
+    </BannerState>
+  </UpcomingClassState>
   );
-}
-
-function App(): React.JSX.Element {
-  const isDarkMode = useColorScheme() === 'dark';
-
-  const backgroundStyle = {
-    backgroundColor: isDarkMode ? Colors.darker : Colors.lighter,
-  };
-
-  return (
-    <SafeAreaView style={backgroundStyle}>
-      <StatusBar
-        barStyle={isDarkMode ? 'light-content' : 'dark-content'}
-        backgroundColor={backgroundStyle.backgroundColor}
-      />
-      <ScrollView
-        contentInsetAdjustmentBehavior="automatic"
-        style={backgroundStyle}>
-        <Header />
-        <View
-          style={{
-            backgroundColor: isDarkMode ? Colors.black : Colors.white,
-          }}>
-          <Section title="Step One">
-            Edit <Text style={styles.highlight}>App.tsx</Text> to change this
-            screen and then come back to see your edits.
-          </Section>
-          <Section title="See Your Changes">
-            <ReloadInstructions />
-          </Section>
-          <Section title="Debug">
-            <DebugInstructions />
-          </Section>
-          <Section title="Learn More">
-            Read the docs to discover what to do next:
-          </Section>
-          <LearnMoreLinks />
-        </View>
-      </ScrollView>
-    </SafeAreaView>
-  );
-}
-
-const styles = StyleSheet.create({
-  sectionContainer: {
-    marginTop: 32,
-    paddingHorizontal: 24,
-  },
-  sectionTitle: {
-    fontSize: 24,
-    fontWeight: '600',
-  },
-  sectionDescription: {
-    marginTop: 8,
-    fontSize: 18,
-    fontWeight: '400',
-  },
-  highlight: {
-    fontWeight: '700',
-  },
-});
+};
 
 export default App;
+
+const styles = StyleSheet.create({});

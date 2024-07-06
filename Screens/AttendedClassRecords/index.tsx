@@ -142,7 +142,7 @@ const AttendedClassRecords = ({navigation,route}:any) => {
     const renderRecords = ({ item }: any) => {
         return (
           <>
-            <Text
+            {/* <Text
               style={[
                 styles.textType3,
                 {
@@ -173,7 +173,45 @@ const AttendedClassRecords = ({navigation,route}:any) => {
               ]}
             >
               {item.status}
-            </Text>
+            </Text> */}
+            <View
+          style={{
+            paddingHorizontal: 5,
+            borderTopLeftRadius: 16,
+            borderTopRightRadius: 16,
+            width: 140,
+            backgroundColor: (() => {
+              switch (item.status) {
+                case 'pending':
+                  return '#FEBC2A';
+                case 'attended':
+                  return '#1FC07D';
+                case 'incomplete':
+                  return '#FF0000';
+                case 'dispute':
+                  return 'orange';
+                default:
+                  return '#298CFF33'; // Default background color if the status is not recognized
+              }
+            })(),
+            marginLeft: 20,
+          }}>
+          <Text
+            style={[
+              styles.textType3,
+              {
+                color: item.status === 'pending' ? '#000000' : '#FFFFFF',
+               
+                paddingVertical: 5,
+                
+                textAlign: 'center',
+                textTransform: 'capitalize',
+                fontFamily: 'Circular Std Medium',
+              },
+            ]}>
+            {item.status}
+          </Text>
+        </View>
             <TouchableOpacity
               activeOpacity={0.8}
               style={{

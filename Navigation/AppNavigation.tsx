@@ -33,6 +33,7 @@ import EditCancelledClass from '../Screens/EditCancelledClass';
 import ClockIn from '../Screens/ClockInScreen/ClockIn';
 import ClockOut from '../Screens/ClockOutScreen';
 import ClassTimerCount from '../Screens/ClassTimerCountScreen';
+import ScheduleSuccessfully from '../Screens/ScheduleSuccessfully';
 const Stack = createNativeStackNavigator();
 const Tab = createBottomTabNavigator();
 
@@ -319,6 +320,7 @@ const AppNavigation = () => {
         <Stack.Screen name="ClockOut" component={ClockOut} />
         <Stack.Screen name="ClassTimerCount" component={ClassTimerCount} />
         <Stack.Screen name="ReportSubmissionHistory" component={ReportSubmissionHistory} />
+        <Stack.Screen name="ScheduleSuccessfully" component={ScheduleSuccessfully} />
       </Stack.Navigator>
     </NavigationContainer>
   );

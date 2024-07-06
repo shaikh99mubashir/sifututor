@@ -609,7 +609,7 @@ function Home({navigation, route}: any) {
       channelName: 'mobile-home-page-updated',
       eventName: 'App\\Events\\MobileHomePageUpdated',
       callback: (data: any) => {
-        console.log('Event received:', data);
+        console.log('Event received: home', data);
         // getAttendedHours();
         // getScheduledHours();
         // getCummulativeCommission()

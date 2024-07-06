@@ -1,5 +1,5 @@
 import React, { useContext, useEffect, useRef, useState } from "react"
-import { View, Text, Image, ActivityIndicator, TouchableOpacity, PermissionsAndroid, ToastAndroid, AppState } from "react-native"
+import { View, Text, Image, ActivityIndicator, TouchableOpacity, PermissionsAndroid, ToastAndroid, AppState, Platform } from "react-native"
 import { Theme } from "../../constant/theme"
 import Header from "../../Component/Header"
 import { launchCamera } from "react-native-image-picker"
@@ -11,6 +11,7 @@ import noteContext from "../../context/noteContext"
 import { useIsFocused } from "@react-navigation/native"
 import moment from "moment"
 import CustomLoader from "../../Component/CustomLoader"
+import { PERMISSIONS, request } from "react-native-permissions"
 // import messaging from '@react-native-firebase/messaging';
 
 
@@ -241,77 +242,162 @@ function ClassTimerCount({ navigation, route }: any) {
       // }, [notificationTime])
       
 
+    // const handleClockOut = async () => {
+    //     try {
+    //       const granted = await PermissionsAndroid.request(
+    //         PermissionsAndroid.PERMISSIONS.CAMERA,
+    //       );
+    //       if (granted === PermissionsAndroid.RESULTS.GRANTED) {
+    //         const options: any = {
+    //           title: 'Select Picture',
+    //           storageOptions: {
+    //             skipBackup: true,
+    //             path: 'images',
+    //           },
+    //           maxWidth: 600,
+    //           maxHeight: 200,
+    //           quality: 1.0,
+    //         };
+    //         launchCamera(options, (res: any) => {
+    //           if (res.didCancel) {
+    //             // ToastAndroid.show(`User cancelled image picker`, ToastAndroid.LONG);
+    //           } else if (res.error) {
+    //             console.log('res?.error', res.error);
+                
+    //             // ToastAndroid.show(`ImagePicker Error: ${res?.error}`, ToastAndroid.LONG);
+    //           } else {
+    //             try {
+    //               const startHour = item.startMinutes;
+    //               const startMinutes = item.startSeconds;
+    //               let endHour = startHour + hour === 24 ? 0 : startHour + hour;
+    //               let endMinutes = startMinutes + minutes;
+      
+    //               if (startMinutes + minutes >= 60) {
+    //                 endMinutes = startMinutes + minutes - 60;
+    //                 endHour += 1;
+    //               }
+    //               const { assets } = res;
+    //               const data = {
+    //                 id: item.id,
+    //                 class_schedule_id: item?.class_schedule_id,
+    //                 endHour: endHour,
+    //                 endMinutes: endMinutes,
+    //                 startMinutes: item?.startSeconds,
+    //                 startHour: item?.startMinutes,
+    //                 hasIncentive: item?.hasIncentive ? item?.hasIncentive : 0,
+    //                 uri: assets[0]?.uri,
+    //                 type: assets[0]?.type,
+    //                 filename: assets[0]?.fileName,
+    //                 ticketID: item?.item?.ticketID,
+    //                 classAttendedID: item?.data?.classAttendedID,
+    //                 minutes: time.minutes,
+    //                 hour: time?.hour ? time.hour : 0,
+    //                 studentName: item?.item?.studentName,
+    //                 subjectName: item?.item?.subjectName,
+    //                 subjectID: item?.item?.subjectID,
+    //                 studentID: item?.item?.studentID,
+    //               };
+    //               cleanTime();
+    //               AsyncStorage.removeItem('classInProcess');
+    //               AsyncStorage.removeItem('timer');
+    //               navigation.replace('ClockOut', data);
+    //             } catch (error) {
+    //               ToastAndroid.show(`Error in handleClockOut: ${error}`, ToastAndroid.LONG);
+    //             }
+    //           }
+    //         });
+    //       }
+    //     } catch (permissionError) {
+    //       ToastAndroid.show(`Error requesting camera permission: ${permissionError}`, ToastAndroid.LONG);
+    //     }
+    //   };
+      
     const handleClockOut = async () => {
-        try {
-          const granted = await PermissionsAndroid.request(
-            PermissionsAndroid.PERMISSIONS.CAMERA,
-          );
-          if (granted === PermissionsAndroid.RESULTS.GRANTED) {
-            const options: any = {
-              title: 'Select Picture',
-              storageOptions: {
-                skipBackup: true,
-                path: 'images',
-              },
-              maxWidth: 600,
-              maxHeight: 200,
-              quality: 1.0,
-            };
-            launchCamera(options, (res: any) => {
-              if (res.didCancel) {
-                ToastAndroid.show(`User cancelled image picker`, ToastAndroid.LONG);
-              } else if (res.error) {
-                ToastAndroid.show(`ImagePicker Error: ${res?.error}`, ToastAndroid.LONG);
-              } else {
-                try {
-                  const startHour = item.startMinutes;
-                  const startMinutes = item.startSeconds;
-                  let endHour = startHour + hour === 24 ? 0 : startHour + hour;
-                  let endMinutes = startMinutes + minutes;
-      
-                  if (startMinutes + minutes >= 60) {
-                    endMinutes = startMinutes + minutes - 60;
-                    endHour += 1;
-                  }
-                  const { assets } = res;
-                  const data = {
-                    id: item.id,
-                    class_schedule_id: item?.class_schedule_id,
-                    endHour: endHour,
-                    endMinutes: endMinutes,
-                    startMinutes: item?.startSeconds,
-                    startHour: item?.startMinutes,
-                    hasIncentive: item?.hasIncentive ? item?.hasIncentive : 0,
-                    uri: assets[0]?.uri,
-                    type: assets[0]?.type,
-                    filename: assets[0]?.fileName,
-                    ticketID: item?.item?.ticketID,
-                    classAttendedID: item?.data?.classAttendedID,
-                    minutes: time.minutes,
-                    hour: time?.hour ? time.hour : 0,
-                    studentName: item?.item?.studentName,
-                    subjectName: item?.item?.subjectName,
-                    subjectID: item?.item?.subjectID,
-                    studentID: item?.item?.studentID,
-                  };
-                  cleanTime();
-                  AsyncStorage.removeItem('classInProcess');
-                  AsyncStorage.removeItem('timer');
-                  navigation.replace('ClockOut', data);
-                } catch (error) {
-                  ToastAndroid.show(`Error in handleClockOut: ${error}`, ToastAndroid.LONG);
-                }
-              }
-            });
-          }
-        } catch (permissionError) {
-          ToastAndroid.show(`Error requesting camera permission: ${permissionError}`, ToastAndroid.LONG);
+      try {
+        let permission:any;
+        if (Platform.OS === 'ios') {
+          permission = PERMISSIONS.IOS.CAMERA;
+        } else if (Platform.OS === 'android') {
+          permission = PermissionsAndroid.PERMISSIONS.CAMERA;
         }
-      };
-      
+    
+        const granted:any = await request(permission);
+        console.log('garnted',granted);
+        
+    
+        if (granted === 'granted' || granted === 'granted') { // Adjust based on exact string return values
+          const options:any = {
+            title: 'Select Picture',
+            storageOptions: {
+              skipBackup: true,
+              path: 'images',
+            },
+            maxWidth: 600,
+            maxHeight: 200,
+            quality: 1.0,
+          };
+    
+          launchCamera(options, (res:any) => {
+            if (res.didCancel) {
+              // Handle cancellation
+            } else if (res.error) {
+              console.log('ImagePicker Error:', res.error);
+              ToastAndroid.show(`ImagePicker Error: ${res.error}`, ToastAndroid.LONG);
+            } else {
+              try {
+                const startHour = item.startMinutes;
+                const startMinutes = item.startSeconds;
+                let endHour = startHour + hour === 24 ? 0 : startHour + hour;
+                let endMinutes = startMinutes + minutes;
+    
+                if (startMinutes + minutes >= 60) {
+                  endMinutes = startMinutes + minutes - 60;
+                  endHour += 1;
+                }
+    
+                const { assets } = res;
+                const data = {
+                  id: item.id,
+                  class_schedule_id: item?.class_schedule_id,
+                  endHour: endHour,
+                  endMinutes: endMinutes,
+                  startMinutes: item?.startSeconds,
+                  startHour: item?.startMinutes,
+                  hasIncentive: item?.hasIncentive ? item?.hasIncentive : 0,
+                  uri: assets[0]?.uri,
+                  type: assets[0]?.type,
+                  filename: assets[0]?.fileName,
+                  ticketID: item?.item?.ticketID,
+                  classAttendedID: item?.data?.classAttendedID,
+                  minutes: time.minutes,
+                  hour: time?.hour ? time.hour : 0,
+                  studentName: item?.item?.studentName,
+                  subjectName: item?.item?.subjectName,
+                  subjectID: item?.item?.subjectID,
+                  studentID: item?.item?.studentID,
+                };
+    
+                cleanTime();
+                AsyncStorage.removeItem('classInProcess');
+                AsyncStorage.removeItem('timer');
+                navigation.replace('ClockOut', data);
+              } catch (error) {
+                ToastAndroid.show(`Error in handleClockOut: ${error}`, ToastAndroid.LONG);
+              }
+            }
+          });
+        } else {
+          ToastAndroid.show('Camera permission denied', ToastAndroid.LONG);
+        }
+      } catch (error) {
+        ToastAndroid.show(`Error requesting camera permission: ${error}`, ToastAndroid.LONG);
+      }
+    };
+    
 
     return (
         <View style={{ flex: 1, backgroundColor: Theme.white, }} >
+          <View style={{margin:20}}></View>
             <Header backBtn navigation={navigation} title='Class In Progress' containerStyle={{ height: 60 }} />
             {/* <TouchableOpacity onPress={() => { handleClockOut() }} >
                 <ActivityIndicator size={220} color={Theme.darkGray} style={{ marginTop: 30 }} />
@@ -326,7 +412,7 @@ function ClassTimerCount({ navigation, route }: any) {
 
             <View style={{ alignItems: 'center', justifyContent: 'center', flex: 1, }}>
                 <Image source={require('../../Assets/Images/Timmmer1.png')} resizeMode="contain" style={{ width: 350, height: 350 }} />
-                <View style={{ alignItems: 'center', position: 'absolute', top: '45%', left: '34%', justifyContent: 'center' }}>
+                <View style={{ alignItems: 'center', position: 'absolute', top: '45%', left: '31%', justifyContent: 'center' }}>
                     <>
                         <TouchableOpacity style={{ alignItems: 'center', justifyContent: 'center' }} onPress={() => handleClockOut()} activeOpacity={0.8} >
 

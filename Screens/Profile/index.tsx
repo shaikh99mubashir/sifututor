@@ -13,14 +13,14 @@ import {
   Modal,
   Dimensions,
 } from 'react-native';
-import React, {useEffect, useState, useContext} from 'react';
+import React, { useEffect, useState, useContext } from 'react';
 import Header from '../../Component/Header';
-import {Theme} from '../../constant/theme';
-import {PermissionsAndroid} from 'react-native';
-import {launchCamera, launchImageLibrary} from 'react-native-image-picker';
+import { Theme } from '../../constant/theme';
+import { PermissionsAndroid } from 'react-native';
+import { launchCamera, launchImageLibrary } from 'react-native-image-picker';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import axios, {isAxiosError} from 'axios';
-import {Base_Uri} from '../../constant/BaseUri';
+import axios, { isAxiosError } from 'axios';
+import { Base_Uri } from '../../constant/BaseUri';
 import TutorDetailsContext from '../../context/tutorDetailsContext';
 import RNHTMLtoPDF from 'react-native-html-to-pdf';
 import AntDesign from 'react-native-vector-icons/AntDesign';
@@ -29,8 +29,9 @@ import bannerContext from '../../context/bannerContext';
 import ModalImg from '../../Component/Modal/modal';
 import CustomLoader from '../../Component/CustomLoader';
 import { useIsFocused } from '@react-navigation/native';
+import { PERMISSIONS, request } from 'react-native-permissions';
 
-const Profile = ({navigation}: any) => {
+const Profile = ({ navigation }: any) => {
   interface ITutorDetails {
     full_name: string | undefined;
     email: string | undefined;
@@ -68,18 +69,24 @@ const Profile = ({navigation}: any) => {
   console.log('tutorDetail', tutorDetail);
   let bannerCont = useContext(bannerContext);
 
-  let {profileBanner, setProfileBanner}: any = bannerCont;
+  let { profileBanner, setProfileBanner }: any = bannerCont;
 
-  let {updateTutorDetails, setTutorDetail} = context;
+  let { updateTutorDetails, setTutorDetail } = context;
 
   const openPhoto = async () => {
     setOpenPhotoModal(false);
+    let permission: any;
+    if (Platform.OS === 'ios') {
+      permission = PERMISSIONS.IOS.CAMERA;
+    } else if (Platform.OS === 'android') {
+      permission = PermissionsAndroid.PERMISSIONS.CAMERA;
+    }
 
-    const granted = await PermissionsAndroid.request(
-      PermissionsAndroid.PERMISSIONS.CAMERA,
-    );
+    const granted: any = await request(permission);
 
-    if (granted === PermissionsAndroid.RESULTS.GRANTED) {
+    console.log('granted====>', granted);
+
+    if (granted === 'granted') {
       const options: any = {
         title: 'Select Picture',
         storageOptions: {
@@ -113,11 +120,17 @@ const Profile = ({navigation}: any) => {
   const uploadProfilePicture = async () => {
     setOpenPhotoModal(false);
 
-    const granted = await PermissionsAndroid.request(
-      PermissionsAndroid.PERMISSIONS.CAMERA,
-    );
+    let permission: any;
+    if (Platform.OS === 'ios') {
+      permission = PERMISSIONS.IOS.CAMERA;
+    } else if (Platform.OS === 'android') {
+      permission = PermissionsAndroid.PERMISSIONS.CAMERA;
+    }
 
-    if (granted === PermissionsAndroid.RESULTS.GRANTED) {
+    const granted: any = await request(permission);
+
+    console.log('granted====>', granted);
+    if (granted == 'granted') {
       const options: any = {
         title: 'Select Picture',
         storageOptions: {
@@ -205,15 +218,15 @@ const Profile = ({navigation}: any) => {
             'Content-Type': 'multipart/form-data',
           },
         })
-        .then(({data}) => {
+        .then(({ data }) => {
           setLoading(false);
-          let {response} = data;
-          let {tutorImage} = response;
+          let { response } = data;
+          let { tutorImage } = response;
           console.log('response', response);
 
           setImage(tutorImage);
           tutorDetail.tutorImage = tutorImage;
-          setTutorDetail({...tutorDetail, tutorImage: tutorImage});
+          setTutorDetail({ ...tutorDetail, tutorImage: tutorImage });
           setUri('');
           setType('');
           setName('');
@@ -269,9 +282,9 @@ const Profile = ({navigation}: any) => {
             'Content-Type': 'multipart/form-data',
           },
         })
-        .then(({data}) => {
+        .then(({ data }) => {
           setLoading(false);
-          let {response} = data;
+          let { response } = data;
           setTutorDetail({
             ...tutorDetail,
             displayName: tutorDetail.displayName,
@@ -312,7 +325,7 @@ const Profile = ({navigation}: any) => {
     setOpenPPModal(true);
     axios
       .get(`${Base_Uri}api/bannerAds`)
-      .then(({data}) => {
+      .then(({ data }) => {
       })
       .catch(error => {
         ToastAndroid.show('Internal Server Error', ToastAndroid.SHORT);
@@ -350,7 +363,7 @@ const Profile = ({navigation}: any) => {
 
   const closeBannerModal = async () => {
     if (profileBanner.displayOnce == 'on') {
-      let bannerData = {...profileBanner};
+      let bannerData = { ...profileBanner };
 
       let stringData = JSON.stringify(bannerData);
 
@@ -388,24 +401,24 @@ const Profile = ({navigation}: any) => {
   console.log('imageUrl', imageUrl);
 
   const [tutorId, setTutorId] = useState<Number | null>(null);
-  
+
   interface LoginAuth {
     status: Number;
     tutorID: Number;
     token: string;
   }
 
-  const [tutorImage , setTutorImage] = useState('')
+  const [tutorImage, setTutorImage] = useState('')
   const getTutorDetails = async () => {
     setLoading(true)
     const data: any = await AsyncStorage.getItem('loginAuth');
     let loginData: LoginAuth = JSON.parse(data);
 
-    let {tutorID} = loginData;
+    let { tutorID } = loginData;
     axios
       .get(`${Base_Uri}getTutorDetailByID/${tutorID}`)
-      .then(({data}) => {
-        let {tutorDetailById} = data;
+      .then(({ data }) => {
+        let { tutorDetailById } = data;
         let tutorDetails = tutorDetailById[0];
         console.log('tutorDetails', tutorDetails);
         setTutorImage(tutorDetails.tutorImage)
@@ -427,27 +440,27 @@ const Profile = ({navigation}: any) => {
 
     // Check if the length is greater than 6 to insert "-" after the first six digits
     if (formattedInput.length >= 6) {
-        const firstPart = formattedInput.slice(0, 6);
-        let secondPart = '';
-        let thirdPart = '';
+      const firstPart = formattedInput.slice(0, 6);
+      let secondPart = '';
+      let thirdPart = '';
 
-        // Check if the length is greater than 8 to insert "-" after the next two digits
-        if (formattedInput.length >= 8) {
-            secondPart = formattedInput.slice(6, 8);
-            // If there are more than 8 characters, add the remaining characters to the third part
-            if (formattedInput.length > 8) {
-                thirdPart = formattedInput.slice(8);
-            }
-        } else {
-            secondPart = formattedInput.slice(6);
+      // Check if the length is greater than 8 to insert "-" after the next two digits
+      if (formattedInput.length >= 8) {
+        secondPart = formattedInput.slice(6, 8);
+        // If there are more than 8 characters, add the remaining characters to the third part
+        if (formattedInput.length > 8) {
+          thirdPart = formattedInput.slice(8);
         }
-        
-        // Combine the parts with hyphens
-        setNric(`${firstPart}${formattedInput.length > 6 ? '-' : ''}${secondPart}${thirdPart ? '-' + thirdPart : ''}`);
+      } else {
+        secondPart = formattedInput.slice(6);
+      }
+
+      // Combine the parts with hyphens
+      setNric(`${firstPart}${formattedInput.length > 6 ? '-' : ''}${secondPart}${thirdPart ? '-' + thirdPart : ''}`);
     } else {
-        setNric(formattedInput);
+      setNric(formattedInput);
     }
-};
+  };
 
 
 
@@ -457,17 +470,17 @@ const Profile = ({navigation}: any) => {
     //     <ActivityIndicator size="large" color={Theme.black} />
     //   </View>
     // ) : (
-    <View style={{backgroundColor: Theme.white, height: '100%'}}>
-      <View style={{margin:20}}></View>
+    <View style={{ backgroundColor: Theme.white, height: '100%' }}>
+      <View style={{ margin: 20 }}></View>
       <Header title="Profile" navigation={navigation} backBtn />
       <ScrollView showsVerticalScrollIndicator={false} nestedScrollEnabled>
-        <View style={{paddingHorizontal: 15, marginBottom: 20}}>
+        <View style={{ paddingHorizontal: 15, marginBottom: 20 }}>
 
-          <View style={{paddingVertical: 15, alignItems: 'center'}}>
-         
+          <View style={{ paddingVertical: 15, alignItems: 'center' }}>
+
             <Image
-              source={{uri: name ? `file://${uri}` : `${tutorImage}` ? `${tutorImage}` : `${imageUrl}`}}
-              style={{width: 90, height: 90, borderRadius: 50}}
+              source={{ uri: name ? `file://${uri}` : `${tutorImage}` ? `${tutorImage}` : `${imageUrl}` }}
+              style={{ width: 90, height: 90, borderRadius: 50 }}
               resizeMode="contain"
             />
 
@@ -476,26 +489,28 @@ const Profile = ({navigation}: any) => {
               activeOpacity={0.8}>
               <Image
                 source={require('../../Assets/Images/plus.png')}
-                style={{width: 20, height: 20, top: -20, left: 25}}
+                style={{ width: 20, height: 20, top: -20, left: 25 }}
                 resizeMode="contain"
               />
             </TouchableOpacity>
-            <View style={{alignItems: 'center'}}>
+            <View style={{ alignItems: 'center' }}>
               <Text
-                style={{fontSize: 18,    fontFamily: 'Circular Std Book',
-                 fontWeight: '600', color: Theme.black, textTransform:'capitalize'}}>
+                style={{
+                  fontSize: 18, fontFamily: 'Circular Std Book',
+                  fontWeight: '600', color: Theme.black, textTransform: 'capitalize'
+                }}>
                 {tutorDetail?.displayName
                   ? tutorDetail?.displayName
                   : tutorDetail?.full_name}
               </Text>
               <Text
-                style={{fontSize: 16, fontWeight: '300', color: Theme.gray}}>
+                style={{ fontSize: 16, fontWeight: '300', color: Theme.gray }}>
                 {tutorDetail?.email}
               </Text>
             </View>
           </View>
           {/* Full Name */}
-          <View style={{marginVertical: 15}}>
+          <View style={{ marginVertical: 15 }}>
             <Text
               style={{
                 color: Theme.black,
@@ -518,14 +533,14 @@ const Profile = ({navigation}: any) => {
                   fontSize: 16,
                   // fontWeight: '600',
                   marginTop: 5,
-                  textTransform:'capitalize'
+                  textTransform: 'capitalize'
                 }}>
                 {tutorDetail?.full_name}
               </Text>
             </View>
           </View>
           {/* Email */}
-          <View style={{marginBottom: 15}}>
+          <View style={{ marginBottom: 15 }}>
             <Text
               style={{
                 color: Theme.black,
@@ -546,13 +561,13 @@ const Profile = ({navigation}: any) => {
                 editable
                 onChangeText={text => setEmail(text)}
                 placeholder={tutorDetail?.email}
-                style={{color: 'black',fontFamily: 'Circular Std Book', fontSize: 16,textTransform:'capitalize'}}
+                style={{ color: 'black', fontFamily: 'Circular Std Book', fontSize: 16, textTransform: 'capitalize' }}
                 placeholderTextColor={Theme.black}
               />
             </View>
           </View>
           {/* Displlay name */}
-          <View style={{marginBottom: 15}}>
+          <View style={{ marginBottom: 15 }}>
             <Text
               style={{
                 color: Theme.black,
@@ -582,14 +597,16 @@ const Profile = ({navigation}: any) => {
                 editable
                 onChangeText={text => setDispalyName(text)}
                 placeholder={tutorDetail?.displayName}
-                style={{color: 'black', fontFamily: 'Circular Std Book',
-                fontSize: 16,textTransform:'capitalize'}}
+                style={{
+                  color: 'black', fontFamily: 'Circular Std Book',
+                  fontSize: 16, textTransform: 'capitalize'
+                }}
                 placeholderTextColor={Theme.black}
               />
             </View>
           </View>
           {/* MObile number*/}
-          <View style={{marginBottom: 15}}>
+          <View style={{ marginBottom: 15 }}>
             <Text
               style={{
                 color: Theme.black,
@@ -618,7 +635,7 @@ const Profile = ({navigation}: any) => {
             </View>
           </View>
           {/* Gender*/}
-          <View style={{marginBottom: 15}}>
+          <View style={{ marginBottom: 15 }}>
             <Text
               style={{
                 color: Theme.black,
@@ -647,7 +664,7 @@ const Profile = ({navigation}: any) => {
               <DropDownModalView
                 // title="Gender"
                 selectedValue={(e: any) =>
-                  setTutorDetail({...tutorDetail, gender: e.option})
+                  setTutorDetail({ ...tutorDetail, gender: e.option })
                 }
                 // subTitle="Rate the student's performance in the quizes"
                 placeHolder="Select Answer"
@@ -664,7 +681,7 @@ const Profile = ({navigation}: any) => {
             </View>
           </View>
           {/* Age*/}
-          <View style={{marginBottom: 15}}>
+          <View style={{ marginBottom: 15 }}>
             <Text
               style={{
                 color: Theme.black,
@@ -683,8 +700,10 @@ const Profile = ({navigation}: any) => {
               }}>
               <TextInput
                 editable
-                style={{color: 'black', textTransform: 'capitalize',    fontFamily: 'Circular Std Book',
-                fontSize: 16,}}
+                style={{
+                  color: 'black', textTransform: 'capitalize', fontFamily: 'Circular Std Book',
+                  fontSize: 16,
+                }}
                 keyboardType="numeric"
                 onChangeText={text => setAge(text)}
                 placeholder={
@@ -697,7 +716,7 @@ const Profile = ({navigation}: any) => {
             </View>
           </View>
           {/* Nric*/}
-          <View style={{marginBottom: 10}}>
+          <View style={{ marginBottom: 10 }}>
             <Text
               style={{
                 color: Theme.black,
@@ -716,14 +735,16 @@ const Profile = ({navigation}: any) => {
               }}>
               <TextInput
                 editable
-                style={{color: 'black',    fontFamily: 'Circular Std Book',
-                fontSize: 16,}}
+                style={{
+                  color: 'black', fontFamily: 'Circular Std Book',
+                  fontSize: 16,
+                }}
                 onChangeText={(text) => handleNricChange(text)}
                 keyboardType="numeric"
                 value={nric}
                 maxLength={14}
                 placeholder={
-                  tutorDetail?.nric == null ? 'Not Provided' :tutorDetail?.nric 
+                  tutorDetail?.nric == null ? 'Not Provided' : tutorDetail?.nric
                 }
                 placeholderTextColor={Theme.black}
               />
@@ -735,7 +756,7 @@ const Profile = ({navigation}: any) => {
       {Object.keys(profileBanner).length > 0 &&
         (profileBanner.tutorStatusCriteria == 'All' ||
           tutorDetails.status == 'verified') && (
-          <View style={{flex: 1}}>
+          <View style={{ flex: 1 }}>
             <Modal
               visible={openPPModal}
               animationType="fade"
@@ -772,7 +793,7 @@ const Profile = ({navigation}: any) => {
                   </TouchableOpacity>
                   {/* <Image source={{uri:}} style={{width:Dimensions.get('screen').width/1.1,height:'80%',}} resizeMode='contain'/> */}
                   <Image
-                    source={{uri: profileBanner.bannerImage}}
+                    source={{ uri: profileBanner.bannerImage }}
                     style={{
                       width: Dimensions.get('screen').width / 1.05,
                       height: '90%',

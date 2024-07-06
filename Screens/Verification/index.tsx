@@ -193,9 +193,9 @@ import {
           backgroundColor: Theme.white,
           height: '100%',
         }}>
-          <View style={{marginTop:20}}></View>
+          <View style={{marginTop:30}}></View>
         <Header
-          navigation={navigation}
+          navigation={navigation}sz
           user={user}
           backBtn
           noSignUp
@@ -212,7 +212,7 @@ import {
             Enter Verification Code
           </Text>
         </View>
-        <View style={{ paddingHorizontal: 15 }}>
+        <View style={{ paddingHorizontal: 15 ,borderRadius: 10,}}>
           <CodeField
             ref={ref}
             {...props}
@@ -324,7 +324,7 @@ import {
       fontSize: 24,
       marginHorizontal: 4,
       borderWidth: 1,
-      borderRadius: 10,
+      borderRadius: 5,
       backgroundColor: '#e6e9fa',
       borderColor: Theme.darkGray,
       textAlign: 'center',

@@ -480,17 +480,23 @@ function AddClass({navigation}: any) {
   };
 
   const confirmClass = () => {
+    console.log('confirmClass');
+    
     setLoading(true);
     if (classes.length > 0) {
       classes?.map((classesObject: any, classesIndex: number) => {
         const startTime = classesObject?.startTime;
         if (startTime == '-') {
-          ToastAndroid.show(
-            `Please select both start time and end time for Class No ${
+          // ToastAndroid.show(
+          //   `Please select both start time and end time for Class No ${
+          //     classesIndex + 1
+          //   }.`,
+          //   ToastAndroid.SHORT,
+          // );
+          console.log(`Please select both start time and end time for Class No ${
               classesIndex + 1
-            }.`,
-            ToastAndroid.SHORT,
-          );
+            }.`,);
+          
           return;
         }
       });
@@ -515,10 +521,12 @@ function AddClass({navigation}: any) {
             (classB.startTime <= classA.endTime &&
               classA.startTime <= classB.endTime))
         ) {
-          ToastAndroid.show(
-            'Classes have overlapping time slots',
-            ToastAndroid.SHORT,
-          );
+          // ToastAndroid.show(
+          //   'Classes have overlapping time slots',
+          //   ToastAndroid.SHORT,
+          // );
+          console.log('Classes have overlapping time slots');
+          
           setLoading(false);
           return;
         }
@@ -588,7 +596,9 @@ function AddClass({navigation}: any) {
     let flag = classesToAdd.some((e: any, i: number) => e == 'false');
 
     if (flag) {
-      ToastAndroid.show('Required Field are missing', ToastAndroid.SHORT);
+      // ToastAndroid.show('Required Field are missing', ToastAndroid.SHORT);
+      console.log('Required Field are missing');
+      
       setLoading(false);
       return;
     }
@@ -603,14 +613,16 @@ function AddClass({navigation}: any) {
       .then(res => {
         setLoading(false);
         if (res?.data?.message?.includes('slot')) {
-          // console.log("res.data.message",res.data.message);
+          console.log("res.data.message",res.data.message);
 
-          ToastAndroid.show(res.data.message, ToastAndroid.SHORT);
+          // ToastAndroid.show(res.data.message, ToastAndroid.SHORT);
           return;
         }
         navigation.navigate('ScheduleSuccessfully');
         // navigation.navigate('Schedule', classesss?.classes[0]?.startTime);
-        ToastAndroid.show(res?.data?.message, ToastAndroid.SHORT);
+        console.log('res?.data?.multiple classes,',res?.data?.message,);
+        
+        // ToastAndroid.show(res?.data?.message, ToastAndroid.SHORT);
       })
       .catch(error => {
         setLoading(false);
@@ -620,10 +632,12 @@ function AddClass({navigation}: any) {
           console.error('Status Code:', error.response.status);
           console.error('Headers:', error.response.headers);
         }
-        ToastAndroid.show(
-          `Sorry classes added unsuccessfull ${error}`,
-          ToastAndroid.SHORT,
-        );
+        // ToastAndroid.show(
+        //   `Sorry classes added unsuccessfull ${error}`,
+        //   ToastAndroid.SHORT,
+        // );
+        console.log('orry classes added unsuccessfull');
+        
       });
   };
   const [isDatePickerVisible, setDatePickerVisibility] = useState(false);

@@ -16,6 +16,7 @@ import {
   Dimensions,
   ToastAndroid,
   Modal,
+  Share,
 } from 'react-native';
 import React, {useEffect, useState, useContext} from 'react';
 import {Theme} from '../../constant/theme';
@@ -30,6 +31,7 @@ import AntDesign from 'react-native-vector-icons/AntDesign';
 import bannerContext from '../../context/bannerContext';
 import TutorDetailsContext from '../../context/tutorDetailsContext';
 import CustomLoader from '../../Component/CustomLoader';
+import ReactNativeBlobUtil from 'react-native-blob-util';
 const ReportSubmissionHistory = ({navigation}: any) => {
   // const [reportSubmission, setreportSubmission] = useState([]);
   // const [progressReport, setProgressReport] = useState([]);
@@ -1463,6 +1465,40 @@ const ReportSubmissionHistory = ({navigation}: any) => {
         navigation.navigate('ReportSubmissionHistory');
       }
   };
+
+  // const downloadFile = () => {
+  //   const source = "https://www.africau.edu/images/default/sample.pdf";
+  //   let dirs = ReactNativeBlobUtil.fs.dirs;
+  //   ReactNativeBlobUtil.config({
+  //     fileCache: true,
+  //     appendExt: 'pdf',
+  //     path: `${dirs.DocumentDir}/${fileName}`,
+  //     addAndroidDownloads: {
+  //       useDownloadManager: true,
+  //       notification: true,
+  //       title: fileName,
+  //       description: 'File downloaded by download manager.',
+  //       mime: 'application/pdf',
+  //     },
+  //   })
+  //     .fetch('GET', fileUrl)
+  //     .then((res) => {
+  //       // in iOS, we want to save our files by opening up the saveToFiles bottom sheet action.
+  //       // whereas in android, the download manager is handling the download for us.
+  //       if (Platform.OS === 'ios') {
+  //         const filePath = res.path();
+  //         let options = {
+  //           type: 'application/pdf',
+  //           url: filePath,
+  //           saveToFiles: true,
+  //         };
+  //         Share.open(options)
+  //           .then((resp) => console.log(resp))
+  //           .catch((err) => console.log(err));
+  //       }
+  //     })
+  //     .catch((err) => console.log('BLOB ERROR -> ', err));
+  // };
 
   return (
   // pdfUri ? (

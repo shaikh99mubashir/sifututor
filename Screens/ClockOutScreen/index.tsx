@@ -18,7 +18,6 @@ import axios from 'axios';
 import {Base_Uri} from '../../constant/BaseUri';
 import noteContext from '../../context/noteContext';
 import {CommonActions, useIsFocused} from '@react-navigation/native';
-import TutorDetailForm from '../TutorDetailForm';
 import TutorDetailsContext from '../../context/tutorDetailsContext';
 import CustomLoader from '../../Component/CustomLoader';
 import AsyncStorage from '@react-native-async-storage/async-storage';
@@ -75,7 +74,6 @@ function ClockOut({navigation, route}: any) {
 
       if (!data) {
         console.log('Data is undefined or null');
-        ToastAndroid.show('Data is undefined or null', ToastAndroid.LONG);
         setLoading(false);
         return;
       }
@@ -95,10 +93,12 @@ function ClockOut({navigation, route}: any) {
         });
       } else {
         console.log('Missing image properties');
-        ToastAndroid.show('Missing image properties', ToastAndroid.LONG);
         setLoading(false);
         return;
       }
+
+      console.log('formData',formData);
+      
 
       const clockOutResponse = await axios.post(
         `${Base_Uri}api/attendedClassClockOutTwo`,
@@ -110,7 +110,7 @@ function ClockOut({navigation, route}: any) {
         },
       );
 
-      ToastAndroid.show(clockOutResponse?.data?.result, ToastAndroid.SHORT);
+      // // ToastAndroid.show(clockOutResponse?.data?.result, ToastAndroid.SHORT);
 
       if (clockOutResponse?.data?.errorMsg) {
         navigation.navigate('Schedule');
@@ -127,19 +127,29 @@ function ClockOut({navigation, route}: any) {
         tutorReportListing &&
         tutorReportListing?.length > 0 &&
         tutorReportListing.filter((e: any, i: number) => {
-          console.log('e', e);
           return items.class_schedule_id == e.scheduleID;
         });
+        
+        console.log('this class ', thisClass);
+        
+      if (thisClass && thisClass?.length > 0) {
+        // navigation.dispatch(
+        //   CommonActions.reset({
+        //     index: 0,
+        //     routes: [{name: 'BackToDashboard'}],
+        //   }),
+        // );
+        // navigation.reset({
+        //   index: 0,
+        //   routes: [{ name: 'BackToDashboard' }],
+        // });
+        
+        navigation.navigate('BackToDashboard')
 
-      if (thisClass && thisClass.length > 0) {
-        navigation.dispatch(
-          CommonActions.reset({
-            index: 0,
-            routes: [{name: 'BackToDashboard'}],
-          }),
-        );
+        
       } else {
-        navigation.replace('ReportSubmission', items);
+        // navigation.replace('ReportSubmission', items);
+        navigation.navigate('ReportSubmission', items);
       }
       setLoading(false);
     } catch (error: any) {
@@ -156,10 +166,10 @@ function ClockOut({navigation, route}: any) {
         console.log('Error setting up the request:', error.message);
       }
       setLoading(false);
-      ToastAndroid.show(
-        `Error in handleClockOutPress: ${error}`,
-        ToastAndroid.LONG,
-      );
+      // ToastAndroid.show(
+      //   `Error in handleClockOutPress: ${error}`,
+      //   ToastAndroid.LONG,
+      // );
       console.log('Error in handleClockOutPress:', error);
     }
   };
@@ -193,6 +203,7 @@ function ClockOut({navigation, route}: any) {
 
   return (
     <View style={{flex: 1, alignItems: 'center'}}>
+      <View style={{margin:20}}/>
       <Header backBtn navigation={navigation} title={'Clock Out'} />
       {currentLocation.latitude && currentLocation.longitude && (
         <MapView

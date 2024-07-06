@@ -90,8 +90,8 @@ const ReportSubmission = ({navigation, route}: any): any => {
   const [rulQ2, setRulQ2] = useState<any>('');
   const [rulQ3, setRulQ3] = useState<any>('');
   const [rulQ4, setRulQ4] = useState<any>('');
-  console.log('rulQ1',rulQ1);
-  
+  console.log('rulQ1', rulQ1);
+
   const [observation, setObservation] = useState<any>({
     obv1: '',
     obv2: '',
@@ -232,7 +232,8 @@ const ReportSubmission = ({navigation, route}: any): any => {
       option: 'Shows some interest and willingness to learn.',
     },
     {
-      option: 'Rarely completes homework on time.Rarely shows willingness to learn.',
+      option:
+        'Rarely completes homework on time.Rarely shows willingness to learn.',
     },
   ];
   const attitudeOption5 = [
@@ -465,7 +466,7 @@ const ReportSubmission = ({navigation, route}: any): any => {
 
   useEffect(() => {
     if (data?.notificationType == 'Submit Evaluation Report') {
-      setEvaluationReport({option: data.notificationType});
+      setEvaluationReport({option: 'Evaluation Report'});
       let student =
         studentData &&
         studentData.length > 0 &&
@@ -502,7 +503,7 @@ const ReportSubmission = ({navigation, route}: any): any => {
       subject && subject.length > 0 && setSubject(subject[0]);
       setSelectedMonth(months[new Date().getMonth()]);
     } else {
-      setEvaluationReport({option: 'Submit Evaluation Report'});
+      setEvaluationReport({option: 'Evaluation Report'});
 
       let student =
         studentData &&
@@ -521,7 +522,6 @@ const ReportSubmission = ({navigation, route}: any): any => {
       subject && subject.length > 0 && setSubject(subject[0]);
     }
   }, [navigation, subjectData, studentData]);
-  console.log(data?.class_schedule_id, 'data.class_schedule_id');
 
   const submitReport = () => {
     if (evaluation.option == 'Progress Report') {
@@ -567,83 +567,29 @@ const ReportSubmission = ({navigation, route}: any): any => {
       formData.append('subjectID', data?.subjectID);
       formData.append('reportType', evaluation?.option);
       formData.append('month', selectedMonth?.option);
-      formData.append(
-        'observation',
-        obQ1?.option,
-      );
-      formData.append(
-        'observation2',
-        obQ2?.option,
-      );
-      formData.append(
-        'observation3',
-        obQ3,
-      );
-      formData.append(
-        'observation4',
-        obQ4,
-      );
-      formData.append(
-        'observation5',
-        obQ5,
-      );
-      formData.append(
-        'observation6',
-        obQ6,
-      );
-      formData.append(
-        'performance',
-        perQ1?.option,
-      );
-      formData.append(
-        'performance2',
-        perQ2?.option,
-      );
-      formData.append(
-        'performance3',
-        perQ3?.option,
-      );
+      formData.append('observation', obQ1?.option);
+      formData.append('observation2', obQ2?.option);
+      formData.append('observation3', obQ3);
+      formData.append('observation4', obQ4);
+      formData.append('observation5', obQ5);
+      formData.append('observation6', obQ6);
+      formData.append('performance', perQ1?.option);
+      formData.append('performance2', perQ2?.option);
+      formData.append('performance3', perQ3?.option);
       formData.append('performance4', perQ4?.option);
       formData.append('performance5', perQ5?.option);
       formData.append('performance6', perQ6);
-      formData.append(
-        'attitude',
-        attQ1?.option,
-      );
-      formData.append(
-        'attitude2',
-        attQ2?.option,
-      );
-      formData.append(
-        'attitude3',
-        attQ3?.option,
-      );
-      formData.append(
-        'attitude4',
-        attQ4?.option,
-      );
-      formData.append(
-        'attitude5',
-        attQ5?.option,
-      );
-      formData.append(
-        'attitude6',
-        attQ6,
-      );
+      formData.append('attitude', attQ1?.option);
+      formData.append('attitude2', attQ2?.option);
+      formData.append('attitude3', attQ3?.option);
+      formData.append('attitude4', attQ4?.option);
+      formData.append('attitude5', attQ5?.option);
+      formData.append('attitude6', attQ6);
       formData.append('result', rulQ1?.option);
-      formData.append(
-        'result2',
-        rulQ2?.option,
-      );
-      formData.append(
-        'result3',
-        rulQ3?.option,
-      );
-      formData.append(
-        'result4',
-        rulQ4,
-      );
-      
+      formData.append('result2', rulQ2?.option);
+      formData.append('result3', rulQ3?.option);
+      formData.append('result4', rulQ4);
+
       console.log('form data progress report===========>', formData);
 
       axios
@@ -675,10 +621,6 @@ const ReportSubmission = ({navigation, route}: any): any => {
           console.log(error, 'error');
         });
       return;
-    }
-    if(questions.addationalAssessments >= '10'){
-      ToastAndroid.show('Please answer all questions', ToastAndroid.SHORT);
-      return
     }
 
     if (
@@ -718,6 +660,8 @@ const ReportSubmission = ({navigation, route}: any): any => {
     formData.append('additionalAssisment', questions?.addationalAssessments);
     formData.append('plan', questions?.plan);
 
+    console.log('formdata',formData);
+    
     axios
       .post(`${Base_Uri}api/tutorFirstReport`, formData, {
         headers: {
@@ -758,22 +702,55 @@ const ReportSubmission = ({navigation, route}: any): any => {
     setValue(currentDate);
     setShow(false);
   };
-
+  
   return (
     <View style={{backgroundColor: Theme.white, height: '100%'}}>
       <CustomLoader visible={loading} />
-      <Header title="Report Submission" backBtn navigation={navigation} />
+      <View style={{margin:20}}/>
+      <Header title="Submit Report" navigation={navigation} />
       <ScrollView showsVerticalScrollIndicator={false} nestedScrollEnabled>
         <View style={{paddingHorizontal: 15, marginBottom: 100}}>
           {/* Report Type */}
-          <DropDownModalView
+          {/* <DropDownModalView
             title="Report Type"
             placeHolder="Evaluation Report"
             selectedValue={setEvaluationReport}
             value={evaluation.option}
             option={EvalutionOption}
             modalHeading="Select Report Type"
-          />
+          /> */}
+
+          <View style={{marginTop: 8}}>
+            <Text
+              style={{
+                fontSize: 16,
+                color: 'black',
+                fontFamily: 'Circular Std Bold',
+              }}>
+              Report Type
+            </Text>
+            <View
+              // onPress={() => setShow(true)}
+              style={{
+                marginTop: 5,
+                flexDirection: 'row',
+                justifyContent: 'space-between',
+                paddingVertical: 15,
+                paddingHorizontal: 15,
+                borderRadius: 15,
+                backgroundColor: Theme.liteBlue,
+                alignItems: 'center',
+              }}>
+              <Text
+                style={{
+                  color: Theme.black,
+                  fontFamily: 'Circular Std Medium',
+                  fontSize: 16,
+                }}>
+                {evaluation?.option}
+              </Text>
+            </View>
+          </View>
 
           {/* First Class Date */}
           {evaluation.option == 'Progress Report' ? (
@@ -1218,7 +1195,7 @@ const ReportSubmission = ({navigation, route}: any): any => {
                 option={attitudeOption5}
                 modalHeading="Select Answer"
               />
-                <>
+              <>
                 <Text
                   style={{
                     color: Theme.gray,
@@ -1281,7 +1258,7 @@ const ReportSubmission = ({navigation, route}: any): any => {
           {/*  OBSERVATION */}
           {evaluation.option == 'Progress Report' ? (
             <>
-             <DropDownModalView
+              <DropDownModalView
                 title="D. RESULT"
                 selectedValue={setRulQ1}
                 subTitle=" How well does the student performance in quizzes/test?"
@@ -1303,7 +1280,7 @@ const ReportSubmission = ({navigation, route}: any): any => {
                 option={resultOption3}
                 modalHeading="Select Answer"
               />
-                <>
+              <>
                 <Text
                   style={{
                     color: Theme.gray,
@@ -1357,8 +1334,7 @@ const ReportSubmission = ({navigation, route}: any): any => {
           )}
 
           {evaluation.option == 'Progress Report' ? (
-            <>
-            </>
+            <></>
           ) : (
             <>
               <Text
@@ -1395,8 +1371,11 @@ const ReportSubmission = ({navigation, route}: any): any => {
                   onChangeText={e =>
                     setQuestions({...questions, addationalAssessments: e})
                   }
-                  style={{color:'black',fontSize: 16,
-                  fontFamily: 'Circular Std Medium',}}
+                  style={{
+                    color: 'black',
+                    fontSize: 16,
+                    fontFamily: 'Circular Std Medium',
+                  }}
                   underlineColorAndroid="transparent"
                   placeholderTextColor="grey"
                 />

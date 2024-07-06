@@ -66,20 +66,22 @@ const AppliedDetails = ({ route, navigation }: any) => {
               </View>
             </View>
             <View style={{ alignItems: 'center', justifyContent: 'center' }}>
+              <View style={{backgroundColor: '#000',
+                      paddingVertical: 5,
+                      paddingHorizontal: 30,
+                      borderRadius: 30,}}>
+                
               <Text
                 style={[
                   styles.textType3,
                   {
                     color: '#fff',
-                    backgroundColor: '#000',
-                    paddingVertical: 5,
-                    paddingHorizontal: 15,
-                    borderRadius: 30,
                     textTransform:'capitalize'
                   },
                 ]}>
                 {data?.offer_status}
               </Text>
+                  </View>
             </View>
           </View>
           <View style={{ marginVertical: 20 }}>
@@ -163,25 +165,27 @@ const AppliedDetails = ({ route, navigation }: any) => {
                   />
                   <Text style={styles.textType3}>No. of Sessions</Text>
                 </View>
-             
+                <View style={{ backgroundColor: '#298CFF33',
+                      paddingVertical: 2,
+                      // paddingHorizontal: 10,
+                      borderRadius: 50,
+                      
+                      width:30,
+                      height:30,}}>
+
+                
                 <Text
                   style={[
                     styles.textType1,
                     {
                       color: '#003E9C',
-                      backgroundColor: '#298CFF33',
-                      paddingVertical: 2,
-                      // paddingHorizontal: 10,
-                      borderRadius: 50,
                       textAlign:'center',
-                      width:30,
-                      height:30,
                       fontSize: 18,
                     },
                   ]}>
                   {data?.classFrequency}
                 </Text>
-               
+                </View>
               </View>
             </View>
 

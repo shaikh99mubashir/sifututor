@@ -6,28 +6,38 @@ import {
   TouchableOpacity,
   View,
   ActivityIndicator,
+  KeyboardAvoidingView,
+  Platform,
 } from 'react-native';
 import PhoneInput from 'react-native-phone-number-input';
 import axios from 'axios';
 import { Theme } from '../../constant/theme';
 import { Base_Uri } from '../../constant/BaseUri';
+import Toast from 'react-native-toast-message';
 const Login = ({ navigation }:any) => {
   const [phoneNumber, setPhoneNumber] = useState('');
   const [loading, setLoading] = useState(false);
 
   const handleLoginPress = () => {
     if (!phoneNumber) {
-      ToastAndroid.show('Kindly Enter Phone Number', ToastAndroid.SHORT);
+      Toast.show({
+        type: 'error',
+        text1: 'Error',
+        text2: 'Kindly Enter Phone Number',
+        position:'bottom'
+      });
       return;
     }
     setLoading(true);
 
     const timeoutId = setTimeout(() => {
       setLoading(false);
-      ToastAndroid.show(
-        'Request timeout: Please check your internet connection',
-        ToastAndroid.SHORT
-      );
+      Toast.show({
+        type: 'error',
+        text1: 'Request timeout:',
+        text2: 'Please check your internet connection',
+        position:'bottom'
+      });
     }, 30000);
 
     const phoneNumberWithCountryCode = phoneNumber;
@@ -41,25 +51,40 @@ const Login = ({ navigation }:any) => {
         setLoading(false);
 
         if (data?.status === 404) {
-          ToastAndroid.show(data.msg, ToastAndroid.SHORT);
+          Toast.show({
+            type: 'success',
+            text1: `${data.msg}`,
+            position:'bottom'
+          });
           return;
         }
-
         if (data?.status === 200) {
-        //   ToastAndroid.show('Enter verification code to continue.', ToastAndroid.SHORT);
+          Toast.show({
+            type: 'success',
+            text1: 'Hello 👋',
+            text2: 'Enter verification code to continue',
+            position:'bottom'
+          });
           navigation.navigate('Verification', data);
         }
       })
       .catch(() => {
         setLoading(false);
-        ToastAndroid.show(
-          'Request timeout: Please check your internet connection',
-          ToastAndroid.LONG
-        );
+        
+        Toast.show({
+          type: 'error',
+          text1: 'Request timeout:',
+          text2: ' Please check your internet connection',
+          position:'bottom'
+        });
       });
   };
 
   return (
+    <KeyboardAvoidingView
+    style={{ flex: 1 }}
+    behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+  >
     <View style={styles.container}>
       <Text style={styles.headerText}>Enter your{'\n'}mobile number</Text>
       <Text style={styles.subHeaderText}>
@@ -90,6 +115,7 @@ const Login = ({ navigation }:any) => {
         </TouchableOpacity>
       </View>
     </View>
+  </KeyboardAvoidingView>
   );
 };
 

@@ -52,7 +52,8 @@ function More({navigation}: any) {
           AsyncStorage.removeItem('loginAuth');
           navigation.replace('Login');
           setTutorDetail('')
-          ToastAndroid.show('Terminated', ToastAndroid.SHORT);
+          // ToastAndroid.show('Terminated', ToastAndroid.SHORT);
+          
           return;
         }
         let {tutorDetailById} = data;
@@ -77,7 +78,7 @@ function More({navigation}: any) {
         setTutorDetail(details);
       })
       .catch(error => {
-        ToastAndroid.show('Internal Server Error', ToastAndroid.SHORT);
+        // ToastAndroid.show('Internal Server Error', ToastAndroid.SHORT);
       });
   };
   const focus = useIsFocused();

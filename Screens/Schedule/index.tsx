@@ -130,7 +130,7 @@ function Schedule({navigation, route}: any) {
       .get(`${Base_Uri}api/bannerAds`)
       .then(({data}) => {})
       .catch(error => {
-        ToastAndroid.show('Internal Server Error', ToastAndroid.SHORT);
+        // ToastAndroid.show('Internal Server Error', ToastAndroid.SHORT);
       });
   };
 
@@ -180,7 +180,7 @@ function Schedule({navigation, route}: any) {
         })
         .catch(error => {
           setLoading(false);
-          ToastAndroid.show('Internal Server Error', ToastAndroid.SHORT);
+          // ToastAndroid.show('Internal Server Error', ToastAndroid.SHORT);
         });
       return;
     }
@@ -231,7 +231,7 @@ function Schedule({navigation, route}: any) {
       })
       .catch(error => {
         setLoading(false);
-        ToastAndroid.show('Internal Server Error', ToastAndroid.SHORT);
+        // ToastAndroid.show('Internal Server Error', ToastAndroid.SHORT);
       });
   };
 

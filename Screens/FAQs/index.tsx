@@ -47,7 +47,7 @@ const FAQs = ({ navigation }: any) => {
       })
       .catch(error => {
         setLoading(false)
-        ToastAndroid.show('Internal Server Error', ToastAndroid.SHORT);
+        // ToastAndroid.show('Internal Server Error', ToastAndroid.SHORT);
       });
   }
  
@@ -70,7 +70,7 @@ const FAQs = ({ navigation }: any) => {
       .then(({ data }) => {
       })
       .catch(error => {
-        ToastAndroid.show('Internal Server Error', ToastAndroid.SHORT);
+        // ToastAndroid.show('Internal Server Error', ToastAndroid.SHORT);
       });
   };
 

@@ -12,6 +12,7 @@ import { useIsFocused } from "@react-navigation/native"
 import moment from "moment"
 import CustomLoader from "../../Component/CustomLoader"
 import { PERMISSIONS, request } from "react-native-permissions"
+import Toast from "react-native-toast-message"
 // import messaging from '@react-native-firebase/messaging';
 
 
@@ -342,7 +343,13 @@ function ClassTimerCount({ navigation, route }: any) {
               // Handle cancellation
             } else if (res.error) {
               console.log('ImagePicker Error:', res.error);
-              ToastAndroid.show(`ImagePicker Error: ${res.error}`, ToastAndroid.LONG);
+              // ToastAndroid.show(`ImagePicker Error: ${res.error}`, ToastAndroid.LONG);
+              Toast.show({
+                type: 'error',
+                text1: 'Error',
+                text2: `ImagePicker Error: ${res.error}`,
+                position: 'bottom'
+              });
             } else {
               try {
                 const startHour = item.startMinutes;
@@ -382,15 +389,31 @@ function ClassTimerCount({ navigation, route }: any) {
                 AsyncStorage.removeItem('timer');
                 navigation.replace('ClockOut', data);
               } catch (error) {
-                ToastAndroid.show(`Error in handleClockOut: ${error}`, ToastAndroid.LONG);
+                Toast.show({
+                  type: 'error',
+                  text1: 'Network Error',
+                  text2: `Error in handleClockOut: ${error}`,
+                  position: 'bottom'
+                });
               }
             }
           });
         } else {
-          ToastAndroid.show('Camera permission denied', ToastAndroid.LONG);
+          // ToastAndroid.show('Camera permission denied', ToastAndroid.LONG);
+          Toast.show({
+            type: 'error',
+            text1: 'Network Error',
+            text2: `Camera permission denied`,
+            position: 'bottom'
+          });
         }
       } catch (error) {
-        ToastAndroid.show(`Error requesting camera permission: ${error}`, ToastAndroid.LONG);
+        Toast.show({
+          type: 'error',
+          text1: 'Network Error',
+          text2: `rror requesting camera permission: ${error}`,
+          position: 'bottom'
+        });
       }
     };
     

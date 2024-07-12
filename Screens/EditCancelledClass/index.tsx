@@ -17,6 +17,7 @@ import AntDesign from 'react-native-vector-icons/EvilIcons';
 import axios from 'axios';
 import {Base_Uri} from '../../constant/BaseUri';
 import CustomLoader from '../../Component/CustomLoader';
+import Toast from 'react-native-toast-message';
 
 function EditCancelledClass({navigation, route}: any) {
   let data = route.params?.data;
@@ -28,7 +29,12 @@ function EditCancelledClass({navigation, route}: any) {
 
   const editTutorCancelledClass = () => {
     if (!cancelledReason) {
-      ToastAndroid.show('Kindly Enter Cancelled Reason', ToastAndroid.SHORT);
+      Toast.show({
+        type: 'error',
+        text1: 'Error',
+        text2: `Kindly Enter Cancelled Reason`,
+        position: 'bottom'
+      });
       return;
     }
     setLoading(true);
@@ -40,7 +46,12 @@ function EditCancelledClass({navigation, route}: any) {
         console.log(res, 'ress');
 
         setLoading(false);
-        ToastAndroid.show(res?.data?.SuccessMessage, ToastAndroid.SHORT);
+        Toast.show({
+          type: 'success',
+          text1: 'Success',
+          text2: `${res?.data?.SuccessMessage}`,
+          position: 'bottom'
+        });
         navigation.navigate('Schedule', data.id);
       })
       .catch(error => {
@@ -50,7 +61,6 @@ function EditCancelledClass({navigation, route}: any) {
           console.error('Status Code:', error.response.status);
           console.error('Headers:', error.response.headers);
         }
-        ToastAndroid.show('Internal Server Error', ToastAndroid.SHORT);
       });
   };
 

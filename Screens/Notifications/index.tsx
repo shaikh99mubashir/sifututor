@@ -89,7 +89,7 @@ const Notifications = ({ navigation }: any) => {
         })
         .catch(error => {
           setLoading(false);
-          ToastAndroid.show('Internal Server Error', ToastAndroid.SHORT);
+          // ToastAndroid.show('Internal Server Error', ToastAndroid.SHORT);
         });
     }
   };
@@ -102,7 +102,7 @@ const Notifications = ({ navigation }: any) => {
         setScheduleNotification(data.record)
       }).catch((error) => {
 
-        ToastAndroid.show('Internal Server Error', ToastAndroid.SHORT);
+        // ToastAndroid.show('Internal Server Error', ToastAndroid.SHORT);
       })
     }
 
@@ -143,7 +143,7 @@ const Notifications = ({ navigation }: any) => {
         //     ToastAndroid.show('Internal Server Error', ToastAndroid.SHORT);
         //   });
       }).catch((error) => {
-        ToastAndroid.show("Nework Error", ToastAndroid.SHORT)
+        // ToastAndroid.show("Nework Error", ToastAndroid.SHORT)
       })
     }
     else if(item?.notificationType == "Schedule Class"){
@@ -156,7 +156,7 @@ const Notifications = ({ navigation }: any) => {
 
         setNotification(updateNotifications)
       }).catch((error) => {
-        ToastAndroid.show("Nework Error", ToastAndroid.SHORT)
+        // ToastAndroid.show("Nework Error", ToastAndroid.SHORT)
       })
     } 
     else {
@@ -169,7 +169,7 @@ const Notifications = ({ navigation }: any) => {
         })
         setNotification(updateNotifications)
       }).catch((error) => {
-        ToastAndroid.show("Nework Error", ToastAndroid.SHORT)
+        // ToastAndroid.show("Nework Error", ToastAndroid.SHORT)
       })
     }
   }

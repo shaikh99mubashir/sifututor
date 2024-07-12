@@ -21,6 +21,7 @@ import DateTimePickerModal from 'react-native-modal-datetime-picker';
 import axios from 'axios';
 import {Base_Uri} from '../../constant/BaseUri';
 import CustomLoader from '../../Component/CustomLoader';
+import Toast from 'react-native-toast-message';
 
 function EditPostpondClass({navigation, route}: any) {
   let data = route.params?.data;
@@ -48,18 +49,31 @@ function EditPostpondClass({navigation, route}: any) {
 
   const editTutorPostPonedClass = () => {
     if (!postponedReason) {
-      ToastAndroid.show('Kindly enter postponed reason', ToastAndroid.SHORT);
+      Toast.show({
+        type: 'error',
+        text1: 'Error',
+        text2: `Kindly enter postponed reason`,
+        position: 'bottom'
+      });
       return;
     }
     if (!nextClass.date) {
       ToastAndroid.show('Kindly enter next class Date', ToastAndroid.SHORT);
+      Toast.show({
+        type: 'error',
+        text1: 'Error',
+        text2: `Kindly enter next class Date`,
+        position: 'bottom'
+      });
       return;
     }
     if (!nextClass.startTime || nextClass.startTime == '-') {
-      ToastAndroid.show(
-        'Kindly enter next class start time',
-        ToastAndroid.SHORT,
-      );
+      Toast.show({
+        type: 'error',
+        text1: 'Error',
+        text2: `Kindly enter next class start time`,
+        position: 'bottom'
+      });
       return;
     }
     // if (!nextClass.endTime || nextClass.endTime == '-') {
@@ -105,21 +119,27 @@ function EditPostpondClass({navigation, route}: any) {
           .then(res => {
             setLoading(false);
             setNextClass(initialData);
-            ToastAndroid.show(res?.data?.SuccessMessage, ToastAndroid.SHORT);
+            Toast.show({
+              type: 'success',
+              text1: 'Success',
+              text2: `${res?.data?.SuccessMessage}`,
+              position: 'bottom'
+            });
             navigation.navigate('Schedule', data.id);
           })
           .catch(error => {
             setLoading(false);
-            ToastAndroid.show('Internal Server Error', ToastAndroid.SHORT);
           });
       })
       .catch(error => {
         setLoading(false);
         console.log(error, 'error');
-        ToastAndroid.show(
-          'Sorry classes added unsuccessfull',
-          ToastAndroid.SHORT,
-        );
+        Toast.show({
+          type: 'error',
+          text1: 'Nertwork Error',
+          text2: `Sorry classes added unsuccessfull`,
+          position: 'bottom'
+        });
       });
   };
 

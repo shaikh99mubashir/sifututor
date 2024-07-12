@@ -17,7 +17,7 @@ import Geolocation from '@react-native-community/geolocation';
 import axios from 'axios';
 import {Base_Uri} from '../../constant/BaseUri';
 import noteContext from '../../context/noteContext';
-import {CommonActions, useIsFocused} from '@react-navigation/native';
+import {CommonActions, StackActions, useIsFocused} from '@react-navigation/native';
 import TutorDetailsContext from '../../context/tutorDetailsContext';
 import CustomLoader from '../../Component/CustomLoader';
 import AsyncStorage from '@react-native-async-storage/async-storage';
@@ -144,7 +144,19 @@ function ClockOut({navigation, route}: any) {
         //   routes: [{ name: 'BackToDashboard' }],
         // });
         
-        navigation.navigate('BackToDashboard')
+        // navigation.dispatch(StackActions.replace('BackToDashboard'))
+        navigation.navigate('BackToDashboard');
+        // try {
+        //   navigation.dispatch(
+        //     CommonActions.reset({
+        //       index: 0,
+        //       routes: [{ name: 'BackToDashboard' }],
+        //     })
+        //   );
+        // } catch (error) {
+        //   console.error('Navigation error:', error);
+        //   // Handle the error appropriately (e.g., show an error message)
+        // }
 
         
       } else {

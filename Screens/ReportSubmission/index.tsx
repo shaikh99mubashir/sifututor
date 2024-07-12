@@ -11,20 +11,23 @@ import {
   TextInput,
   Dimensions,
   ActivityIndicator,
+  KeyboardAvoidingView,
+  Platform,
 } from 'react-native';
-import React, {useState, useEffect, useContext} from 'react';
-import {Theme} from '../../constant/theme';
+import React, { useState, useEffect, useContext } from 'react';
+import { Theme } from '../../constant/theme';
 import Header from '../../Component/Header';
 import DropDownModalView from '../../Component/DropDownModalView';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import axios from 'axios';
-import {Base_Uri} from '../../constant/BaseUri';
+import { Base_Uri } from '../../constant/BaseUri';
 import StudentContext from '../../context/studentContext';
 import DateTimePicker from '@react-native-community/datetimepicker';
 import moment from 'moment';
 import CustomLoader from '../../Component/CustomLoader';
+import Toast from 'react-native-toast-message';
 
-const ReportSubmission = ({navigation, route}: any): any => {
+const ReportSubmission = ({ navigation, route }: any): any => {
   let data = route.params;
   console.log('data', data);
 
@@ -41,7 +44,7 @@ const ReportSubmission = ({navigation, route}: any): any => {
       day: '2-digit',
     },
   );
-  const options: any = {day: 'numeric', month: 'SHORT', year: 'numeric'};
+  const options: any = { day: 'numeric', month: 'SHORT', year: 'numeric' };
   // console.log("value", value);
 
   // const formattedDate = value.toLocaleDateString('en-US', options);
@@ -90,7 +93,7 @@ const ReportSubmission = ({navigation, route}: any): any => {
   const [rulQ2, setRulQ2] = useState<any>('');
   const [rulQ3, setRulQ3] = useState<any>('');
   const [rulQ4, setRulQ4] = useState<any>('');
-  console.log('rulQ1', rulQ1);
+  console.log('knowledgeAnswer', knowledgeAnswer);
 
   const [observation, setObservation] = useState<any>({
     obv1: '',
@@ -232,8 +235,7 @@ const ReportSubmission = ({navigation, route}: any): any => {
       option: 'Shows some interest and willingness to learn.',
     },
     {
-      option:
-        'Rarely completes homework on time.Rarely shows willingness to learn.',
+      option: 'Rarely completes homework on time.Rarely shows willingness to learn.',
     },
   ];
   const attitudeOption5 = [
@@ -305,7 +307,7 @@ const ReportSubmission = ({navigation, route}: any): any => {
 
   const context = useContext(StudentContext);
 
-  const {students, subjects} = context;
+  const { students, subjects } = context;
 
   const getTutorId = async () => {
     interface LoginAuth {
@@ -315,7 +317,7 @@ const ReportSubmission = ({navigation, route}: any): any => {
     }
     const data: any = await AsyncStorage.getItem('loginAuth');
     let loginData: LoginAuth = JSON.parse(data);
-    let {tutorID} = loginData;
+    let { tutorID } = loginData;
     setTutorId(tutorID);
   };
 
@@ -462,11 +464,9 @@ const ReportSubmission = ({navigation, route}: any): any => {
     },
   ];
 
-  // console.log(data.classAttendedTime[0].class_schedule_id, "data")
-
   useEffect(() => {
     if (data?.notificationType == 'Submit Evaluation Report') {
-      setEvaluationReport({option: 'Evaluation Report'});
+      setEvaluationReport({ option: 'Evaluation Report' });
       let student =
         studentData &&
         studentData.length > 0 &&
@@ -484,7 +484,7 @@ const ReportSubmission = ({navigation, route}: any): any => {
       student && student.length > 0 && setStudent(student[0]);
       subject && subject.length > 0 && setSubject(subject[0]);
     } else if (data?.notificationType == 'Submit Progress Report') {
-      setEvaluationReport({option: 'Progress Report'});
+      setEvaluationReport({ option: 'Progress Report' });
       let student =
         studentData &&
         studentData.length > 0 &&
@@ -503,7 +503,7 @@ const ReportSubmission = ({navigation, route}: any): any => {
       subject && subject.length > 0 && setSubject(subject[0]);
       setSelectedMonth(months[new Date().getMonth()]);
     } else {
-      setEvaluationReport({option: 'Evaluation Report'});
+      setEvaluationReport({ option: 'Evaluation Report' });
 
       let student =
         studentData &&
@@ -522,12 +522,10 @@ const ReportSubmission = ({navigation, route}: any): any => {
       subject && subject.length > 0 && setSubject(subject[0]);
     }
   }, [navigation, subjectData, studentData]);
+  console.log(data?.class_schedule_id, 'data.class_schedule_id');
 
   const submitReport = () => {
     if (evaluation.option == 'Progress Report') {
-      console.log('tutorId', tutorId);
-      console.log('student.studentID', student.studentID);
-      console.log('selectedMonth', selectedMonth);
 
       if (
         !tutorId ||
@@ -554,7 +552,12 @@ const ReportSubmission = ({navigation, route}: any): any => {
         !rulQ3 ||
         !rulQ4
       ) {
-        ToastAndroid.show('Required Fields are missing', ToastAndroid.SHORT);
+        Toast.show({
+          type: 'error',
+          text1: 'Error',
+          text2: 'Required Fields are missing',
+          position: 'bottom'
+        });
         return;
       }
 
@@ -567,30 +570,82 @@ const ReportSubmission = ({navigation, route}: any): any => {
       formData.append('subjectID', data?.subjectID);
       formData.append('reportType', evaluation?.option);
       formData.append('month', selectedMonth?.option);
-      formData.append('observation', obQ1?.option);
-      formData.append('observation2', obQ2?.option);
-      formData.append('observation3', obQ3);
-      formData.append('observation4', obQ4);
-      formData.append('observation5', obQ5);
-      formData.append('observation6', obQ6);
-      formData.append('performance', perQ1?.option);
-      formData.append('performance2', perQ2?.option);
-      formData.append('performance3', perQ3?.option);
+      formData.append(
+        'observation',
+        obQ1?.option,
+      );
+      formData.append(
+        'observation2',
+        obQ2?.option,
+      );
+      formData.append(
+        'observation3',
+        obQ3,
+      );
+      formData.append(
+        'observation4',
+        obQ4,
+      );
+      formData.append(
+        'observation5',
+        obQ5,
+      );
+      formData.append(
+        'observation6',
+        obQ6,
+      );
+      formData.append(
+        'performance',
+        perQ1?.option,
+      );
+      formData.append(
+        'performance2',
+        perQ2?.option,
+      );
+      formData.append(
+        'performance3',
+        perQ3?.option,
+      );
       formData.append('performance4', perQ4?.option);
       formData.append('performance5', perQ5?.option);
       formData.append('performance6', perQ6);
-      formData.append('attitude', attQ1?.option);
-      formData.append('attitude2', attQ2?.option);
-      formData.append('attitude3', attQ3?.option);
-      formData.append('attitude4', attQ4?.option);
-      formData.append('attitude5', attQ5?.option);
-      formData.append('attitude6', attQ6);
+      formData.append(
+        'attitude',
+        attQ1?.option,
+      );
+      formData.append(
+        'attitude2',
+        attQ2?.option,
+      );
+      formData.append(
+        'attitude3',
+        attQ3?.option,
+      );
+      formData.append(
+        'attitude4',
+        attQ4?.option,
+      );
+      formData.append(
+        'attitude5',
+        attQ5?.option,
+      );
+      formData.append(
+        'attitude6',
+        attQ6,
+      );
       formData.append('result', rulQ1?.option);
-      formData.append('result2', rulQ2?.option);
-      formData.append('result3', rulQ3?.option);
-      formData.append('result4', rulQ4);
-
-      console.log('form data progress report===========>', formData);
+      formData.append(
+        'result2',
+        rulQ2?.option,
+      );
+      formData.append(
+        'result3',
+        rulQ3?.option,
+      );
+      formData.append(
+        'result4',
+        rulQ4,
+      );
 
       axios
         .post(`${Base_Uri}api/progressReport`, formData, {
@@ -600,8 +655,38 @@ const ReportSubmission = ({navigation, route}: any): any => {
         })
         .then(res => {
           setLoading(false);
-          ToastAndroid.show(res?.data?.successMessage, ToastAndroid.SHORT);
           navigation.navigate('BackToDashboard', data);
+          Toast.show({
+            type: 'success',
+            text1: 'success',
+            text2: `${res?.data?.successMessage}`,
+            position: 'bottom'
+          });
+
+          setObQ1('')
+          setObQ2('')
+          setObQ3('')
+          setObQ4('')
+          setObQ5('')
+          setObQ6('')
+          setPerQ1('')
+          setPerQ2('')
+          setPerQ3('')
+          setPerQ4('')
+          setPerQ5('')
+          setPerQ6('')
+          setattQ1('')
+          setattQ2('')
+          setattQ3('')
+          setattQ4('')
+          setattQ5('')
+          setattQ6('')
+          setRulQ1('')
+          setRulQ2('')
+          setRulQ3('')
+          setRulQ4('')
+
+
         })
         .catch(error => {
           setLoading(false);
@@ -617,11 +702,15 @@ const ReportSubmission = ({navigation, route}: any): any => {
             // Something happened in setting up the request that triggered an Error
             console.log('Error setting up the request:', error.message);
           }
-          ToastAndroid.show('Failed To Submit Report', ToastAndroid.SHORT);
+          // ToastAndroid.show('Failed To Submit Report', ToastAndroid.SHORT);
           console.log(error, 'error');
         });
       return;
     }
+    // if(questions.addationalAssessments >= '10'){
+    //   ToastAndroid.show('Please answer all questions', ToastAndroid.SHORT);
+    //   return
+    // }
 
     if (
       !tutorId ||
@@ -636,7 +725,12 @@ const ReportSubmission = ({navigation, route}: any): any => {
       !ctAnswer2?.option ||
       !observationEReport?.option
     ) {
-      ToastAndroid.show('Required Fields are missing', ToastAndroid.SHORT);
+      Toast.show({
+        type: 'error',
+        text1: 'Error',
+        text2: 'Required Fields are missing',
+        position: 'bottom'
+      });
       return;
     }
     setLoading(true);
@@ -660,8 +754,6 @@ const ReportSubmission = ({navigation, route}: any): any => {
     formData.append('additionalAssisment', questions?.addationalAssessments);
     formData.append('plan', questions?.plan);
 
-    console.log('formdata',formData);
-    
     axios
       .post(`${Base_Uri}api/tutorFirstReport`, formData, {
         headers: {
@@ -669,19 +761,32 @@ const ReportSubmission = ({navigation, route}: any): any => {
         },
       })
       .then(res => {
-        ToastAndroid.show(
-          'Report has been submitted successfully',
-          ToastAndroid.SHORT,
-        );
+        Toast.show({
+          type: 'success',
+          text1: 'Success',
+          text2: 'Report has been submitted successfully',
+          position: 'bottom'
+        });
         setLoading(false);
         navigation.navigate('BackToDashboard');
+        setKnowledgeAnswer('')
+        setKnowledgeAnswer2('')
+        setUnderstandingAnswer('')
+        setUnderstandingAnswer2('')
+        setCtAnswer('')
+        setCtAnswer2('')
+        setObservationEReport('')
       })
       .catch(error => {
         setLoading(false);
-        ToastAndroid.show(
-          'Report submission unSuccessfull',
-          ToastAndroid.SHORT,
-        );
+        
+
+        Toast.show({
+          type: 'error',
+          text1: 'Network Error',
+          text2: 'Report submission unSuccessfull',
+          position: 'bottom'
+        });
         if (error.response) {
           // The request was made and the server responded with a status code
           console.log('Server responded with data:', error.response.data);
@@ -702,59 +807,24 @@ const ReportSubmission = ({navigation, route}: any): any => {
     setValue(currentDate);
     setShow(false);
   };
-  
-  return (
-    <View style={{backgroundColor: Theme.white, height: '100%'}}>
-      <CustomLoader visible={loading} />
-      <View style={{margin:20}}/>
-      <Header title="Submit Report" navigation={navigation} />
-      <ScrollView showsVerticalScrollIndicator={false} nestedScrollEnabled>
-        <View style={{paddingHorizontal: 15, marginBottom: 100}}>
-          {/* Report Type */}
-          {/* <DropDownModalView
-            title="Report Type"
-            placeHolder="Evaluation Report"
-            selectedValue={setEvaluationReport}
-            value={evaluation.option}
-            option={EvalutionOption}
-            modalHeading="Select Report Type"
-          /> */}
 
-          <View style={{marginTop: 8}}>
-            <Text
-              style={{
-                fontSize: 16,
-                color: 'black',
-                fontFamily: 'Circular Std Bold',
-              }}>
-              Report Type
-            </Text>
-            <View
-              // onPress={() => setShow(true)}
-              style={{
-                marginTop: 5,
-                flexDirection: 'row',
-                justifyContent: 'space-between',
-                paddingVertical: 15,
-                paddingHorizontal: 15,
-                borderRadius: 15,
-                backgroundColor: Theme.liteBlue,
-                alignItems: 'center',
-              }}>
-              <Text
-                style={{
-                  color: Theme.black,
-                  fontFamily: 'Circular Std Medium',
-                  fontSize: 16,
-                }}>
-                {evaluation?.option}
-              </Text>
-            </View>
-          </View>
+  return (
+    <KeyboardAvoidingView
+    style={{ flex: 1 }}
+    behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+  >
+    <View style={{ backgroundColor: Theme.white, height: '100%' }}>
+      <CustomLoader visible={loading} />
+      <View style={{height:40}}></View>
+      <Header title={evaluation.option} navigation={navigation} />
+      <ScrollView showsVerticalScrollIndicator={false} nestedScrollEnabled>
+        <View style={{ paddingHorizontal: 15, marginBottom: 100 }}>
+
+          
 
           {/* First Class Date */}
           {evaluation.option == 'Progress Report' ? (
-            <View style={{marginTop: 8}}>
+            <View style={{ marginTop: 8 }}>
               <DropDownModalView
                 title="Month"
                 placeHolder="Select Report Type"
@@ -765,7 +835,7 @@ const ReportSubmission = ({navigation, route}: any): any => {
               />
             </View>
           ) : (
-            <View style={{marginTop: 8}}>
+            <View style={{ marginTop: 8 }}>
               <Text
                 style={{
                   fontSize: 16,
@@ -798,7 +868,7 @@ const ReportSubmission = ({navigation, route}: any): any => {
             </View>
           )}
           {/* Student */}
-          <View style={{marginTop: 8}}>
+          <View style={{ marginTop: 8 }}>
             <Text
               style={{
                 fontSize: 16,
@@ -830,7 +900,7 @@ const ReportSubmission = ({navigation, route}: any): any => {
             </View>
           </View>
           {/* Subject */}
-          <View style={{marginTop: 8}}>
+          <View style={{ marginTop: 8 }}>
             <Text
               style={{
                 fontSize: 16,
@@ -1048,12 +1118,14 @@ const ReportSubmission = ({navigation, route}: any): any => {
                 placeHolder="Select Answer"
                 option={knowledge}
                 modalHeading="Knowledge"
+                value={knowledgeAnswer?.option}
               />
               <DropDownModalView
                 selectedValue={setKnowledgeAnswer2}
                 subTitle="How well does the student share their ideas on the topics under discussion?"
                 placeHolder="Select Answer"
                 option={knowledge2}
+                value={knowledgeAnswer2?.option}
                 modalHeading="Knowledge"
               />
             </>
@@ -1146,6 +1218,7 @@ const ReportSubmission = ({navigation, route}: any): any => {
                 placeHolder="Select Answer"
                 option={understanding}
                 modalHeading="Understanding"
+                value={understandingAnswer?.option}
               />
               <DropDownModalView
                 selectedValue={setUnderstandingAnswer2}
@@ -1153,6 +1226,7 @@ const ReportSubmission = ({navigation, route}: any): any => {
                 placeHolder="Select Answer"
                 option={understanding2}
                 modalHeading="Understanding"
+                value={understandingAnswer2?.option}
               />
             </>
           )}
@@ -1244,6 +1318,8 @@ const ReportSubmission = ({navigation, route}: any): any => {
                 placeHolder="Select Answer"
                 option={CT}
                 modalHeading="Critical Thinking"
+                value={ctAnswer?.option}
+
               />
               <DropDownModalView
                 selectedValue={setCtAnswer2}
@@ -1251,6 +1327,7 @@ const ReportSubmission = ({navigation, route}: any): any => {
                 placeHolder="Select Answer"
                 option={CT2}
                 modalHeading="Critical Thinking"
+                value={ctAnswer2?.option}
               />
             </>
           )}
@@ -1329,12 +1406,14 @@ const ReportSubmission = ({navigation, route}: any): any => {
                 placeHolder="Select Answer"
                 option={Observation}
                 modalHeading="Observation"
+                value={observationEReport?.option}
               />
             </>
           )}
 
           {evaluation.option == 'Progress Report' ? (
-            <></>
+            <>
+            </>
           ) : (
             <>
               <Text
@@ -1369,13 +1448,13 @@ const ReportSubmission = ({navigation, route}: any): any => {
                   placeholder="give score out of 10"
                   keyboardType="number-pad"
                   onChangeText={e =>
-                    setQuestions({...questions, addationalAssessments: e})
+                    setQuestions({ ...questions, addationalAssessments: e })
                   }
                   style={{
-                    color: 'black',
-                    fontSize: 16,
+                    color: 'black', fontSize: 16,
                     fontFamily: 'Circular Std Medium',
                   }}
+                  value={questions?.addationalAssessments}
                   underlineColorAndroid="transparent"
                   placeholderTextColor="grey"
                 />
@@ -1403,7 +1482,7 @@ const ReportSubmission = ({navigation, route}: any): any => {
                   placeholder="Plan"
                   multiline={true}
                   maxLength={300}
-                  onChangeText={e => setQuestions({...questions, plan: e})}
+                  onChangeText={e => setQuestions({ ...questions, plan: e })}
                   style={[
                     styles.textArea,
                     {
@@ -1413,6 +1492,7 @@ const ReportSubmission = ({navigation, route}: any): any => {
                       fontFamily: 'Circular Std Medium',
                     },
                   ]}
+                  value={questions.plan}
                   underlineColorAndroid="transparent"
                   placeholderTextColor="grey"
                 />
@@ -1467,6 +1547,7 @@ const ReportSubmission = ({navigation, route}: any): any => {
         )}
       </View>
     </View>
+    </KeyboardAvoidingView>
   );
 };
 

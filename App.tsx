@@ -13,11 +13,20 @@ import PaymentState from './context/paymentState';
 import StudentState from './context/studentState';
 import FilterState from './context/filterState';
 import IdleTimerManager from 'react-native-idle-timer';
+import { getFcmToken, registerListenerWithFCM } from './src/utils/fcmHelper';
 const App = () => {
   useEffect(() => {
     IdleTimerManager.setIdleTimerDisabled(true);
 
     return () => IdleTimerManager.setIdleTimerDisabled(false);
+  }, []);
+  useEffect(() => {
+    getFcmToken();
+  }, []);
+
+  useEffect(() => {
+    const unsubscribe = registerListenerWithFCM();
+    return unsubscribe;
   }, []);
   return (
     <UpcomingClassState>

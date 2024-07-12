@@ -9,20 +9,21 @@ import {
   ToastAndroid,
   Image,
 } from 'react-native';
-import React, {useContext, useState} from 'react';
+import React, { useContext, useState } from 'react';
 import Header from '../../Component/Header';
-import {Theme} from '../../constant/theme';
+import { Theme } from '../../constant/theme';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import axios from 'axios';
-import {Base_Uri} from '../../constant/BaseUri';
+import { Base_Uri } from '../../constant/BaseUri';
 import AntDesign from 'react-native-vector-icons/AntDesign';
 import Entypo from 'react-native-vector-icons/Entypo';
 import Feather from 'react-native-vector-icons/Feather';
 import FontAwesome from 'react-native-vector-icons/FontAwesome';
 import TutorDetailsContext from '../../context/tutorDetailsContext';
 import Ionicons from 'react-native-vector-icons/Ionicons';
+import Toast from 'react-native-toast-message';
 
-const OpenDetails = ({route, navigation}: any) => {
+const OpenDetails = ({ route, navigation }: any) => {
   const data = route.params;
   console.log('data', data);
 
@@ -31,65 +32,61 @@ const OpenDetails = ({route, navigation}: any) => {
   });
 
   const tutor = useContext(TutorDetailsContext);
-  let {tutorDetails, updateTutorDetails} = tutor;
+  let { tutorDetails, updateTutorDetails } = tutor;
   console.log('tutorDetails', tutorDetails);
 
   const [loading, setLoading] = useState(false);
-
-  // console.log(openDetailItem.comment, "comment")
-
-  // console.log(data, "dataaa")
-  // console.log('idddddddddddddd',data)
   const sendOpenDetailData = async () => {
     let tutorData: any = await AsyncStorage.getItem('loginAuth');
-
     tutorData = await JSON.parse(tutorData);
-
     let subjectId = data?.subject_id;
-    // let ticket_id = data?.ticket_id
     let ticketID = data?.ticketID;
-    // let id = data?.id
     let tutor_id = tutorData?.tutorID;
     let comment = openDetailItem.comment ? openDetailItem?.comment : null;
-    // console.log('idddddddddddddd',data.id)
-    console.log(subjectId, 'subjectId');
-    console.log(ticketID, 'ticketID');
-    console.log(tutor_id, 'tutor_id');
-    console.log(comment, 'comment');
-
     setLoading(true);
     axios
       .get(
         `${Base_Uri}offerSendByTutor/${subjectId}/${tutor_id}/${ticketID}/${comment}`,
       )
-      .then(({data}) => {
+      .then(({ data }) => {
         if (data?.result?.status == 'pending') {
           setLoading(false);
-          ToastAndroid.show(
-            'You have successfully applied for this ticket',
-            ToastAndroid.SHORT,
-          );
           navigation.navigate('Job Ticket', ticketID);
+          Toast.show({
+            type: 'success',
+            text1: 'Success',
+            text2: 'You have successfully applied for this Ticket',
+            position: 'bottom'
+          });
         } else {
-          console.log(data, 'dataaa');
-          ToastAndroid.show(data?.result, ToastAndroid.SHORT);
+          navigation.navigate('Job Ticket', ticketID);
+          Toast.show({
+            type: 'info',
+            text1: 'Applied Successfully',
+            text2: `${data?.result}`,
+            position: 'bottom'
+          });
           setLoading(false);
         }
       })
       .catch(error => {
         setLoading(false);
         console.log(error, 'error');
-        ToastAndroid.show('Internal Server Error', ToastAndroid.SHORT);
+        Toast.show({
+          type: 'error',
+          text1: 'Network Error',
+          text2: 'Check your internet connectivity',
+          position: 'bottom'
+        });
       });
   };
-  // console.log('data=============>', data);
 
   return (
-    <View style={{backgroundColor: Theme.white, height: '100%'}}>
-      <View style={{margin: 20}}></View>
+    <View style={{ backgroundColor: Theme.white, height: '100%' }}>
+      <View style={{ margin: 20 }}></View>
       <Header title={data?.jtuid} backBtn navigation={navigation} />
       <ScrollView showsVerticalScrollIndicator={false} nestedScrollEnabled>
-        <View style={{paddingHorizontal: 15}}>
+        <View style={{ paddingHorizontal: 15 }}>
           <View
             style={{
               backgroundColor: Theme.darkGray,
@@ -100,32 +97,34 @@ const OpenDetails = ({route, navigation}: any) => {
               justifyContent: 'space-between',
             }}>
             <View>
-              <Text style={[styles.textType3, {color: 'white'}]}>
+              <Text style={[styles.textType3, { color: 'white' }]}>
                 {data?.jtuid}
               </Text>
               <Text
-                style={[styles.textType1, {lineHeight: 30, color: 'white'}]}>
+                style={[styles.textType1, { lineHeight: 30, color: 'white' }]}>
                 RM {data?.price}
               </Text>
               <View
-                style={{flexDirection: 'row', gap: 5, alignItems: 'center'}}>
+                style={{ flexDirection: 'row', gap: 5, alignItems: 'center' }}>
                 <Feather name="map-pin" size={18} color={'#fff'} />
-                <Text style={[styles.textType3, {color: 'white'}]}>
+                <Text style={[styles.textType3, { color: 'white' }]}>
                   {data?.city}
                 </Text>
               </View>
             </View>
-            <View style={{alignItems: 'center', justifyContent: 'center'}}>
-              <View style={{backgroundColor: '#000',
-                      paddingVertical: 5,
-                      paddingHorizontal: 30,
-                      borderRadius: 30,}}>
+            <View style={{ alignItems: 'center', justifyContent: 'center' }}>
+              <View style={{
+                backgroundColor: '#000',
+                paddingVertical: 5,
+                paddingHorizontal: 30,
+                borderRadius: 30,
+              }}>
                 <Text
                   style={[
                     styles.textType3,
                     {
                       color: '#fff',
-                      
+
                       textTransform: 'capitalize',
                     },
                   ]}>
@@ -134,7 +133,7 @@ const OpenDetails = ({route, navigation}: any) => {
               </View>
             </View>
           </View>
-          <View style={{marginVertical: 20}}>
+          <View style={{ marginVertical: 20 }}>
             <Text style={styles.textType1}>Details</Text>
 
             <View
@@ -164,7 +163,7 @@ const OpenDetails = ({route, navigation}: any) => {
                 <Text
                   style={[
                     styles.textType1,
-                    {fontSize: 18, textTransform: 'capitalize'},
+                    { fontSize: 18, textTransform: 'capitalize' },
                   ]}>
                   {data?.studentName}
                 </Text>
@@ -189,7 +188,7 @@ const OpenDetails = ({route, navigation}: any) => {
                   />
                   <Text style={styles.textType3}>Student Detail</Text>
                 </View>
-                <Text style={[styles.textType1, {fontSize: 18}]}>
+                <Text style={[styles.textType1, { fontSize: 18 }]}>
                   {data?.studentGender},({data?.student_age} y/o)
                 </Text>
               </View>
@@ -298,7 +297,7 @@ const OpenDetails = ({route, navigation}: any) => {
                   <FontAwesome name="level-up" size={22} color={'#298CFF'} />
                   <Text style={styles.textType3}>Level</Text>
                 </View>
-                <Text style={[styles.textType1, {fontSize: 18}]}>
+                <Text style={[styles.textType1, { fontSize: 18 }]}>
                   {data?.categoryName}
                 </Text>
               </View>
@@ -323,7 +322,7 @@ const OpenDetails = ({route, navigation}: any) => {
                   />
                   <Text style={styles.textType3}>Subscription</Text>
                 </View>
-                <Text style={[styles.textType1, {fontSize: 18}]}>
+                <Text style={[styles.textType1, { fontSize: 18 }]}>
                   {data?.subscription}
                 </Text>
               </View>
@@ -344,7 +343,7 @@ const OpenDetails = ({route, navigation}: any) => {
                   <AntDesign name="copy1" size={18} color={'#298CFF'} />
                   <Text style={styles.textType3}>Subject</Text>
                 </View>
-                <Text style={[styles.textType1, {fontSize: 18}]}>
+                <Text style={[styles.textType1, { fontSize: 18 }]}>
                   {data?.subject_name}
                 </Text>
               </View>
@@ -370,7 +369,7 @@ const OpenDetails = ({route, navigation}: any) => {
                 <Text
                   style={[
                     styles.textType1,
-                    {fontSize: 18, textTransform: 'capitalize'},
+                    { fontSize: 18, textTransform: 'capitalize' },
                   ]}>
                   {data?.tutorPereference}
                 </Text>
@@ -399,7 +398,7 @@ const OpenDetails = ({route, navigation}: any) => {
                       paddingHorizontal: 10,
                     }}>
                     <AntDesign name="calendar" size={20} color={'#298CFF'} />
-                    <Text style={[styles.textType3, {color: '#298CFF'}]}>
+                    <Text style={[styles.textType3, { color: '#298CFF' }]}>
                       {data?.classDay}
                     </Text>
                   </View>
@@ -423,7 +422,7 @@ const OpenDetails = ({route, navigation}: any) => {
                       size={20}
                       color={'#298CFF'}
                     />
-                    <Text style={[styles.textType3, {color: '#298CFF'}]}>
+                    <Text style={[styles.textType3, { color: '#298CFF' }]}>
                       {data?.classTime}
                     </Text>
                   </View>
@@ -434,7 +433,7 @@ const OpenDetails = ({route, navigation}: any) => {
             {/*Adress */}
 
             {data.specialRequest && (
-              <View style={{marginVertical: 20}}>
+              <View style={{ marginVertical: 20 }}>
                 <Text style={styles.textType1}>Special Need</Text>
                 <View
                   style={{
@@ -447,7 +446,7 @@ const OpenDetails = ({route, navigation}: any) => {
                   <Text
                     style={[
                       styles.textType3,
-                      {fontFamily: 'Circular Std Book'},
+                      { fontFamily: 'Circular Std Book' },
                     ]}>
                     {data.specialRequest}
                   </Text>
@@ -459,7 +458,7 @@ const OpenDetails = ({route, navigation}: any) => {
             {tutorDetails?.status?.toLowerCase() == 'verified' &&
               data?.mode?.toLowerCase() == 'physical' &&
               data?.studentAddress && (
-                <View style={{marginVertical: 5}}>
+                <View style={{ marginVertical: 5 }}>
                   <Text style={styles.textType1}>Student Address</Text>
                   <View
                     style={{
@@ -472,7 +471,7 @@ const OpenDetails = ({route, navigation}: any) => {
                     <Text
                       style={[
                         styles.textType3,
-                        {fontFamily: 'Circular Std Book'},
+                        { fontFamily: 'Circular Std Book' },
                       ]}>
                       {data.studentAddress}
                     </Text>
@@ -481,7 +480,7 @@ const OpenDetails = ({route, navigation}: any) => {
               )}
             {/* Avaiable student */}
             {data?.jobTicketExtraStudents.length > 0 && (
-              <View style={{marginVertical: 15}}>
+              <View style={{ marginVertical: 15 }}>
                 <Text style={styles.textType1}>Extra Students</Text>
 
                 {data?.jobTicketExtraStudents?.map((e: any, i: number) => (
@@ -498,46 +497,18 @@ const OpenDetails = ({route, navigation}: any) => {
                       Student Name : {e?.student_name}
                     </Text>
                     <Text
-                      // style={{
-                      //   color: Theme.black,
-                      //   fontSize: 14,
-                      //   fontWeight: '400',
-                      //   marginTop: 5,
-                      //   fontFamily: 'Circular Std Book',
-                      // }}
                       style={styles.textType3}>
                       Age : {e?.student_age}
                     </Text>
                     <Text
-                      // style={{
-                      //   color: Theme.black,
-                      //   fontSize: 14,
-                      //   fontWeight: '400',
-                      //   marginTop: 5,
-                      //   fontFamily: 'Circular Std Book',
-                      // }}
                       style={styles.textType3}>
                       Gender : {e?.student_gender}
                     </Text>
                     <Text
-                      // style={{
-                      //   color: Theme.black,
-                      //   fontSize: 14,
-                      //   fontWeight: '400',
-                      //   marginTop: 5,
-                      //   fontFamily: 'Circular Std Book',
-                      // }}
                       style={styles.textType3}>
                       Birth Year : {e?.year_of_birth}
                     </Text>
                     <Text
-                      // style={{
-                      //   color: Theme.black,
-                      //   fontSize: 14,
-                      //   fontWeight: '400',
-                      //   marginTop: 5,
-                      //   fontFamily: 'Circular Std Book',
-                      // }}
                       style={styles.textType3}>
                       Special Need : {e?.special_need}
                     </Text>
@@ -546,13 +517,12 @@ const OpenDetails = ({route, navigation}: any) => {
               </View>
             )}
             {/* Comment */}
-            <View style={{marginBottom: 100, marginTop: 20}}>
+            <View style={{ marginBottom: 100, marginTop: 20 }}>
               <Text style={styles.textType1}>Comment</Text>
               <View
                 style={[
                   styles.textAreaContainer,
                   {
-                    // borderWidth: 1,
                     marginTop: 5,
                     borderRadius: 10,
                     marginHorizontal: 2,
@@ -563,7 +533,7 @@ const OpenDetails = ({route, navigation}: any) => {
                   multiline={true}
                   maxLength={300}
                   onChangeText={e =>
-                    setopenDetailItem({...openDetailItem, comment: e})
+                    setopenDetailItem({ ...openDetailItem, comment: e })
                   }
                   style={[
                     styles.textArea,
@@ -630,9 +600,6 @@ export default OpenDetails;
 
 const styles = StyleSheet.create({
   textAreaContainer: {
-    // borderColor: COLORS.grey20,
-    // borderWidth: 1,
-    // padding: 5,
     borderRadius: 10,
     fontFamily: 'Circular Std Medium',
   },

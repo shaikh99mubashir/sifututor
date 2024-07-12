@@ -30,6 +30,7 @@ import ModalImg from '../../Component/Modal/modal';
 import CustomLoader from '../../Component/CustomLoader';
 import { useIsFocused } from '@react-navigation/native';
 import { PERMISSIONS, request } from 'react-native-permissions';
+import Toast from 'react-native-toast-message';
 
 const Profile = ({ navigation }: any) => {
   interface ITutorDetails {
@@ -41,14 +42,6 @@ const Profile = ({ navigation }: any) => {
     nric: string | undefined;
   }
 
-  // const [tutorDetail, setTutorDetail] = useState<ITutorDetails>({
-  //   full_name: '',
-  //   email: '',
-  //   gender: '',
-  //   phoneNumber: '',
-  //   age: null,
-  //   nric: '',
-  // });
   const [loading, setLoading] = useState(false);
   const [image, setImage] = useState('');
   const [email, setEmail] = React.useState('');
@@ -65,12 +58,8 @@ const Profile = ({ navigation }: any) => {
 
   let tutorDetail = context?.tutorDetails;
   let tutorDetails = context?.tutorDetails;
-  console.log('tutorDetails', tutorDetails);
-  console.log('tutorDetail', tutorDetail);
   let bannerCont = useContext(bannerContext);
-
   let { profileBanner, setProfileBanner }: any = bannerCont;
-
   let { updateTutorDetails, setTutorDetail } = context;
 
   const openPhoto = async () => {
@@ -81,11 +70,7 @@ const Profile = ({ navigation }: any) => {
     } else if (Platform.OS === 'android') {
       permission = PermissionsAndroid.PERMISSIONS.CAMERA;
     }
-
     const granted: any = await request(permission);
-
-    console.log('granted====>', granted);
-
     if (granted === 'granted') {
       const options: any = {
         title: 'Select Picture',
@@ -126,10 +111,7 @@ const Profile = ({ navigation }: any) => {
     } else if (Platform.OS === 'android') {
       permission = PermissionsAndroid.PERMISSIONS.CAMERA;
     }
-
     const granted: any = await request(permission);
-
-    console.log('granted====>', granted);
     if (granted == 'granted') {
       const options: any = {
         title: 'Select Picture',
@@ -171,21 +153,10 @@ const Profile = ({ navigation }: any) => {
 
   let imageUrl;
   const updateTutorDetail = async () => {
-    // const expression: RegExp = /^[A -Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i;
-    // const userEmail: any = tutorDetail.email;
-    // const result: boolean = expression.test(userEmail); // true
-    // if (!result) {
-    //   ToastAndroid.show('Enter correct email', ToastAndroid.SHORT);
-    //   return;
-    // }
     let authData: any = await AsyncStorage.getItem('loginAuth');
     let tutorData: any = JSON.parse(authData);
     console.log('tutorData.tutorID', tutorData.tutorID);
     if (uri && name && type) {
-      console.log('uri', uri);
-      console.log('type', type);
-      console.log('name', uri);
-      console.log('If running', tutorDetail?.tutorId);
 
       setLoading(true);
 
@@ -210,7 +181,6 @@ const Profile = ({ navigation }: any) => {
       formData.append('nric', tutorDetail?.nric);
       formData.append('phone', tutorDetail?.phoneNumber);
       formData.append('age', tutorDetail?.age);
-      console.log('formData', formData);
 
       axios
         .post(`${Base_Uri}api/editTutorProfile`, formData, {
@@ -242,21 +212,24 @@ const Profile = ({ navigation }: any) => {
           }
           console.log('imageUrl', imageUrl);
           getTutorDetails()
-          ToastAndroid.show(
-            'Successfully Update Tutor Details',
-            ToastAndroid.SHORT,
-          );
+          Toast.show({
+            type: 'success',
+            text1: 'Successs',
+            text2: 'Successfully Update Tutor Details',
+            position: 'bottom'
+          });
         })
         .catch(error => {
           setLoading(false);
           console.log(error);
-          ToastAndroid.show(
-            'Tutor Details update unsuccessfull',
-            ToastAndroid.SHORT,
-          );
+          Toast.show({
+            type: 'error',
+            text1: 'Error',
+            text2: 'Tutor Details update unsuccessfull',
+            position: 'bottom'
+          });
         });
     } else {
-      console.log('Else running profile');
       setLoading(true);
       tutorDetail.displayName = dispalyName
         ? dispalyName
@@ -267,7 +240,6 @@ const Profile = ({ navigation }: any) => {
       console.log('tutorDetail?.tutorId', tutorDetail?.tutorId);
 
       let formData = new FormData();
-      // formData.append('tutorID', tutorDetail?.tutorId);
       formData.append('id', tutorData.tutorID);
       formData.append('name', tutorDetail?.full_name);
       formData.append('email', tutorDetail?.email);
@@ -292,18 +264,21 @@ const Profile = ({ navigation }: any) => {
             nric: tutorDetail.nric,
             age: tutorDetail.age,
           });
-          ToastAndroid.show(
-            'Successfully Update Tutor Details',
-            ToastAndroid.SHORT,
-          );
+          Toast.show({
+            type: 'success',
+            text1: 'Successs',
+            text2: 'Successfully Update Tutor Details',
+            position: 'bottom'
+          });
         })
         .catch(error => {
           setLoading(false);
-          console.log(error);
-          ToastAndroid.show(
-            `Tutor Details update unsuccessfull ${error}`,
-            ToastAndroid.SHORT,
-          );
+          Toast.show({
+            type: 'error',
+            text1: 'Error',
+            text2: 'Tutor Details update unsuccessfull',
+            position: 'bottom'
+          });
           if (error.response) {
             // The request was made and the server responded with a status code
             console.log('Server responded with data:', error.response.data);
@@ -328,7 +303,6 @@ const Profile = ({ navigation }: any) => {
       .then(({ data }) => {
       })
       .catch(error => {
-        ToastAndroid.show('Internal Server Error', ToastAndroid.SHORT);
       });
   };
 
@@ -375,33 +349,15 @@ const Profile = ({ navigation }: any) => {
     }
   };
 
-  // if (image) {
-  //   imageUrl = image;
-  // } else if (tutorDetail?.tutorImage?.includes('https')) {
-  //   imageUrl = tutorDetail?.tutorImage;
-  // } else {
-  //   imageUrl = `${Base_Uri}public/tutorImage/${tutorDetail?.tutorImage}`;
-  // }
-
   if (image) {
     imageUrl = image;
   } else if (!tutorDetail?.tutorImage) {
     imageUrl = tutorDetails?.tutorDetailById?.tutorImage;
-    // imageUrl =  tutorDetails?.tutorDetailById[0]?.tutorImage
   } else if (tutorDetail?.tutorImage?.includes('https')) {
     imageUrl = tutorDetail?.tutorImage;
   } else {
     imageUrl = `${Base_Uri}public/tutorImage/${tutorDetail?.tutorImage}`;
   }
-
-  // console.log("tutorDetails?.tutorDetailById[0]?.tutorImage",tutorDetails?.tutorDetailById[0]?.tutorImage);
-
-  console.log('name', name);
-  console.log('uri', uri);
-  console.log('imageUrl', imageUrl);
-
-  const [tutorId, setTutorId] = useState<Number | null>(null);
-
   interface LoginAuth {
     status: Number;
     tutorID: Number;
@@ -425,7 +381,12 @@ const Profile = ({ navigation }: any) => {
         setLoading(false)
       })
       .catch(error => {
-        ToastAndroid.show('Internal Server Error', ToastAndroid.SHORT);
+        Toast.show({
+          type: 'error',
+          text1: 'Network Error',
+          text2: 'Check your internet connectivity',
+          position: 'bottom'
+        });
         setLoading(false)
       });
   };
@@ -462,14 +423,7 @@ const Profile = ({ navigation }: any) => {
     }
   };
 
-
-
-
   return (
-    //   <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
-    //     <ActivityIndicator size="large" color={Theme.black} />
-    //   </View>
-    // ) : (
     <View style={{ backgroundColor: Theme.white, height: '100%' }}>
       <View style={{ margin: 20 }}></View>
       <Header title="Profile" navigation={navigation} backBtn />
@@ -483,7 +437,6 @@ const Profile = ({ navigation }: any) => {
               style={{ width: 90, height: 90, borderRadius: 50 }}
               resizeMode="contain"
             />
-
             <TouchableOpacity
               onPress={() => setOpenPhotoModal(true)}
               activeOpacity={0.8}>

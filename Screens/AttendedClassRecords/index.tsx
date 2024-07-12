@@ -112,10 +112,7 @@ const AttendedClassRecords = ({navigation,route}:any) => {
             setLoading(false);
           })
           .catch((error) => {
-            ToastAndroid.show(
-              'Internal Server Error getClassAttendedTime filter DATA',
-              ToastAndroid.SHORT,
-            );
+            
             setLoading(false);
           });
         return;
@@ -130,7 +127,7 @@ const AttendedClassRecords = ({navigation,route}:any) => {
           })
           .catch((error)=>{
             // console.log("error",error);
-            ToastAndroid.show('Network Error', ToastAndroid.LONG);
+            // ToastAndroid.show('Network Error', ToastAndroid.LONG);
             setLoading(false)
           })
     }

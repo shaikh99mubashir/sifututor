@@ -81,7 +81,7 @@ const ReportSubmissionHistory = ({navigation}: any) => {
         })
         .catch(error => {
           setLoading(false);
-          ToastAndroid.show('Network Error', ToastAndroid.LONG);
+          // ToastAndroid.show('Network Error', ToastAndroid.LONG);
         });
     }
   };
@@ -117,7 +117,7 @@ const ReportSubmissionHistory = ({navigation}: any) => {
         .catch(error => {
           setLoading(false);
           console.log('error');
-          ToastAndroid.show('Network Error', ToastAndroid.LONG);
+          // ToastAndroid.show('Network Error', ToastAndroid.LONG);
         });
     }
   };
@@ -1433,7 +1433,7 @@ const ReportSubmissionHistory = ({navigation}: any) => {
       .get(`${Base_Uri}api/bannerAds`)
       .then(({data}) => {})
       .catch(error => {
-        ToastAndroid.show('Internal Server Error', ToastAndroid.SHORT);
+        // ToastAndroid.show('Internal Server Error', ToastAndroid.SHORT);
       });
   };
 

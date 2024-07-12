@@ -9,6 +9,8 @@ import {
   Image,
   ScrollView,
   Linking,
+  KeyboardAvoidingView,
+  Platform,
 } from 'react-native';
 import React, {useRef, useState, useEffect, useContext} from 'react';
 import {Theme} from '../../constant/theme';
@@ -16,6 +18,8 @@ import axios from 'axios';
 import {Base_Uri} from '../../constant/BaseUri';
 import TutorDetailsContext from '../../context/tutorDetailsContext';
 import Icon from 'react-native-vector-icons/Ionicons';
+import Toast from 'react-native-toast-message';
+import { StackActions } from '@react-navigation/native';
 const Signup = ({navigation, route}: any) => {
   let data = route.params;
   const [email, setEmail] = useState('');
@@ -24,29 +28,44 @@ const Signup = ({navigation, route}: any) => {
   const [rememberMe, setRememberMe] = useState(false);
   const context = useContext(TutorDetailsContext);
 
-
-  let tutorDetail = context?.tutorDetails;
   const handleLoginPress = () => {
     if (!fullName) {
-      ToastAndroid.show('Kindly Enter Full Name', ToastAndroid.SHORT);
+      Toast.show({
+        type: 'error',
+        text1: 'Error',
+        text2: 'Kindly Enter Full Name',
+        position: 'bottom'
+      });
       return;
     }
     if (!email) {
-      ToastAndroid.show('Kindly Enter Email Address', ToastAndroid.SHORT);
+      Toast.show({
+        type: 'error',
+        text1: 'Error',
+        text2: 'Kindly Enter Email Address',
+        position: 'bottom'
+      });
       return;
     }
 
     if (!rememberMe) {
-      ToastAndroid.show('Kindly Accept Terms and Services', ToastAndroid.SHORT);
+      Toast.show({
+        type: 'error',
+        text1: 'Error',
+        text2: 'Kindly Accept Terms and Services',
+        position: 'bottom'
+      });
       return;
     }
-
     let emailReg = /\b[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}\b/;
-
     let testEmail = emailReg.test(email);
-
     if (!testEmail) {
-      ToastAndroid.show('Invalid Email Address', ToastAndroid.SHORT);
+      Toast.show({
+        type: 'error',
+        text1: 'Error',
+        text2: 'Invalid Email Address',
+        position: 'bottom'
+      });
       return;
     }
 
@@ -55,10 +74,7 @@ const Signup = ({navigation, route}: any) => {
     formData.append('email', email);
     formData.append('tutorId', data.tutorDetailById[0]?.id);
     formData.append('phoneNumber', data.tutorDetailById[0]?.phoneNumber);
-
     setLoading(true);
-    console.log(formData, 'formData');
-    console.log('data.tutorDetailById[0]?.id', data.tutorDetailById[0]?.id);
     axios
       .post(`${Base_Uri}api/appTutorRegister`, formData, {
         headers: {
@@ -66,40 +82,61 @@ const Signup = ({navigation, route}: any) => {
         },
       })
       .then(({data}) => {
-        console.log('data signup===>', data.Msg);
         if (data?.Msg) {
-          ToastAndroid.show(`${data?.Msg}`, ToastAndroid.SHORT);
+          Toast.show({
+            type: 'error',
+            text1: 'Error',
+            text2: `${data?.Msg}`,
+            position: 'bottom'
+          });
           setLoading(false);
           return;
         }
         if (data.status == 200) {
-          navigation.reset({
-            index: 0,
-            routes: [
-              {
-                name: 'Main',
-                params: {
-                  screen: 'Home',
-                },
-              },
-            ],
-          });
-          navigation.replace('Main', {
+          // navigation.reset({
+          //   index: 0,
+          //   routes: [
+          //     {
+          //       name: 'Main',
+          //       params: {
+          //         screen: 'Home',
+          //       },
+          //     },
+          //   ],
+          // });
+          navigation.dispatch(StackActions.replace('Main', {
             screen: 'Home',
+          }));
+          // navigation.replace('Main', {
+          //   screen: 'Home',
+          // });
+          Toast.show({
+            type: 'success',
+            text1: 'Successs',
+            text2: 'Register Successfully',
+            position: 'bottom'
           });
-          ToastAndroid.show('Register Successfully', ToastAndroid.SHORT);
           setLoading(false);
         }
       })
       .catch((error: any) => {
         setLoading(false);
-        console.log('error', error);
-
-        ToastAndroid.show('Internal Server Error', ToastAndroid.SHORT);
+        Toast.show({
+          type: 'error',
+          text1: 'Network Error',
+          text2: 'Kindlly Check your Internret Connectivity',
+          position: 'bottom'
+        });
       });
   };
 
+  
+
   return (
+    <KeyboardAvoidingView
+    style={{ flex: 1 }}
+    behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+  >
     <View
       style={{
         backgroundColor: 'white',
@@ -165,10 +202,10 @@ const Signup = ({navigation, route}: any) => {
               padding: 10,
               color: Theme.black,
               fontFamily: 'Circular Std Book',
-              textTransform:'lowercase'
+              textTransform:'lowercase',
             }}
             onChangeText={text => {
-              setEmail(text);
+              setEmail(text.toLowerCase());
             }}
           />
         </View>
@@ -236,7 +273,7 @@ const Signup = ({navigation, route}: any) => {
                 Linking.openURL('https://sifututor.my/terms-of-use/')
               }>
               <Text style={[styles.textType3, {textAlign: 'center'}]}>
-                I agree to the
+                I agree to the {' '}
                 <Text
                   style={[
                     styles.textType3,
@@ -250,6 +287,7 @@ const Signup = ({navigation, route}: any) => {
         </View>
       </ScrollView>
     </View>
+    </KeyboardAvoidingView>
   );
 };
 

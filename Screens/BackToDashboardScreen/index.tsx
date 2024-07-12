@@ -1,7 +1,7 @@
 import React from "react"
 import { View, Text, TouchableOpacity, Image } from "react-native"
 import { Theme } from "../../constant/theme"
-import { useNavigation } from "@react-navigation/native"
+import { StackActions, useNavigation } from "@react-navigation/native"
 import {CommonActions, useIsFocused} from '@react-navigation/native';
 
 //#0f58cb
@@ -9,10 +9,10 @@ import {CommonActions, useIsFocused} from '@react-navigation/native';
 function BackToDashboard({ route,navigation }: any) {
     let data = route.params
     // const navigation: any = useNavigation()
-    console.log("navigation",navigation.canGoBack);
+    // console.log("navigation",navigation?.canGoBack);
     
     const handelPress = () => {
-       navigation.replace('AddClass')
+       navigation.dispatch(StackActions.replace('AddClass'))
     }
     return (
         <View style={{ flex: 1, backgroundColor: Theme.darkGray, alignItems: "center", justifyContent: "space-around" }} >
@@ -31,7 +31,7 @@ function BackToDashboard({ route,navigation }: any) {
                    Update Schedule
                 </Text>
             </TouchableOpacity>
-            <TouchableOpacity activeOpacity={0.8} onPress={() => navigation.replace("Main")} style={{ width: "90%", backgroundColor: Theme.black, padding: 12, borderRadius: 8 }} >
+            <TouchableOpacity activeOpacity={0.8} onPress={() => navigation.dispatch(StackActions.replace('Main'))} style={{ width: "90%", backgroundColor: Theme.black, padding: 12, borderRadius: 8 }} >
                 <Text style={{ fontSize: 16, color: Theme.white, textAlign: "center", fontWeight: "700",fontFamily: 'Circular Std Black' }} >
                     Back To Dashboard
                 </Text>

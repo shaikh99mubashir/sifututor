@@ -26,11 +26,11 @@ import TutorDetailsContext from '../../context/tutorDetailsContext';
 import CustomLoader from '../../Component/CustomLoader';
 import AntDesign from 'react-native-vector-icons/AntDesign';
 import DateTimePickerModal from 'react-native-modal-datetime-picker';
+import Toast from 'react-native-toast-message';
 
 function AddClass({navigation}: any) {
   const [student, setStudent] = useState([]);
   const [subject, setSubject] = useState([]);
-
   const [tutorId, setTutorId] = useState(null);
   const [mode, setMode] = useState<any>('date');
   const [confirm, setConfirm] = useState(false);
@@ -106,7 +106,6 @@ function AddClass({navigation}: any) {
       .catch(error => {
         console.log('error', error);
         setLoading(false);
-        ToastAndroid.show('Internal Server Error', ToastAndroid.SHORT);
       });
   };
 
@@ -464,12 +463,15 @@ function AddClass({navigation}: any) {
         const currentTime = new Date();
         const startTime = classesObject?.startTime;
         if (startTime == '-') {
-          ToastAndroid.show(
-            `Please select both start time and end time for Class No ${
+         
+          Toast.show({
+            type: 'error',
+            text1: 'Error',
+            text2: `Please select both start time for Class No ${
               classesIndex + 1
             }.`,
-            ToastAndroid.SHORT,
-          );
+            position: 'bottom'
+          });
           return;
         }
         setClasses([...classes, newClass]);
@@ -480,7 +482,6 @@ function AddClass({navigation}: any) {
   };
 
   const confirmClass = () => {
-    console.log('confirmClass');
     
     setLoading(true);
     if (classes.length > 0) {
@@ -525,7 +526,15 @@ function AddClass({navigation}: any) {
           //   'Classes have overlapping time slots',
           //   ToastAndroid.SHORT,
           // );
-          console.log('Classes have overlapping time slots');
+
+          Toast.show({
+            type: 'error',
+            text1: 'Error',
+            text2: 'Classes have overlapping time slots',
+            position: 'bottom'
+          });
+          
+          // console.log('Classes have overlapping time slots');
           
           setLoading(false);
           return;
@@ -596,9 +605,13 @@ function AddClass({navigation}: any) {
     let flag = classesToAdd.some((e: any, i: number) => e == 'false');
 
     if (flag) {
-      // ToastAndroid.show('Required Field are missing', ToastAndroid.SHORT);
-      console.log('Required Field are missing');
       
+      Toast.show({
+        type: 'error',
+        text1: 'Error',
+        text2: 'Required Field are missing',
+        position: 'bottom'
+      });
       setLoading(false);
       return;
     }
@@ -616,11 +629,15 @@ function AddClass({navigation}: any) {
           console.log("res.data.message",res.data.message);
 
           // ToastAndroid.show(res.data.message, ToastAndroid.SHORT);
+          Toast.show({
+            type: 'info',
+            text2: `${res.data.message}`,
+            position: 'bottom'
+          });
           return;
         }
         navigation.navigate('ScheduleSuccessfully');
         // navigation.navigate('Schedule', classesss?.classes[0]?.startTime);
-        console.log('res?.data?.multiple classes,',res?.data?.message,);
         
         // ToastAndroid.show(res?.data?.message, ToastAndroid.SHORT);
       })

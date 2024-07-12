@@ -13,6 +13,7 @@ import {
   RefreshControl,
   Modal,
   Linking,
+  StatusBar,
 } from 'react-native';
 import {Theme} from '../../constant/theme';
 import AsyncStorage from '@react-native-async-storage/async-storage';
@@ -37,6 +38,7 @@ import Money from '../../SVGs/Money';
 import Student from '../../SVGs/Student';
 import Clock from '../../SVGs/Clock';
 import Schedule from '../../SVGs/Schedule';
+import Toast from 'react-native-toast-message';
 function Home({navigation, route}: any) {
   let key = route.key;
 
@@ -161,7 +163,7 @@ function Home({navigation, route}: any) {
         setCommissionData(response);
       })
       .catch(error => {
-        ToastAndroid.show('Internal Server Error', ToastAndroid.SHORT);
+        // ToastAndroid.show('Internal Server Error', ToastAndroid.SHORT);
       });
   };
 
@@ -179,7 +181,7 @@ function Home({navigation, route}: any) {
         setNotification(tutorNotification);
       })
       .catch(error => {
-        ToastAndroid.show('Internal Server Error', ToastAndroid.SHORT);
+        // ToastAndroid.show('Internal Server Error', ToastAndroid.SHORT);
       });
   };
 
@@ -433,7 +435,12 @@ function Home({navigation, route}: any) {
           AsyncStorage.removeItem('loginAuth');
           navigation.replace('Login');
           updateTutorDetails('');
-          ToastAndroid.show('Terminated', ToastAndroid.SHORT);
+          Toast.show({
+            type: 'info',
+            text1: 'Error',
+            text2: `Terminated`,
+            position: 'bottom'
+          });
           return;
         }
         let {tutorDetailById} = data;
@@ -456,7 +463,7 @@ function Home({navigation, route}: any) {
         updateTutorDetails(details);
       })
       .catch(error => {
-        ToastAndroid.show('Internal Server Error', ToastAndroid.SHORT);
+        // ToastAndroid.show('Internal Server Error', ToastAndroid.SHORT);
       });
   };
 
@@ -468,7 +475,7 @@ function Home({navigation, route}: any) {
         setScheduleNotification(data.record);
       })
       .catch(error => {
-        ToastAndroid.show('Internal Server Error', ToastAndroid.SHORT);
+        // ToastAndroid.show('Internal Server Error', ToastAndroid.SHORT);
       });
   };
 
@@ -485,7 +492,7 @@ function Home({navigation, route}: any) {
         setCumulativeCommission(data.commulativeCommission);
       })
       .catch(error => {
-        ToastAndroid.show('Internal Server Error', ToastAndroid.SHORT);
+        // ToastAndroid.show('Internal Server Error', ToastAndroid.SHORT);
       });
   };
 
@@ -496,7 +503,7 @@ function Home({navigation, route}: any) {
         setAttendedHours(data.attendedHours);
       })
       .catch(error => {
-        ToastAndroid.show('Internal Server Error', ToastAndroid.SHORT);
+        // ToastAndroid.show('Internal Server Error', ToastAndroid.SHORT);
       });
   };
 
@@ -507,7 +514,7 @@ function Home({navigation, route}: any) {
         setScheduledHours(data.scheduledHours);
       })
       .catch(error => {
-        ToastAndroid.show('Internal Server Error', ToastAndroid.SHORT);
+        // ToastAndroid.show('Internal Server Error', ToastAndroid.SHORT);
       });
   };
 
@@ -518,7 +525,7 @@ function Home({navigation, route}: any) {
         setCancelledHours(data.cancelledHours);
       })
       .catch(error => {
-        ToastAndroid.show('Internal Server Error', ToastAndroid.SHORT);
+        // ToastAndroid.show('Internal Server Error', ToastAndroid.SHORT);
       });
   };
   const [assignedTickets, setAssignedTickets] = useState();
@@ -529,7 +536,7 @@ function Home({navigation, route}: any) {
         setAssignedTickets(data.assignedTickets);
       })
       .catch(error => {
-        ToastAndroid.show('Internal Server Error', ToastAndroid.SHORT);
+        // ToastAndroid.show('Internal Server Error', ToastAndroid.SHORT);
       });
   };
 
@@ -542,7 +549,7 @@ function Home({navigation, route}: any) {
         updateStudent(tutorStudents);
       })
       .catch(error => {
-        ToastAndroid.show('Internal Server Error', ToastAndroid.SHORT);
+        // ToastAndroid.show('Internal Server Error', ToastAndroid.SHORT);
       });
   };
 
@@ -578,7 +585,7 @@ function Home({navigation, route}: any) {
         setUpCommingClasses(classSchedules);
       })
       .catch(error => {
-        ToastAndroid.show('Internal Server Error', ToastAndroid.SHORT);
+        // ToastAndroid.show('Internal Server Error', ToastAndroid.SHORT);
       });
   };
 
@@ -654,7 +661,7 @@ function Home({navigation, route}: any) {
         );
       })
       .catch(error => {
-        ToastAndroid.show('Internal Server Error', ToastAndroid.SHORT);
+        // ToastAndroid.show('Internal Server Error', ToastAndroid.SHORT);
       });
     navigation.navigate('Schedule');
   };
@@ -868,7 +875,7 @@ function Home({navigation, route}: any) {
         }
       })
       .catch(error => {
-        ToastAndroid.show('Internal Server Error', ToastAndroid.SHORT);
+        // ToastAndroid.show('Internal Server Error', ToastAndroid.SHORT);
       });
   };
 
@@ -983,7 +990,7 @@ function Home({navigation, route}: any) {
         setTutorImage(tutorDetails.tutorImage);
       })
       .catch(error => {
-        ToastAndroid.show('Internal Server Error', ToastAndroid.SHORT);
+        // ToastAndroid.show('Internal Server Error', ToastAndroid.SHORT);
       });
   };
   useEffect(() => {
@@ -991,24 +998,10 @@ function Home({navigation, route}: any) {
   }, [focus, refreshing]);
 
   return (
-    // return !cancelledHours ? (
-    //   <View style={{flex: 1, justifyContent: 'center', alignItems: 'center'}}>
-    //     <ActivityIndicator size={'large'} color={Theme.black} />
-    //   </View>
-    // ) : (
-    <View style={{flex: 1, backgroundColor: Theme.GhostWhite}}>
+    <View style={{height:'100%'}}>
       <CustomLoader visible={!cancelledHours} />
       <CustomLoader visible={refreshing} />
-      {/* <Modal visible={refreshing} animationType="fade" transparent={true}>
-        <View
-          style={{
-            flex: 1,
-            justifyContent: 'center',
-            backgroundColor: 'rgba(0,0,0,0.5)',
-          }}>
-          <ActivityIndicator size={'large'} color={Theme.darkGray} />
-        </View>
-      </Modal> */}
+        <StatusBar/>
       <ScrollView
         refreshControl={
           <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
@@ -1016,12 +1009,6 @@ function Home({navigation, route}: any) {
         style={[styles.container, {}]}
         showsVerticalScrollIndicator={false}>
         <ScrollView showsVerticalScrollIndicator={false}>
-          {/* <View style={{ marginTop: 15 }}>
-            <Text style={[styles.textType3, { fontSize: 20 }]}>Hello,</Text>
-            <Text style={[styles.textType1 , { fontWeight: '700' }]}>
-              {tutorDetails?.displayName ?? tutorDetails?.full_name}
-            </Text>
-          </View> */}
 
           <View style={{paddingTop: 60}}>
             <View
@@ -1505,7 +1492,8 @@ export default Home;
 
 const styles = StyleSheet.create({
   container: {
-    flex: 1,
+    // flex: 1,
+    height:'100%',
     backgroundColor: Theme.white,
     padding: 15,
   },

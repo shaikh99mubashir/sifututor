@@ -123,7 +123,7 @@ const PaymentHistory = ({ navigation }: any) => {
 
       }).catch((error) => {
         setLoading(false)
-        ToastAndroid.show("Internal Server Error", ToastAndroid.SHORT)
+        // ToastAndroid.show("Internal Server Error", ToastAndroid.SHORT)
 
       })
 

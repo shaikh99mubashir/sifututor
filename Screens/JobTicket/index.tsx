@@ -1,4 +1,4 @@
-import React, {useState, useCallback, useEffect, useContext} from 'react';
+import React, { useState, useCallback, useEffect, useContext } from 'react';
 import {
   View,
   Text,
@@ -16,11 +16,11 @@ import {
   StyleSheet,
 } from 'react-native';
 import Header from '../../Component/Header';
-import {Theme} from '../../constant/theme';
+import { Theme } from '../../constant/theme';
 import CustomTabView from '../../Component/CustomTabView';
-import {Base_Uri} from '../../constant/BaseUri';
+import { Base_Uri } from '../../constant/BaseUri';
 import axios from 'axios';
-import {useIsFocused} from '@react-navigation/native';
+import { useIsFocused } from '@react-navigation/native';
 import AsyncStorage, {
   useAsyncStorage,
 } from '@react-native-async-storage/async-storage';
@@ -32,29 +32,26 @@ import FontAwesome from 'react-native-vector-icons/FontAwesome';
 import bannerContext from '../../context/bannerContext';
 import filterContext from '../../context/filterContext';
 import CustomLoader from '../../Component/CustomLoader';
-import BackToDashboard from '../../Component/BackToDashboard';
+import BackToDashboardModal from '../../Component/BackToDashboardModal';
 import subscribeToChannel from '../../Component/subscribeToChannel';
+import Toast from 'react-native-toast-message';
 interface LoginAuth {
   status: Number;
   tutorID: Number;
   token: string;
 }
-function JobTicket({navigation, route}: any) {
+function JobTicket({ navigation, route }: any) {
   const focus = useIsFocused();
   const filter = useContext(filterContext);
-  const {setCategory, setSubjects, setState, setCity} = filter;
-  let data = route.params;
-
+  const { setCategory, setSubjects, setState, setCity } = filter;
   const bannerCont = useContext(bannerContext);
-
-  let {jobTicketBanner, setJobTicketBanner} = bannerCont;
+  let { jobTicketBanner, setJobTicketBanner } = bannerCont;
   let loginData: LoginAuth;
-  const [isSearchItems, setIsSearchItems] = useState(false);
-  const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState(true);
   const [refresh, setRefresh] = useState(false);
   const tutor = useContext(TutorDetailsContext);
   const [modalVisible, setModalVisible] = useState(false);
-  let {tutorDetails, updateTutorDetails, setTutorDetail} = tutor;
+  let { tutorDetails, updateTutorDetails, setTutorDetail } = tutor;
   const [currentTab, setCurrentTab]: any = useState([
     {
       index: 0,
@@ -73,31 +70,15 @@ function JobTicket({navigation, route}: any) {
       ...e,
       selected: e.index === index,
     }));
-
-    // Check if the user is switching between the first and second route
-    const switchingFirstToSecond =
-      currentTab[0]?.selected && newTabs[1]?.selected;
-    const switchingSecondToFirst =
-      newTabs[0]?.selected && currentTab[1]?.selected;
-
     setCurrentTab(newTabs);
-
-    // Trigger the refresh when switching between the first and second route
-    // if (switchingFirstToSecond || switchingSecondToFirst) {
-    //   onRefresh();
-    // }
   };
 
   const [openData, setOpenData] = useState<any>([]);
-  const [closeData, setCloseData] = useState<any>([]);
-
   const [appliedData, setAppliedData] = useState([]);
-  const [assignedData, setAssignedData] = useState([]);
   const [refreshing, setRefreshing] = React.useState(false);
 
   const onRefresh = React.useCallback(() => {
     if (!refreshing) {
-      // setRefreshing(true);
       setLoading(true);
       setTimeout(() => {
         setRefreshing(false);
@@ -113,16 +94,15 @@ function JobTicket({navigation, route}: any) {
   const getTutorId = async () => {
     const data: any = await AsyncStorage.getItem('loginAuth');
     loginData = JSON.parse(data);
-
-    let {tutorID} = loginData;
+    let { tutorID } = loginData;
     setTutorId(tutorID);
   };
 
   const getCategory = () => {
     axios
       .get(`${Base_Uri}getCategories`)
-      .then(({data}) => {
-        let {categories} = data;
+      .then(({ data }) => {
+        let { categories } = data;
 
         let myCategories =
           categories &&
@@ -145,8 +125,8 @@ function JobTicket({navigation, route}: any) {
   const getSubject = () => {
     axios
       .get(`${Base_Uri}getSubjects`)
-      .then(({data}) => {
-        let {subjects} = data;
+      .then(({ data }) => {
+        let { subjects } = data;
 
         let mySubject =
           subjects &&
@@ -170,9 +150,8 @@ function JobTicket({navigation, route}: any) {
   const getStates = () => {
     axios
       .get(`${Base_Uri}getStates`)
-      .then(({data}) => {
-        let {states} = data;
-
+      .then(({ data }) => {
+        let { states } = data;
         let myStates =
           states &&
           states.length > 0 &&
@@ -194,8 +173,8 @@ function JobTicket({navigation, route}: any) {
   const getCities = () => {
     axios
       .get(`${Base_Uri}getCities`)
-      .then(({data}) => {
-        let {cities} = data;
+      .then(({ data }) => {
+        let { cities } = data;
         let myCities =
           cities &&
           cities.length > 0 &&
@@ -220,24 +199,22 @@ function JobTicket({navigation, route}: any) {
     getStates();
     getCities();
   }, [refreshing]);
-  let isVerified = false;
-  const checkTutorStatus = async () => {
-    // isVerified = true
-    // if(isVerified){
-    //   setModalVisible(true)
-    // }
-    console.log('tutorId', tutorId);
 
+  const checkTutorStatus = async () => {
     axios
       .get(`${Base_Uri}getTutorDetailByID/${tutorId}`)
-      .then(({data}) => {
-        let {tutorDetailById} = data;
+      .then(({ data }) => {
+        let { tutorDetailById } = data;
         let tutorDetails = tutorDetailById[0];
         if (data.tutorDetailById == null) {
           AsyncStorage.removeItem('loginAuth');
           navigation.replace('Login');
           setTutorDetail('');
-          ToastAndroid.show('Terminated', ToastAndroid.SHORT);
+          Toast.show({
+            type: 'info',
+            text1: 'Terminated',
+            position: 'bottom'
+          });
           return;
         }
         let details = {
@@ -259,7 +236,7 @@ function JobTicket({navigation, route}: any) {
         ) {
           axios
             .get(`${Base_Uri}api/update_dashboard_status/${tutorId}`)
-            .then(({data}) => {
+            .then(({ data }) => {
               setModalVisible(true);
             })
             .catch((error: any) => {
@@ -269,21 +246,17 @@ function JobTicket({navigation, route}: any) {
         }
       })
       .catch(error => {
-        ToastAndroid.show(
-          'Internal Server Error getTutorDetailByID ',
-          ToastAndroid.SHORT,
-        );
+        console.log('error', error);
       });
   };
 
   const getTicketsData = async () => {
-    // setLoading(true);
     let filter: any = await AsyncStorage.getItem('filter');
     if (filter) {
       filter = JSON.parse(filter);
       console.log(filter, 'filter');
 
-      let {Category, subject, mode, state, city} = filter;
+      let { Category, subject, mode, state, city } = filter;
       let categoryID = Category.id ?? 'noFilter';
       let subjectID = subject.id ?? 'noFilter';
       let myMode = mode.subject ?? 'noFilter';
@@ -292,14 +265,14 @@ function JobTicket({navigation, route}: any) {
 
       axios
         .get(`${Base_Uri}ticketsAPI/${tutorDetails?.tutorId}`)
-        .then(({data}) => {
-          let {tickets} = data;
+        .then(({ data }) => {
+          let { tickets } = data;
           setOpenData(
             tickets?.filter((e: any, i: number) => {
               return (
                 (myMode == 'noFilter' ||
                   e?.mode?.toString()?.toLowerCase() ==
-                    myMode?.toString()?.toLowerCase()) &&
+                  myMode?.toString()?.toLowerCase()) &&
                 (subjectID == 'noFilter' || e?.subject_id == subjectID) &&
                 (categoryID == 'noFilter' || e?.categoryID == categoryID) &&
                 (myCity == 'noFilter' || e?.cityID == myCity) &&
@@ -310,10 +283,6 @@ function JobTicket({navigation, route}: any) {
         })
         .catch(error => {
           setLoading(false);
-          ToastAndroid.show(
-            'Internal Server Error ticketsAPI1',
-            ToastAndroid.SHORT,
-          );
         });
 
       return;
@@ -323,22 +292,17 @@ function JobTicket({navigation, route}: any) {
       let tutor_id = tutorData?.tutorID;
       axios
         .get(`${Base_Uri}ticketsAPI/${tutor_id}`)
-        .then(async ({data}) => {
-          let {tickets} = data;
+        .then(async ({ data }) => {
+          let { tickets } = data;
           setOpenData(tickets);
         })
         .catch(error => {
           setLoading(false);
-          ToastAndroid.show(
-            'Internal Server Error ticketsAPI',
-            ToastAndroid.SHORT,
-          );
         });
     }
   };
 
   const getAppliedData = async () => {
-    // setLoading(true)
     let tutorData: any = await AsyncStorage.getItem('loginAuth');
     tutorData = JSON.parse(tutorData);
     let tutor_id = tutorData?.tutorID;
@@ -347,8 +311,8 @@ function JobTicket({navigation, route}: any) {
     if (status) {
       axios
         .get(`${Base_Uri}getTutorOffers/${tutor_id}`)
-        .then(({data}) => {
-          let {getTutorOffers} = data;
+        .then(({ data }) => {
+          let { getTutorOffers } = data;
           let tutorOffer =
             getTutorOffers &&
             getTutorOffers.length > 0 &&
@@ -362,10 +326,6 @@ function JobTicket({navigation, route}: any) {
           setLoading(false);
         })
         .catch(error => {
-          ToastAndroid.show(
-            'Internal Server Error getTutorOffers filter DATA',
-            ToastAndroid.SHORT,
-          );
           setLoading(false);
         });
       return;
@@ -373,16 +333,12 @@ function JobTicket({navigation, route}: any) {
 
     axios
       .get(`${Base_Uri}getTutorOffers/${tutor_id}`)
-      .then(({data}) => {
-        let {getTutorOffers} = data;
+      .then(({ data }) => {
+        let { getTutorOffers } = data;
         setAppliedData(getTutorOffers);
         setLoading(false);
       })
       .catch(error => {
-        ToastAndroid.show(
-          'Internal Server Error getTutorOffers3',
-          ToastAndroid.SHORT,
-        );
         setLoading(false);
       });
   };
@@ -397,15 +353,6 @@ function JobTicket({navigation, route}: any) {
       checkTutorStatus();
       getTicketsData();
       getAppliedData();
-
-      // const intervalId = setInterval(() => {
-      //   checkTutorStatus();
-      //   getTicketsData();
-      //   getAppliedData();
-      // }, 30000); // 60000 milliseconds = 1 minute
-
-      // // Clean up the interval when the component unmounts or dependencies change
-      // return () => clearInterval(intervalId);
     }
   }, [route, refresh, tutorId]);
 
@@ -414,7 +361,6 @@ function JobTicket({navigation, route}: any) {
       channelName: 'tutor-approved',
       eventName: 'App\\Events\\TutorApproved',
       callback: (data: any) => {
-        console.log('Event received:', data);
         checkTutorStatus();
       },
     });
@@ -453,18 +399,6 @@ function JobTicket({navigation, route}: any) {
   const HandelGoToDashboard = () => {
     setModalVisible(false);
     navigation.navigate('Home');
-    navigation.reset({
-      index: 0,
-      routes: [
-        {
-          name: 'Main', // Change 'Login' to 'Main'
-          screen: 'Home',
-        },
-      ],
-    });
-  };
-  const checkSearchItems = () => {
-    searchText && foundName.length == 0 && setIsSearchItems(true);
   };
 
   const [foundName, setFoundName] = useState([]);
@@ -506,7 +440,7 @@ function JobTicket({navigation, route}: any) {
     setFoundName(filteredItems);
   };
 
-  const renderOpenData: any = ({item}: any) => {
+  const renderOpenData: any = ({ item }: any) => {
     return (
       <>
         <TouchableOpacity
@@ -530,18 +464,18 @@ function JobTicket({navigation, route}: any) {
             }}>
             <View>
               <Text
-                style={[styles.textType3, {fontFamily: 'Circular Std Medium'}]}>
+                style={[styles.textType3, { fontFamily: 'Circular Std Medium' }]}>
                 {item?.jtuid}
               </Text>
               <Text
                 style={[
                   styles.textType1,
-                  {lineHeight: 30, fontFamily: 'Circular Std Medium'},
+                  { lineHeight: 30, fontFamily: 'Circular Std Medium' },
                 ]}>
                 RM {item?.price}
               </Text>
             </View>
-            <View style={{alignItems: 'center', justifyContent: 'center'}}>
+            <View style={{ alignItems: 'center', justifyContent: 'center' }}>
               <View
                 style={{
                   backgroundColor:
@@ -577,7 +511,7 @@ function JobTicket({navigation, route}: any) {
               <Text
                 style={[
                   styles.textType3,
-                  {color: '#003E9C', fontFamily: 'Circular Std Medium'},
+                  { color: '#003E9C', fontFamily: 'Circular Std Medium' },
                 ]}>
                 {item?.city}
               </Text>
@@ -646,7 +580,6 @@ function JobTicket({navigation, route}: any) {
                   flexDirection: 'row',
                   gap: 10,
                 }}>
-                {/* <Image source={require('../../Assets/Images/preftutor.png')} /> */}
                 <FontAwesome name="user-o" size={18} color={'#298CFF'} />
                 <Text
                   style={[
@@ -749,7 +682,7 @@ function JobTicket({navigation, route}: any) {
             </View>
           </View>
 
-          <View style={{flexDirection: 'row', gap: 10, marginTop: 15}}>
+          <View style={{ flexDirection: 'row', gap: 10, marginTop: 15 }}>
             <View
               style={{
                 backgroundColor: '#E6F2FF',
@@ -796,7 +729,7 @@ function JobTicket({navigation, route}: any) {
                 <Text
                   style={[
                     styles.textType3,
-                    {color: '#298CFF', fontFamily: 'Circular Std Medium'},
+                    { color: '#298CFF', fontFamily: 'Circular Std Medium' },
                   ]}>
                   {item?.classTime}
                 </Text>
@@ -807,7 +740,7 @@ function JobTicket({navigation, route}: any) {
       </>
     );
   };
-  const renderCloseData = ({item}: any) => {
+  const renderCloseData = ({ item }: any) => {
     return (
       <>
         <View
@@ -835,9 +768,9 @@ function JobTicket({navigation, route}: any) {
               styles.textType3,
               {
                 color: item.offer_status === 'pending' ? '#000000' : '#FFFFFF',
-               
+
                 paddingVertical: 5,
-                
+
                 textAlign: 'center',
                 textTransform: 'capitalize',
                 fontFamily: 'Circular Std Medium',
@@ -865,14 +798,14 @@ function JobTicket({navigation, route}: any) {
             }}>
             <View>
               <Text
-                style={[styles.textType3, {fontFamily: 'Circular Std Medium'}]}>
+                style={[styles.textType3, { fontFamily: 'Circular Std Medium' }]}>
                 {item?.jtuid}
               </Text>
-              <Text style={[styles.textType1, {lineHeight: 30}]}>
+              <Text style={[styles.textType1, { lineHeight: 30 }]}>
                 RM {item?.price}
               </Text>
             </View>
-            <View style={{alignItems: 'center', justifyContent: 'center'}}>
+            <View style={{ alignItems: 'center', justifyContent: 'center' }}>
               <View
                 style={{
                   backgroundColor:
@@ -1083,7 +1016,7 @@ function JobTicket({navigation, route}: any) {
             </View>
           </View>
 
-          <View style={{flexDirection: 'row', gap: 10, marginTop: 15}}>
+          <View style={{ flexDirection: 'row', gap: 10, marginTop: 15 }}>
             <View
               style={{
                 backgroundColor: '#E6F2FF',
@@ -1148,9 +1081,9 @@ function JobTicket({navigation, route}: any) {
 
   const firstRoute = useCallback(() => {
     return (
-      <View style={{marginVertical: 20, marginBottom: 10}}>
+      <View style={{ marginVertical: 20, marginBottom: 10 }}>
         {/* Search */}
-        <View style={{justifyContent: 'center', alignItems: 'center'}}>
+        <View style={{ justifyContent: 'center', alignItems: 'center' }}>
           <View
             style={{
               width: '100%',
@@ -1167,7 +1100,7 @@ function JobTicket({navigation, route}: any) {
             <TouchableOpacity onPress={() => navigation}>
               <Image
                 source={require('../../Assets/Images/search.png')}
-                style={{width: 15, height: 15}}
+                style={{ width: 15, height: 15 }}
               />
             </TouchableOpacity>
             <TextInput
@@ -1196,10 +1129,10 @@ function JobTicket({navigation, route}: any) {
             />
           </View>
         ) : (
-          <View style={{justifyContent: 'center', alignItems: 'center'}}>
+          <View style={{ justifyContent: 'center', alignItems: 'center' }}>
             <Image
               source={require('../../Assets/Images/nojobticketavailable.png')}
-              style={{width: 300, height: 300}}
+              style={{ width: 300, height: 300 }}
             />
           </View>
         )}
@@ -1209,9 +1142,9 @@ function JobTicket({navigation, route}: any) {
 
   const secondRoute = useCallback(() => {
     return (
-      <View style={{marginVertical: 20, marginBottom: 10}}>
+      <View style={{ marginVertical: 20, marginBottom: 10 }}>
         {/* Search */}
-        <View style={{justifyContent: 'center', alignItems: 'center'}}>
+        <View style={{ justifyContent: 'center', alignItems: 'center' }}>
           <View
             style={{
               width: '100%',
@@ -1228,12 +1161,12 @@ function JobTicket({navigation, route}: any) {
               placeholder="Search"
               placeholderTextColor="black"
               onChangeText={e => searchApplied(e)}
-              style={{width: '90%', padding: 8, color: 'black'}}
+              style={{ width: '90%', padding: 8, color: 'black' }}
             />
             <TouchableOpacity onPress={() => navigation}>
               <Image
                 source={require('../../Assets/Images/search.png')}
-                style={{width: 20, height: 20}}
+                style={{ width: 20, height: 20 }}
               />
             </TouchableOpacity>
           </View>
@@ -1250,20 +1183,10 @@ function JobTicket({navigation, route}: any) {
             />
           </View>
         ) : (
-          <View style={{justifyContent: 'center', alignItems: 'center'}}>
-            {/* <Text
-              style={{
-                fontWeight: 'bold',
-                fontSize: 16,
-                color: Theme.black,
-                textAlign: 'center',
-              }}>
-              No Data Found
-            </Text> */}
-
+          <View style={{ justifyContent: 'center', alignItems: 'center' }}>
             <Image
               source={require('../../Assets/Images/nojobavailable.png')}
-              style={{width: 300, height: 300}}
+              style={{ width: 300, height: 300 }}
             />
           </View>
         )}
@@ -1276,9 +1199,9 @@ function JobTicket({navigation, route}: any) {
     setOpenPPModal(true);
     axios
       .get(`${Base_Uri}api/bannerAds`)
-      .then(({data}) => {})
+      .then(({ data }) => { })
       .catch(error => {
-        ToastAndroid.show('Internal Server Error', ToastAndroid.SHORT);
+        // ToastAndroid.show('Internal Server Error', ToastAndroid.SHORT);
       });
   };
 
@@ -1313,7 +1236,7 @@ function JobTicket({navigation, route}: any) {
 
   const closeBannerModal = async () => {
     if (jobTicketBanner.displayOnce == 'on') {
-      let bannerData = {...jobTicketBanner};
+      let bannerData = { ...jobTicketBanner };
 
       let stringData = JSON.stringify(bannerData);
 
@@ -1326,13 +1249,8 @@ function JobTicket({navigation, route}: any) {
   };
 
   return (
-    // <View  style={{ flex: 1, justifyContent: 'center', alignItems: 'center',backgroundColor:"transparent" }}>
-    //   {/* <ActivityIndicator size={'large'} color={'black'}  /> */}
-    //   <Image source={require('../../Assets/Images/loader.gif')}/>
-    // </View>
-
-    <View style={{backgroundColor: Theme.white, height: '100%'}}>
-      <View style={{margin:20}}></View>
+    <View style={{ backgroundColor: Theme.white, height: '100%' }}>
+      <View style={{ margin: 20 }}></View>
       <Header
         tab={currentTab}
         title="Job Ticket"
@@ -1346,23 +1264,22 @@ function JobTicket({navigation, route}: any) {
         }
         showsVerticalScrollIndicator={false}
         nestedScrollEnabled>
-        <View style={{paddingHorizontal: 15, marginTop: 20}}>
+        <View style={{ paddingHorizontal: 15, marginTop: 20 }}>
           <CustomTabView
             currentTab={currentTab}
             firstRoute={firstRoute}
             secondRoute={secondRoute}
             activateTab={activateTab}
             firstRouteTitle="Latest"
-            secondRouteTitle={`Applied (${
-              appliedData.length ? appliedData.length : 0
-            })`}
+            secondRouteTitle={`Applied (${appliedData.length ? appliedData.length : 0
+              })`}
           />
         </View>
       </ScrollView>
       {Object.keys(jobTicketBanner).length > 0 &&
         (jobTicketBanner.tutorStatusCriteria == 'All' ||
           tutorDetails.status.toLowerCase() == 'verified') && (
-          <View style={{flex: 1}}>
+          <View style={{ flex: 1 }}>
             <Modal
               visible={openPPModal}
               animationType="fade"
@@ -1379,7 +1296,6 @@ function JobTicket({navigation, route}: any) {
                 <View
                   style={{
                     backgroundColor: 'white',
-                    // padding: 15,
                     borderRadius: 5,
                     marginHorizontal: 20,
                   }}>
@@ -1397,9 +1313,8 @@ function JobTicket({navigation, route}: any) {
                       />
                     </View>
                   </TouchableOpacity>
-                  {/* <Image source={{uri:}} style={{width:Dimensions.get('screen').width/1.1,height:'80%',}} resizeMode='contain'/> */}
                   <Image
-                    source={{uri: jobTicketBanner.bannerImages}}
+                    source={{ uri: jobTicketBanner.bannerImages }}
                     style={{
                       width: Dimensions.get('screen').width / 1.05,
                       height: '90%',
@@ -1411,81 +1326,11 @@ function JobTicket({navigation, route}: any) {
             </Modal>
           </View>
         )}
-      {/* <Modal visible={modalVisible} animationType="fade" transparent={true}>
-        <View
-          style={{
-            flex: 1,
-            justifyContent: 'center',
-            backgroundColor: 'rgba(0,0,0,0.5)',
-          }}>
-          <View
-            style={[
-              styles.modalContainer,
-              { padding: 30, marginHorizontal: 40 },
-            ]}>
-            <Text
-              style={{
-                color: Theme.darkGray,
-                fontSize: 16,
-                fontWeight: 'bold',
-                fontFamily: 'Circular Std Medium',
-                lineHeight: 30,
-              }}>
-              You have been Verified!
-            </Text>
-            <View
-              style={{
-                display: 'flex',
-                flexDirection: 'row',
-                justifyContent: 'center',
-                gap: 10,
-                marginTop: 20,
-                marginBottom: 20,
-              }}>
-              <TouchableOpacity
-                onPress={() => HandelGoToDashboard()}
-                activeOpacity={0.8}
-                style={{
-                  borderWidth: 1,
-                  paddingVertical: 10,
-                  borderRadius: 10,
-                  borderColor: Theme.lightGray,
-                  alignItems: 'center',
-                  width: '90%',
-                  backgroundColor: Theme.darkGray,
-                }}>
-                <Text
-                  style={{
-                    color: 'white',
-                    fontSize: 14,
-                    fontFamily: 'Circular Std Medium',
-                  }}>
-                  Go To Dashboard
-                </Text>
-              </TouchableOpacity>
-            </View>
-          </View>
-        </View>
-      </Modal> */}
-      <BackToDashboard
+      <BackToDashboardModal
         modalVisible={modalVisible}
         handleGoToDashboard={() => HandelGoToDashboard()}
       />
       <CustomLoader visible={loading} />
-      {/* <Modal visible={loading} animationType="fade" transparent={true}>
-        <View
-          style={{
-            flex: 1,
-            justifyContent: 'center',
-            alignItems: 'center',
-            backgroundColor: 'rgba(0,0,0,0.5)',
-          }}>
-          <Image
-            source={require('../../Assets/Images/SIFU.gif')}
-            style={{ width: 150, height: 150 }}
-          />
-        </View>
-      </Modal> */}
     </View>
   );
 }

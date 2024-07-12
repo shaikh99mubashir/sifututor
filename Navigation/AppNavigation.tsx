@@ -1,5 +1,5 @@
 import {Image, StyleSheet, Text, View} from 'react-native';
-import React from 'react';
+import React, { useContext, useEffect } from 'react';
 import {NavigationContainer} from '@react-navigation/native';
 import {createNativeStackNavigator} from '@react-navigation/native-stack';
 import {createBottomTabNavigator} from '@react-navigation/bottom-tabs';
@@ -34,261 +34,302 @@ import ClockIn from '../Screens/ClockInScreen/ClockIn';
 import ClockOut from '../Screens/ClockOutScreen';
 import ClassTimerCount from '../Screens/ClassTimerCountScreen';
 import ScheduleSuccessfully from '../Screens/ScheduleSuccessfully';
+import Toast from 'react-native-toast-message';
+import HomeIcon from '../SVGs/Home';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import { Base_Uri } from '../constant/BaseUri';
+import axios from 'axios';
+import TutorDetailsContext from '../context/tutorDetailsContext';
 const Stack = createNativeStackNavigator();
 const Tab = createBottomTabNavigator();
 
 function BottomNavigation({navigation,route}: any) {
-    return (
-      <Tab.Navigator
-        // initialRouteName={initialRoute}
-        screenOptions={({route}) => ({
-          headerShown: false,
-          tabBarShowLabel: false,
-          tabBarInactiveTintColor: 'grey',
-          tabBarStyle: styles.tabBarStyle,
-          tabBarActiveTintColor: 'black',
-        })}>
-        <>
-          <Tab.Screen
-            name="Job Ticket"
-            component={JobTicket}
-            options={{
-              tabBarIcon: ({focused, color}) => (
-                <View>
-                  {focused == true ? (
-                    <View
-                      style={{
-                        alignItems: 'center',
-                        justifyContent: 'center',
-                        flexDirection: 'row',
-                        padding: 5,
-                        borderRadius: 5,
-                      }}>
-                      <Image
-                        source={require('../Assets/Images/Job.png')}
-                        resizeMode="contain"
-                        style={{
-                          height: 50,
-                          width: 50,
-                          tintColor: focused ? 'black' : 'grey',
-                        }}
-                      />
-                    </View>
-                  ) : (
-                    <View
-                      style={{
-                        alignItems: 'center',
-                        justifyContent: 'center',
-                        flexDirection: 'row',
-                      }}>
-                      <Image
-                        source={require('../Assets/Images/Job.png')}
-                        resizeMode="contain"
-                        style={{
-                          height: 50,
-                          width: 50,
-                          tintColor: focused ? 'black' : 'grey',
-                        }}
-                      />
-                    </View>
-                  )}
-                </View>
-              ),
-            }}
-          />
-           <Tab.Screen
-              name="Schedule"
-              component={Schedule}
-              options={{
-                tabBarIcon: ({focused, color}) => (
-                  <View>
-                    {focused == true ? (
-                      <View
-                        style={{
-                          alignItems: 'center',
-                          justifyContent: 'center',
-                          flexDirection: 'row',
-                          padding: 5,
-                          borderRadius: 5,
-                        }}>
-                        <Image
-                          source={require('../Assets/Images/schedule1.png')}
-                          resizeMode="contain"
-                          style={{
-                            height: 50,
-                            width: 50,
-                            tintColor: focused ? 'black' : 'grey',
-                          }}
-                        />
-                      </View>
-                    ) : (
-                      <View
-                        style={{
-                          alignItems: 'center',
-                          justifyContent: 'center',
-                          flexDirection: 'row',
-                        }}>
-                        <Image
-                          source={require('../Assets/Images/schedule1.png')}
-                          resizeMode="contain"
-                          style={{
-                            height: 50,
-                            width: 50,
-                            tintColor: focused ? 'black' : 'grey',
-                          }}
-                        />
-                      </View>
-                    )}
-                  </View>
-                ),
-              }}
-            />
-          
-            <Tab.Screen
-              name="Home"
-              component={Home}
-              options={{
-                tabBarIcon: ({focused, color}) => (
-                  <View>
-                    {focused == true ? (
-                      <View
-                        style={{
-                          alignItems: 'center',
-                          justifyContent: 'center',
-                          flexDirection: 'row',
-                          // backgroundColor:'#1FC07D',
-                        }}>
-                        <Image
-                          source={require('../Assets/Images/HomeBlue.png')}
-                          resizeMode="contain"
-                          style={{
-                            height: 100,
-                            width: 100,
-                          }}
-                        />
-                      </View>
-                    ) : (
-                      <View
-                        style={{
-                          alignItems: 'center',
-                          justifyContent: 'center',
-                          flexDirection: 'row',
-                        }}>
-                        <Image
-                          source={require('../Assets/Images/HomeBlue.png')}
-                          resizeMode="contain"
-                          style={{
-                            height: 100,
-                            width: 100,
-                          }}
-                        />
-                      </View>
-                    )}
-                  </View>
-                ),
-              }}
-            />
-          
-            <Tab.Screen
-              name="Inbox"
-              component={Inbox}
-              options={{
-                tabBarIcon: ({focused, color}) => (
-                  <View>
-                    {focused == true ? (
-                      <View
-                        style={{
-                          alignItems: 'center',
-                          justifyContent: 'center',
-                          flexDirection: 'row',
-                          padding: 5,
-                          borderRadius: 5,
-                        }}>
-                        <Image
-                          source={require('../Assets/Images/Group203.png')}
-                          resizeMode="contain"
-                          style={{
-                            height: 35,
-                            width: 35,
-                            tintColor: focused ? 'black' : 'grey',
-                          }}
-                        />
-                      </View>
-                    ) : (
-                      <View
-                        style={{
-                          alignItems: 'center',
-                          justifyContent: 'center',
-                          flexDirection: 'row',
-                        }}>
-                        <Image
-                          source={require('../Assets/Images/Group203.png')}
-                          resizeMode="contain"
-                          style={{
-                            height: 35,
-                            width: 35,
-                            tintColor: focused ? 'black' : 'grey',
-                          }}
-                        />
-                      </View>
-                    )}
-                  </View>
-                ),
-              }}
-            />
-          
-          <Tab.Screen
-            name="More"
-            component={More}
-            options={{
-              tabBarIcon: ({focused, color}) => (
-                <View>
-                  {focused == true ? (
-                    <View
-                      style={{
-                        alignItems: 'center',
-                        justifyContent: 'center',
-                        flexDirection: 'row',
-                        padding: 5,
-                        borderRadius: 5,
-                      }}>
-                      <Image
-                        source={require('../Assets/Images/Group202.png')}
-                        resizeMode="contain"
-                        style={{
-                          height: 35,
-                          width: 35,
-                          tintColor: focused ? 'black' : 'grey',
-                        }}
-                      />
-                    </View>
-                  ) : (
-                    <View
-                      style={{
-                        alignItems: 'center',
-                        justifyContent: 'center',
-                        flexDirection: 'row',
-                      }}>
-                      <Image
-                        source={require('../Assets/Images/Group202.png')}
-                        resizeMode="contain"
-                        style={{
-                          height: 35,
-                          width: 35,
-                          tintColor: focused ? 'black' : 'grey',
-                        }}
-                      />
-                    </View>
-                  )}
-                </View>
-              ),
-            }}
-          />
-        </>
-      </Tab.Navigator>
+  const tutorDetailsCont = useContext(TutorDetailsContext);
+  const {tutorDetails, setTutorDetail}: any = tutorDetailsCont;
+
+  const getTutorData = async () => {
+    let authData = await AsyncStorage.getItem('loginAuth');
+
+    if (authData) {
+      let tutorData: any = JSON.parse(authData);
+      axios
+        .get(`${Base_Uri}getTutorDetailByID/${tutorData?.tutorID}`)
+        .then(res => {
+          if(res.data.tutorDetailById == null){
+            AsyncStorage.removeItem('loginAuth');
+            navigation.replace('Login');
+            setTutorDetail('')
+            Toast.show({
+              type: 'info',
+              text1: 'Terminated',
+              position: 'bottom'
+            });
+            return;
+          }
+          let tutorData = res.data;
+          if (tutorData) {
+            let allData = tutorData?.tutorDetailById[0];
+            
+            setTutorDetail(allData);
+          }
+          return;
+        });
+    }
+  };
+
+  useEffect(() => {
+    getTutorData();
+  }, []);
   
-    );
-  }
+  const initialRoute =
+    tutorDetails?.status?.toLowerCase() == 'unverified' ? 'JobTicket' : 'Home';
+
+  const hideTabs =
+    tutorDetails?.status?.toLowerCase() == 'unverified' ? ['Schedule', 'Home', 'inbox'] : [];
+
+  return (
+    <Tab.Navigator
+      initialRouteName={initialRoute}
+      screenOptions={({route}) => ({
+        headerShown: false,
+        tabBarShowLabel: false,
+        tabBarInactiveTintColor: 'grey',
+        tabBarStyle: styles.tabBarStyle,
+        tabBarActiveTintColor: 'black',
+        tabBarHideOnKeyboard:true
+      })}>
+      <>
+        <Tab.Screen
+          name="Job Ticket"
+          component={JobTicket}
+          options={{
+            tabBarIcon: ({focused, color}) => (
+              <View>
+                {focused == true ? (
+                  <View
+                    style={{
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      flexDirection: 'row',
+                      padding: 5,
+                      borderRadius: 5,
+                    }}>
+                    <Image
+                      source={require('../Assets/Images/Job.png')}
+                      resizeMode="contain"
+                      style={{
+                        height: 50,
+                        width: 50,
+                        tintColor: focused ? 'black' : 'grey',
+                      }}
+                    />
+                  </View>
+                ) : (
+                  <View
+                    style={{
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      flexDirection: 'row',
+                    }}>
+                    <Image
+                      source={require('../Assets/Images/Job.png')}
+                      resizeMode="contain"
+                      style={{
+                        height: 50,
+                        width: 50,
+                        tintColor: focused ? 'black' : 'grey',
+                      }}
+                    />
+                  </View>
+                )}
+              </View>
+            ),
+          }}
+        />
+        {hideTabs?.includes('Schedule') ||
+        tutorDetails?.status?.toLowerCase() != 'verified' && tutorDetails?.open_dashboard != 'yes' ? null : (
+          <Tab.Screen
+            name="Schedule"
+            component={Schedule}
+            options={{
+              tabBarIcon: ({focused, color}) => (
+                <View>
+                  {focused == true ? (
+                    <View
+                      style={{
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        flexDirection: 'row',
+                        padding: 5,
+                        borderRadius: 5,
+                      }}>
+                      <Image
+                        source={require('../Assets/Images/schedule1.png')}
+                        resizeMode="contain"
+                        style={{
+                          height: 50,
+                          width: 50,
+                          tintColor: focused ? 'black' : 'grey',
+                        }}
+                      />
+                    </View>
+                  ) : (
+                    <View
+                      style={{
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        flexDirection: 'row',
+                      }}>
+                      <Image
+                        source={require('../Assets/Images/schedule1.png')}
+                        resizeMode="contain"
+                        style={{
+                          height: 50,
+                          width: 50,
+                          tintColor: focused ? 'black' : 'grey',
+                        }}
+                      />
+                    </View>
+                  )}
+                </View>
+              ),
+            }}
+          />
+        )}
+        {hideTabs?.includes('Home') ||
+        tutorDetails?.status?.toLowerCase() != 'verified' && tutorDetails?.open_dashboard != 'yes' ? null : (
+          <Tab.Screen
+            name="Home"
+            component={Home}
+            options={{
+              tabBarIcon: ({focused, color}) => (
+                <View>
+                  {focused == true ? (
+                    <View
+                      style={{
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        flexDirection: 'row',
+                      }}>
+                      <HomeIcon/>
+                    </View>
+                  ) : (
+                    <View
+                      style={{
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        flexDirection: 'row',
+                      }}>
+                      <HomeIcon/>
+                    </View>
+                  )}
+                </View>
+              ),
+            }}
+          />
+        )}
+        {hideTabs?.includes('inbox') ||
+        tutorDetails?.status?.toLowerCase() != 'verified' && tutorDetails?.open_dashboard != 'yes' ? null : (
+          <Tab.Screen
+            name="inbox"
+            component={Inbox}
+            options={{
+              tabBarIcon: ({focused, color}) => (
+                <View>
+                  {focused == true ? (
+                    <View
+                      style={{
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        flexDirection: 'row',
+                        padding: 5,
+                        borderRadius: 5,
+                      }}>
+                      <Image
+                        source={require('../Assets/Images/Group203.png')}
+                        resizeMode="contain"
+                        style={{
+                          height: 35,
+                          width: 35,
+                          tintColor: focused ? 'black' : 'grey',
+                        }}
+                      />
+                    </View>
+                  ) : (
+                    <View
+                      style={{
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        flexDirection: 'row',
+                      }}>
+                      <Image
+                        source={require('../Assets/Images/Group203.png')}
+                        resizeMode="contain"
+                        style={{
+                          height: 35,
+                          width: 35,
+                          tintColor: focused ? 'black' : 'grey',
+                        }}
+                      />
+                    </View>
+                  )}
+                </View>
+              ),
+            }}
+          />
+        )}
+        <Tab.Screen
+          name="More"
+          component={More}
+          options={{
+            tabBarIcon: ({focused, color}) => (
+              <View>
+                {focused == true ? (
+                  <View
+                    style={{
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      flexDirection: 'row',
+                      padding: 5,
+                      borderRadius: 5,
+                    }}>
+                    <Image
+                      source={require('../Assets/Images/Group202.png')}
+                      resizeMode="contain"
+                      style={{
+                        height: 35,
+                        width: 35,
+                        tintColor: focused ? 'black' : 'grey',
+                      }}
+                    />
+                  </View>
+                ) : (
+                  <View
+                    style={{
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      flexDirection: 'row',
+                    }}>
+                    <Image
+                      source={require('../Assets/Images/Group202.png')}
+                      resizeMode="contain"
+                      style={{
+                        height: 35,
+                        width: 35,
+                        tintColor: focused ? 'black' : 'grey',
+                      }}
+                    />
+                  </View>
+                )}
+              </View>
+            ),
+          }}
+        />
+      </>
+    </Tab.Navigator>
+
+  );
+}
 const AppNavigation = () => {
   return (
     <NavigationContainer>
@@ -322,6 +363,7 @@ const AppNavigation = () => {
         <Stack.Screen name="ReportSubmissionHistory" component={ReportSubmissionHistory} />
         <Stack.Screen name="ScheduleSuccessfully" component={ScheduleSuccessfully} />
       </Stack.Navigator>
+        <Toast/>
     </NavigationContainer>
   );
 };
@@ -331,11 +373,13 @@ export default AppNavigation;
 const styles = StyleSheet.create({
     customFont: {
         fontFamily: 'Circular Std Black',
+        
       },
     
       tabBarStyle: {
         borderTopWidth: 0,
-        height: 105,
+        height: 80,
         backgroundColor: Theme.white,
+        
       },
 });

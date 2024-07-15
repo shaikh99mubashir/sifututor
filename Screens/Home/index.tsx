@@ -1,4 +1,4 @@
-import React, {useEffect, useState, useContext} from 'react';
+import React, { useEffect, useState, useContext } from 'react';
 import {
   View,
   Text,
@@ -15,11 +15,11 @@ import {
   Linking,
   StatusBar,
 } from 'react-native';
-import {Theme} from '../../constant/theme';
+import { Theme } from '../../constant/theme';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import axios from 'axios';
-import {Base_Uri} from '../../constant/BaseUri';
-import {useIsFocused} from '@react-navigation/native';
+import { Base_Uri } from '../../constant/BaseUri';
+import { useIsFocused } from '@react-navigation/native';
 import TutorDetailsContext from '../../context/tutorDetailsContext';
 import StudentContext from '../../context/studentContext';
 import filterContext from '../../context/filterContext';
@@ -39,19 +39,19 @@ import Student from '../../SVGs/Student';
 import Clock from '../../SVGs/Clock';
 import Schedule from '../../SVGs/Schedule';
 import Toast from 'react-native-toast-message';
-function Home({navigation, route}: any) {
+function Home({ navigation, route }: any) {
   let key = route.key;
 
   const scheduleNotCont = useContext(scheduleNotificationContext);
 
-  let {scheduleNotification, setScheduleNotification} = scheduleNotCont;
+  let { scheduleNotification, setScheduleNotification } = scheduleNotCont;
 
   const context = useContext(TutorDetailsContext);
   const filter = useContext(filterContext);
   const studentAndSubjectContext = useContext(StudentContext);
   const notContext = useContext(notificationContext);
-  let {notification, setNotification} = notContext;
-  const {setCategory, setSubjects, setState, setCity} = filter;
+  let { notification, setNotification } = notContext;
+  const { setCategory, setSubjects, setState, setCity } = filter;
   const [refreshing, setRefreshing] = useState(false);
   const upcomingClassCont = useContext(upcomingClassContext);
   const paymentHistory = useContext(paymentContext);
@@ -80,12 +80,12 @@ function Home({navigation, route}: any) {
 
   const upcomingContext = useContext(scheduleContext);
 
-  let {commissionData, setCommissionData} = paymentHistory;
-  let {upcomingClass, setUpcomingClass, scheduleData, setScheduleData} =
+  let { commissionData, setCommissionData } = paymentHistory;
+  let { upcomingClass, setUpcomingClass, scheduleData, setScheduleData } =
     upcomingContext;
 
-  const {tutorDetails, updateTutorDetails} = context;
-  const {students, subjects, updateStudent, updateSubject} =
+  const { tutorDetails, updateTutorDetails } = context;
+  const { students, subjects, updateStudent, updateSubject } =
     studentAndSubjectContext;
   let reportContext = useContext(reportSubmissionContext);
 
@@ -146,19 +146,19 @@ function Home({navigation, route}: any) {
     const data: any = await AsyncStorage.getItem('loginAuth');
     let loginData: LoginAuth = JSON.parse(data);
 
-    let {tutorID} = loginData;
+    let { tutorID } = loginData;
     setTutorId(tutorID);
   };
 
   const getPaymentHistory = async () => {
     let data: any = await AsyncStorage.getItem('loginAuth');
     data = JSON.parse(data);
-    let {tutorID} = data;
+    let { tutorID } = data;
 
     axios
       .get(`${Base_Uri}tutorPayments/${tutorID}`)
-      .then(({data}) => {
-        let {response} = data;
+      .then(({ data }) => {
+        let { response } = data;
 
         setCommissionData(response);
       })
@@ -170,9 +170,9 @@ function Home({navigation, route}: any) {
   const getNotificationLength = async () => {
     axios
       .get(`${Base_Uri}api/notifications/${tutorId}`)
-      .then(({data}) => {
+      .then(({ data }) => {
         let length = 0;
-        let {notifications} = data;
+        let { notifications } = data;
         let tutorNotification =
           notifications.length > 0 &&
           notifications.filter((e: any, i: number) => {
@@ -279,8 +279,8 @@ function Home({navigation, route}: any) {
   const getCategory = () => {
     axios
       .get(`${Base_Uri}getCategories`)
-      .then(({data}) => {
-        let {categories} = data;
+      .then(({ data }) => {
+        let { categories } = data;
 
         let myCategories =
           categories &&
@@ -303,8 +303,8 @@ function Home({navigation, route}: any) {
   const getSubject = () => {
     axios
       .get(`${Base_Uri}getSubjects`)
-      .then(({data}) => {
-        let {subjects} = data;
+      .then(({ data }) => {
+        let { subjects } = data;
 
         let mySubject =
           subjects &&
@@ -328,8 +328,8 @@ function Home({navigation, route}: any) {
   const getStates = () => {
     axios
       .get(`${Base_Uri}getStates`)
-      .then(({data}) => {
-        let {states} = data;
+      .then(({ data }) => {
+        let { states } = data;
 
         let myStates =
           states &&
@@ -352,8 +352,8 @@ function Home({navigation, route}: any) {
   const getCities = () => {
     axios
       .get(`${Base_Uri}getCities`)
-      .then(({data}) => {
-        let {cities} = data;
+      .then(({ data }) => {
+        let { cities } = data;
         let myCities =
           cities &&
           cities.length > 0 &&
@@ -377,12 +377,12 @@ function Home({navigation, route}: any) {
 
     data = JSON.parse(data);
 
-    let {tutorID} = data;
+    let { tutorID } = data;
 
     axios
       .get(`${Base_Uri}api/tutorFirstReportListing/${tutorID}`)
-      .then(({data}) => {
-        let {tutorReportListing} = data;
+      .then(({ data }) => {
+        let { tutorReportListing } = data;
         setreportSubmission(tutorReportListing);
       })
       .catch(error => {
@@ -395,12 +395,12 @@ function Home({navigation, route}: any) {
 
     data = JSON.parse(data);
 
-    let {tutorID} = data;
+    let { tutorID } = data;
 
     axios
       .get(`${Base_Uri}api/progressReportListing`)
-      .then(({data}) => {
-        let {progressReportListing} = data;
+      .then(({ data }) => {
+        let { progressReportListing } = data;
 
         let tutorReport =
           progressReportListing &&
@@ -430,7 +430,7 @@ function Home({navigation, route}: any) {
   const getTutorDetails = async () => {
     axios
       .get(`${Base_Uri}getTutorDetailByID/${tutorId}`)
-      .then(({data}) => {
+      .then(({ data }) => {
         if (data.tutorDetailById == null) {
           AsyncStorage.removeItem('loginAuth');
           navigation.replace('Login');
@@ -443,7 +443,7 @@ function Home({navigation, route}: any) {
           });
           return;
         }
-        let {tutorDetailById} = data;
+        let { tutorDetailById } = data;
 
         let tutorDetails = tutorDetailById[0];
 
@@ -471,7 +471,7 @@ function Home({navigation, route}: any) {
     axios
       .get(`${Base_Uri}api/classScheduleStatusNotifications/${tutorId}`)
       .then(res => {
-        let {data} = res;
+        let { data } = res;
         setScheduleNotification(data.record);
       })
       .catch(error => {
@@ -488,7 +488,7 @@ function Home({navigation, route}: any) {
   const getCummulativeCommission = () => {
     axios
       .get(`${Base_Uri}getCommulativeCommission/${tutorId}`)
-      .then(({data}) => {
+      .then(({ data }) => {
         setCumulativeCommission(data.commulativeCommission);
       })
       .catch(error => {
@@ -499,7 +499,7 @@ function Home({navigation, route}: any) {
   const getAttendedHours = () => {
     axios
       .get(`${Base_Uri}getAttendedHours/${tutorId}`)
-      .then(({data}) => {
+      .then(({ data }) => {
         setAttendedHours(data.attendedHours);
       })
       .catch(error => {
@@ -510,7 +510,7 @@ function Home({navigation, route}: any) {
   const getScheduledHours = () => {
     axios
       .get(`${Base_Uri}getScheduledHours/${tutorId}`)
-      .then(({data}) => {
+      .then(({ data }) => {
         setScheduledHours(data.scheduledHours);
       })
       .catch(error => {
@@ -521,7 +521,7 @@ function Home({navigation, route}: any) {
   const getCancelledHours = () => {
     axios
       .get(`${Base_Uri}getCancelledHours/${tutorId}`)
-      .then(({data}) => {
+      .then(({ data }) => {
         setCancelledHours(data.cancelledHours);
       })
       .catch(error => {
@@ -532,7 +532,7 @@ function Home({navigation, route}: any) {
   const getAssignedTicket = () => {
     axios
       .get(`${Base_Uri}getAssignedTickets/${tutorId}`)
-      .then(({data}) => {
+      .then(({ data }) => {
         setAssignedTickets(data.assignedTickets);
       })
       .catch(error => {
@@ -543,8 +543,8 @@ function Home({navigation, route}: any) {
   const getTutorStudents = () => {
     axios
       .get(`${Base_Uri}getTutorStudents/${tutorId}`)
-      .then(({data}) => {
-        const {tutorStudents} = data;
+      .then(({ data }) => {
+        const { tutorStudents } = data;
         setTutorStudents(tutorStudents);
         updateStudent(tutorStudents);
       })
@@ -556,8 +556,8 @@ function Home({navigation, route}: any) {
   const getTutorSubjects = () => {
     axios
       .get(`${Base_Uri}getTutorSubjects/${tutorId}`)
-      .then(({data}) => {
-        let {tutorSubjects} = data;
+      .then(({ data }) => {
+        let { tutorSubjects } = data;
 
         let mySubject =
           tutorSubjects &&
@@ -580,8 +580,8 @@ function Home({navigation, route}: any) {
   const getUpcomingClasses = () => {
     axios
       .get(`${Base_Uri}getUpcomingClassesByTutorID/${tutorId}`)
-      .then(({data}) => {
-        const {classSchedules} = data;
+      .then(({ data }) => {
+        const { classSchedules } = data;
         setUpCommingClasses(classSchedules);
       })
       .catch(error => {
@@ -619,12 +619,20 @@ function Home({navigation, route}: any) {
         console.log('Event received: home', data);
         // getAttendedHours();
         // getScheduledHours();
-        // getCummulativeCommission()
+        if (tutorId && cummulativeCommission) {
+          getCummulativeCommission()
+          getAttendedHours();
+          getScheduledHours();
+          getTutorStudents();
+          getTutorSubjects();
+          getCancelledHours();
+          getAssignedTicket();
+        }
       },
     });
 
     return unsubscribe;
-  }, [focus]);
+  }, [focus,cummulativeCommission,refreshing,tutorId]);
 
   const routeToScheduleScreen = async (item: any) => {
     interface LoginAuth {
@@ -634,13 +642,13 @@ function Home({navigation, route}: any) {
     }
     const login: any = await AsyncStorage.getItem('loginAuth');
     let loginData: LoginAuth = JSON.parse(login);
-    let {tutorID} = loginData;
+    let { tutorID } = loginData;
     axios
       .get(`${Base_Uri}getClassSchedulesTime/${tutorID}`)
       .then(res => {
         let scheduledClasses = res.data;
 
-        let {classSchedulesTime} = scheduledClasses;
+        let { classSchedulesTime } = scheduledClasses;
         let checkRouteClass =
           classSchedulesTime &&
           classSchedulesTime.length > 0 &&
@@ -670,7 +678,7 @@ function Home({navigation, route}: any) {
     setOpenPPModal(true);
     axios
       .get(`${Base_Uri}api/bannerAds`)
-      .then(async ({data}) => {
+      .then(async ({ data }) => {
         let myHomeBanners: any = [];
         let myFaqBanners: any = [];
         let myScheduleBanners: any = [];
@@ -910,7 +918,7 @@ function Home({navigation, route}: any) {
 
   const closeBannerModal = async () => {
     if (homePageBanner.displayOnce == 'on') {
-      let bannerData = {...homePageBanner};
+      let bannerData = { ...homePageBanner };
 
       let stringData = JSON.stringify(bannerData);
 
@@ -980,11 +988,11 @@ function Home({navigation, route}: any) {
     const data: any = await AsyncStorage.getItem('loginAuth');
     let loginData: LoginAuth = JSON.parse(data);
 
-    let {tutorID} = loginData;
+    let { tutorID } = loginData;
     axios
       .get(`${Base_Uri}getTutorDetailByID/${tutorID}`)
-      .then(({data}) => {
-        let {tutorDetailById} = data;
+      .then(({ data }) => {
+        let { tutorDetailById } = data;
         let tutorDetails = tutorDetailById[0];
         console.log('tutorDetails', tutorDetails);
         setTutorImage(tutorDetails.tutorImage);
@@ -998,10 +1006,10 @@ function Home({navigation, route}: any) {
   }, [focus, refreshing]);
 
   return (
-    <View style={{height:'100%'}}>
+    <View style={{ height: '100%' }}>
       <CustomLoader visible={!cancelledHours} />
       <CustomLoader visible={refreshing} />
-        <StatusBar/>
+      <StatusBar />
       <ScrollView
         refreshControl={
           <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
@@ -1010,25 +1018,25 @@ function Home({navigation, route}: any) {
         showsVerticalScrollIndicator={false}>
         <ScrollView showsVerticalScrollIndicator={false}>
 
-          <View style={{paddingTop: 60}}>
+          <View style={{ paddingTop: 60 }}>
             <View
               style={{
                 flexDirection: 'row',
                 alignItems: 'center',
                 justifyContent: 'space-between',
               }}>
-              <View style={{width: '60%'}}>
+              <View style={{ width: '60%' }}>
                 <Text style={styles.textType3}>Welcome Back!</Text>
                 <Text
                   style={[
                     styles.textType1,
-                    {fontWeight: '700', lineHeight: 30},
+                    { fontWeight: '700', lineHeight: 30 },
                   ]}>
                   {tutorDetails?.displayName ?? tutorDetails?.full_name}
                 </Text>
               </View>
               <View
-                style={{flexDirection: 'row', alignItems: 'center', gap: 15}}>
+                style={{ flexDirection: 'row', alignItems: 'center', gap: 15 }}>
                 <TouchableOpacity
                   activeOpacity={0.8}
                   onPress={() => navigation.navigate('Notifications')}>
@@ -1050,7 +1058,7 @@ function Home({navigation, route}: any) {
                       top: -28,
                     }}>
                     <Text
-                      style={[styles.text, {fontSize: 10, color: Theme.white}]}>
+                      style={[styles.text, { fontSize: 10, color: Theme.white }]}>
                       {notification.length + scheduleNotification.length > 0
                         ? notification.length + scheduleNotification.length
                         : 0}
@@ -1081,8 +1089,8 @@ function Home({navigation, route}: any) {
                     style={{ width: 60, height: 60, borderRadius: 50 }}
                   /> */}
                   <Image
-                    source={{uri: tutorImage}}
-                    style={{height: 60, width: 60, borderRadius: 50}}
+                    source={{ uri: tutorImage }}
+                    style={{ height: 60, width: 60, borderRadius: 50 }}
                   />
                 </TouchableOpacity>
               </View>
@@ -1116,12 +1124,12 @@ function Home({navigation, route}: any) {
                   borderRadius: 30,
                   marginVertical: 30,
                 }}>
-                <View style={{flexDirection: 'row', gap: 15}}>
-                  <Text style={[styles.textType1, {color: Theme.white}]}>
+                <View style={{ flexDirection: 'row', gap: 15 }}>
+                  <Text style={[styles.textType1, { color: Theme.white }]}>
                     Ongoing Classes
                   </Text>
                   <Text
-                    style={[styles.text, {fontSize: 10, color: Theme.white}]}>
+                    style={[styles.text, { fontSize: 10, color: Theme.white }]}>
                     <ActivityIndicator color={'white'} size="small" />
                   </Text>
                 </View>
@@ -1141,14 +1149,14 @@ function Home({navigation, route}: any) {
                     <Image
                       source={require('../../Assets/Images/woman.png')}
                       resizeMode="contain"
-                      style={{width: 60, height: 60}}
+                      style={{ width: 60, height: 60 }}
                     />
-                    <View style={{gap: 5}}>
+                    <View style={{ gap: 5 }}>
                       {/* <Text style={[styles.textType3, { color: Theme.white, }]}>J9003560</Text> */}
-                      <Text style={[styles.textType1, {color: Theme.white}]}>
+                      <Text style={[styles.textType1, { color: Theme.white }]}>
                         {classInProcess?.item?.studentName}
                       </Text>
-                      <Text style={[styles.textType3, {color: Theme.white}]}>
+                      <Text style={[styles.textType3, { color: Theme.white }]}>
                         {classInProcess?.item?.subjectName}
                       </Text>
                     </View>
@@ -1158,7 +1166,7 @@ function Home({navigation, route}: any) {
                     <Image
                       source={require('../../Assets/Images/RightArrow.png')}
                       resizeMode="contain"
-                      style={{width: 25, height: 25}}
+                      style={{ width: 25, height: 25 }}
                     />
                   </View>
                 </View>
@@ -1168,7 +1176,7 @@ function Home({navigation, route}: any) {
             ''
           )}
 
-          <View style={{marginVertical: 15}}>
+          <View style={{ marginVertical: 15 }}>
             <Text style={styles.textType1}>Monthly Summary</Text>
             <View
               style={{
@@ -1176,7 +1184,7 @@ function Home({navigation, route}: any) {
                 justifyContent: 'space-between',
                 marginTop: 10,
               }}>
-              <View style={{width: '49%'}}>
+              <View style={{ width: '49%' }}>
                 <View
                   style={{
                     backgroundColor: Theme.darkGray,
@@ -1203,21 +1211,21 @@ function Home({navigation, route}: any) {
                       resizeMode="contain"
                     />
                   </View>
-                  <View style={{paddingBottom: 15}}>
-                    <Text style={[styles.textType3, {color: 'white'}]}>
+                  <View style={{ paddingBottom: 15 }}>
+                    <Text style={[styles.textType3, { color: 'white' }]}>
                       Earnings
                     </Text>
                     <Text
                       style={[
                         styles.textType1,
-                        {color: 'white', fontSize: 30, lineHeight: 40},
+                        { color: 'white', fontSize: 30, lineHeight: 40 },
                       ]}>
                       RM {cummulativeCommission && cummulativeCommission}
                     </Text>
                     <Text
                       style={[
                         styles.textType3,
-                        {color: Theme.white, fontSize: 12},
+                        { color: Theme.white, fontSize: 12 },
                       ]}>
                       {currentDate}
                     </Text>
@@ -1246,7 +1254,7 @@ function Home({navigation, route}: any) {
                       resizeMode="contain"
                     />
                   </View>
-                  <View style={{margin: 10}}></View>
+                  <View style={{ margin: 10 }}></View>
                   <View
                     style={{
                       paddingBottom: 20,
@@ -1257,7 +1265,7 @@ function Home({navigation, route}: any) {
                     <Text
                       style={[
                         styles.textType1,
-                        {fontSize: 30, lineHeight: 38},
+                        { fontSize: 30, lineHeight: 38 },
                       ]}>
                       {students?.length ? students?.length : '0'}
                     </Text>
@@ -1265,7 +1273,7 @@ function Home({navigation, route}: any) {
                   </View>
                 </View>
               </View>
-              <View style={{width: '49%'}}>
+              <View style={{ width: '49%' }}>
                 <View
                   style={{
                     backgroundColor: Theme.liteBlue,
@@ -1291,12 +1299,12 @@ function Home({navigation, route}: any) {
                       resizeMode="contain"
                     />
                   </View>
-                  <View style={{paddingBottom: 20}}>
+                  <View style={{ paddingBottom: 20 }}>
                     <Text style={[styles.textType3]}>Attended Hours</Text>
                     <Text
                       style={[
                         styles.textType1,
-                        {fontSize: 30, lineHeight: 40},
+                        { fontSize: 30, lineHeight: 40 },
                       ]}>
                       {attendedHours && attendedHours}
                     </Text>
@@ -1324,12 +1332,12 @@ function Home({navigation, route}: any) {
                       resizeMode="contain"
                     />
                   </View>
-                  <View style={{paddingBottom: 20}}>
+                  <View style={{ paddingBottom: 20 }}>
                     <Text style={[styles.textType3]}>Scheduled Hours</Text>
                     <Text
                       style={[
                         styles.textType1,
-                        {fontSize: 30, lineHeight: 40},
+                        { fontSize: 30, lineHeight: 40 },
                       ]}>
                       {schedulesHours && schedulesHours}
                     </Text>
@@ -1342,7 +1350,7 @@ function Home({navigation, route}: any) {
           <Text
             style={[
               styles.textType3,
-              {marginTop: 20, fontWeight: '500', fontSize: 16},
+              { marginTop: 20, fontWeight: '500', fontSize: 16 },
             ]}>
             Upcoming Classes
           </Text>
@@ -1353,7 +1361,7 @@ function Home({navigation, route}: any) {
                 horizontal
                 nestedScrollEnabled
                 showsHorizontalScrollIndicator={false}
-                renderItem={({item, index}: any) => {
+                renderItem={({ item, index }: any) => {
                   const startTime12Hour = convertTo12HourFormat(item.startTime);
                   const endTime12Hour = convertTo12HourFormat(item.endTime);
                   // const formattedDate = convertDateFormat(item.date);
@@ -1373,7 +1381,7 @@ function Home({navigation, route}: any) {
                         borderColor: '#eee',
                         marginBottom: 40,
                       }}
-                      // onPress={() => routeToScheduleScreen(item)}
+                    // onPress={() => routeToScheduleScreen(item)}
                     >
                       <View
                         style={{
@@ -1390,7 +1398,7 @@ function Home({navigation, route}: any) {
                             borderRadius: 50,
                           }}
                         />
-                        <Text style={{color: Theme.black, fontSize: 16}}>
+                        <Text style={{ color: Theme.black, fontSize: 16 }}>
                           {item?.studentName}
                         </Text>
                       </View>
@@ -1403,7 +1411,7 @@ function Home({navigation, route}: any) {
                         {item?.subject_name}
                       </Text>
                       <View>
-                        <Text style={{color: Theme.gray, fontSize: 14}}>
+                        <Text style={{ color: Theme.gray, fontSize: 14 }}>
                           Time - {startTime12Hour} to {endTime12Hour}{' '}
                         </Text>
                         <Text
@@ -1422,8 +1430,8 @@ function Home({navigation, route}: any) {
               />
             </View>
           ) : (
-            <View style={{marginTop: 35}}>
-              <Text style={[styles.textType3, {textAlign: 'center'}]}>
+            <View style={{ marginTop: 35 }}>
+              <Text style={[styles.textType3, { textAlign: 'center' }]}>
                 No UpComming Classes...
               </Text>
             </View>
@@ -1434,10 +1442,10 @@ function Home({navigation, route}: any) {
         Object.keys(homePageBanner).length > 0 &&
         (homePageBanner.tutorStatusCriteria == 'All' ||
           tutorDetails.status == 'verified') && (
-          <View style={{flex: 1}}>
+          <View style={{ flex: 1 }}>
             <Modal
               visible={openPPModal}
-              style={{flex: 1}}
+              style={{ flex: 1 }}
               animationType="fade"
               transparent={true}
               onRequestClose={() => closeBannerModal()}>
@@ -1472,7 +1480,7 @@ function Home({navigation, route}: any) {
                   </TouchableOpacity>
                   {/* <Image source={{uri:}} style={{width:Dimensions.get('screen').width/1.1,height:'80%',}} resizeMode='contain'/> */}
                   <Image
-                    source={{uri: homePageBanner.bannerImage}}
+                    source={{ uri: homePageBanner.bannerImage }}
                     style={{
                       width: Dimensions.get('screen').width / 1,
                       height: '90%',
@@ -1493,7 +1501,7 @@ export default Home;
 const styles = StyleSheet.create({
   container: {
     // flex: 1,
-    height:'100%',
+    height: '100%',
     backgroundColor: Theme.white,
     padding: 15,
   },

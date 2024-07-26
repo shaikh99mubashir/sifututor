@@ -11,7 +11,9 @@ import {
   TouchableOpacity,
   Dimensions,
 } from 'react-native';
-import {Theme} from '../../constant/theme';
+import CustomButton from '../../Component/CustomButton';
+import { Theme } from '../../constant/theme';
+
 
 const {width, height} = Dimensions.get('window');
 
@@ -20,26 +22,76 @@ const COLORS = {primary: 'pink', white: 'black'};
 const slides = [
   {
     id: '1',
-    image: require('../../Assets/Images/students1.jpeg'),
-    title: 'Teach students from your',
-    subtitle: 'Community or nationwide and as ',
-    subtitle2: 'much as you want',
+    image: require('../../Assets/Images/OnBoardingOne.png'),
+    // image2: require('../../Assets/Images/Dot.png'),
+    title: 'Tutor with Confidence',
+    subtitle: 'Share Your Knowledge and ',
+    subtitle2: 'Help Students Succeed',
   },
   {
     id: '2',
-    image: require('../../Assets/Images/students2.jpeg'),
-    title: 'Just Focus On what you do best,',
-    subtitle: 'teach! Let handel all the',
-    subtitle2: 'Billings',
+    image: require('../../Assets/Images/OnBoardingTwo.png'),
+    // image2: require('../../Assets/Images/Dot.png'),
+    title: 'Teach, We Manage Billing!',
+    subtitle: 'Just Focus on What You do Best, Teach!',
+    subtitle2: 'Let us Handle all the Billings',
   },
   {
     id: '3',
-    image: require('../../Assets/Images/students3.jpeg'),
-    title: 'We offer tutors comoetative Pay.',
-    subtitle: 'Earn More With a rewarding',
-    subtitle2: 'carrer as a tutor',
+    image: require('../../Assets/Images/OnBoardingThree.png'),
+    // image2: require('../../Assets/Images/Dot.png'),
+    title: 'Earn More, Teach Better!',
+    subtitle: 'We Offer Tutors Competitive Pay.',
+    subtitle2: 'Earn More with a Rewarding Career as a Tutor',
   },
 ];
+
+const Slide = ({item}: any) => {
+  return (
+    <View style={{alignItems: 'center', marginTop: 20}}>
+      <Text
+        style={[
+          {
+            marginTop: 20,
+            fontFamily: 'Circular Std Medium',
+            color: 'black',
+            fontSize: 22,
+            lineHeight: 24,
+          },
+        ]}>
+        {item?.title}
+      </Text>
+      <Image
+        source={item?.image}
+        style={{height: '50%', width, resizeMode: 'contain', marginTop: 40}}
+      />
+      <View
+        style={{alignItems: 'center', justifyContent: 'center', marginTop: 0}}>
+        <Text
+          style={{
+            fontFamily: 'Circular Std Book',
+            color: 'black',
+            fontSize: 15,
+          }}>
+          {item?.subtitle}
+        </Text>
+      </View>
+      {item?.subtitle2 && (
+        <View style={{alignItems: 'center', justifyContent: 'center'}}>
+          <Text
+            style={{
+              fontFamily: 'Circular Std Book',
+              color: 'black',
+              fontSize: 15,
+            }}>
+            {item?.subtitle2}
+          </Text>
+        </View>
+      )}
+    </View>
+  );
+};
+
 const OnBoarding = ({navigation}: any) => {
   const [currentSlideIndex, setCurrentSlideIndex] = React.useState(0);
   const ref: any = React.useRef();
@@ -48,107 +100,188 @@ const OnBoarding = ({navigation}: any) => {
     const currentIndex = Math.round(contentOffsetX / width);
     setCurrentSlideIndex(currentIndex);
   };
-  const Slide = ({item}: any) => {
-    return (
-      <>
-        <View style={{alignItems: 'center', justifyContent: 'center'}}>
-          <Image
-            source={item?.image}
-            style={{width: width / 1, height: '60%'}}
-            resizeMode="contain"
-          />
-          <View
-            style={{alignItems: 'center', position: 'relative', bottom: -82}}>
-            <Text style={[styles.textType3, {fontSize: 20, fontWeight: '600'}]}>
-              {item?.title}
-            </Text>
-            <Text style={[styles.textType3, {fontSize: 20, fontWeight: '600'}]}>
-              {item?.subtitle}
-            </Text>
-            <Text style={[styles.textType3, {fontSize: 20, fontWeight: '600'}]}>
-              {item?.subtitle2}
-            </Text>
-          </View>
-        </View>
-      </>
-    );
+
+  const goToNextSlide = () => {
+    const nextSlideIndex = currentSlideIndex + 1;
+    if (nextSlideIndex != slides.length) {
+      const offset = nextSlideIndex * width;
+      ref?.current.scrollToOffset({offset});
+      setCurrentSlideIndex(currentSlideIndex + 1);
+    }
+  };
+
+  const skip = () => {
+    const lastSlideIndex = slides.length - 1;
+    const offset = lastSlideIndex * width;
+    ref?.current.scrollToOffset({offset});
+    setCurrentSlideIndex(lastSlideIndex);
   };
 
   const handleDonePress = () => {
     AsyncStorage.setItem('login', 'login');
+    navigation.replace('GetStarted');
+  };
+  const handleLoginPress = () => {
+    // AsyncStorage.setItem('OnBoarding', 'true');
     navigation.replace('Login');
   };
 
   const Footer = () => {
     return (
-      <View>
-        {/* Indicator container */}
-        <View
-          style={{
-            flexDirection: 'row',
-            justifyContent: 'center',
-          }}>
-          {/* Render indicator */}
-          {slides.map((_, index) => (
-            <View
-              key={index}
-              style={[
-                styles.indicator,
-                currentSlideIndex == index && {
-                  backgroundColor: Theme.darkGray,
-                  width: 10,
-                  height: 10,
-                  borderRadius: 50,
-                },
-              ]}
-            />
-          ))}
-        </View>
+      <View style={{marginBottom: Dimensions.get('screen').height /15, marginHorizontal: 20}}>
+        {currentSlideIndex == slides.length - 1 ? (
+          <>
+            <View style={{height: 50, paddingHorizontal: 15, marginBottom: 0,}}>
+              <CustomButton
+                onPress={() => handleDonePress()}
+                btnTitle="Get Started"
+              />
+            </View>
+            <TouchableOpacity
+              activeOpacity={0.8}
+              onPress={() => handleLoginPress()}
+              style={{
+                alignItems: 'center',
+                justifyContent: 'center',
+                marginTop: 20,
+                flexDirection: 'row',
+                gap: 10,
+              }}>
+              <View>
+                <Text
+                  style={{
+                    color: Theme.IronsideGrey,
+                    alignSelf: 'center',
+                    fontSize: 16,
+                    fontFamily: 'Circular Std Medium',
+                  }}>
+                  Already have an Account?
+                </Text>
+              </View>
+              <View style={{borderBottomWidth: 2,
+                    borderBottomColor: Theme.darkGray,}}>
+                <Text
+                  style={{
+                    color: Theme.Dune,
+                    fontWeight: '500',
+                    fontSize: 16,
+                    
+                    fontFamily: 'Circular Std Medium',
+                  }}>
+                  Login
+                </Text>
+              </View>
+            </TouchableOpacity>
+          </>
+        ) : (
+          <View style={{height: 50, marginBottom: 20, paddingHorizontal: 15}}>
+            <CustomButton onPress={goToNextSlide} btnTitle="Next" />
+          </View>
+        )}
+      </View>
+    );
+  };
 
-        <TouchableOpacity
-          activeOpacity={0.8}
-          onPress={() => handleDonePress()}
-          style={{
-            backgroundColor: Theme.lightGray,
-            width: '90%',
-            alignSelf: 'center',
-            borderRadius: 10,
-            flexDirection: 'row',
-            gap: 20,
-            paddingHorizontal: 18,
-            paddingVertical: 15,
-            alignItems: 'center',
-            marginTop: 40,
-            marginBottom: 20,
-          }}>
-          <Image
-            source={require('../../Assets/Images/malalogo.png')}
-            style={{width: 30, height: 30}}
-            resizeMode="contain"
+  const roundedCornerStyle = {
+    borderTopLeftRadius: 18,
+    borderBottomLeftRadius: 18,
+  };
+
+  const roundedEndStyle = {
+    borderTopRightRadius: 18,
+    borderBottomRightRadius: 18,
+    left: -1,
+  };
+
+  const UpperScroll = () => {
+    return (
+      <View
+        style={{
+          flexDirection: 'row',
+          justifyContent: 'center',
+          alignItems: 'center',
+          left: 10,
+        }}>
+        {/* Render indicator */}
+        {slides.map((_, index) => (
+          <View
+            key={index}
+            style={[
+              styles.indicator,
+              index === 2 ? roundedEndStyle : {},
+              currentSlideIndex >= index && {
+                backgroundColor: Theme.darkGray,
+                width: 33,
+                height: 8,
+                borderWidth: 0,
+                ...(index === 0 ? roundedCornerStyle : {}),
+                ...(index === slides.length - 1 ? roundedEndStyle : {}),
+              },
+            ]}
           />
-          <Text style={styles.textType3}>+60</Text>
-          <Text style={styles.textType3}>Enter Your Mobile Number</Text>
-        </TouchableOpacity>
+        ))}
       </View>
     );
   };
 
   return (
-    <View style={{backgroundColor: 'white', height: '100%'}}>
-      {/* <StatusBar backgroundColor={'red'} /> */}
+    <SafeAreaView
+      style={{flex: 1, backgroundColor: Theme.GhostWhite, paddingTop: 20}}>
+      {/* <StatusBar backgroundColor={COLORS.primary} /> */}
+      <View style={{alignItems: 'center', flexDirection: 'row', marginTop: 20}}>
+        <View style={{width: '60%'}}>
+          <View style={{justifyContent: 'flex-end', alignItems: 'flex-end'}}>
+            <UpperScroll />
+            {/* <Image source={require("../../Images/Dot.png")}/> */}
+          </View>
+        </View>
 
+        <View style={{width: '40%'}}>
+          <TouchableOpacity
+            onPress={() => skip()}
+            activeOpacity={0.8}
+            style={{
+              justifyContent: 'flex-end',
+              alignItems: 'flex-end',
+              marginRight: 45,
+            }}>
+            {currentSlideIndex !== slides.length - 1 && (
+              <Text
+                style={{
+                  color: Theme.Dune,
+                  textAlign: 'right',
+                  fontSize: 14,
+                  fontFamily: 'Circular Std Medium',
+                }}>
+                Skip
+              </Text>
+            )}
+          </TouchableOpacity>
+        </View>
+      </View>
+      <View style={{alignItems: 'center'}}>
+        <Text
+          style={{
+            marginTop: 40,
+            color: 'black',
+            fontSize: 20,
+            fontFamily: 'Circular Std Medium',
+            fontWeight: '500',
+          }}>{`${currentSlideIndex + 1}/${slides.length}`}</Text>
+      </View>
       <FlatList
         ref={ref}
         onMomentumScrollEnd={updateCurrentSlideIndex}
         contentContainerStyle={{height: height * 0.75}}
         showsHorizontalScrollIndicator={false}
+        showsVerticalScrollIndicator={false}
         horizontal
         data={slides}
         pagingEnabled
         renderItem={({item}) => <Slide item={item} />}
       />
       <Footer />
-    </View>
+    </SafeAreaView>
   );
 };
 
@@ -157,13 +290,14 @@ const styles = StyleSheet.create({
     color: COLORS.white,
     fontSize: 13,
     marginTop: 10,
+    // maxWidth: '70%',
     textAlign: 'center',
     lineHeight: 23,
   },
   title: {
     color: COLORS.white,
-    fontSize: 18,
-    fontWeight: '600',
+    fontSize: 22,
+    fontWeight: 'bold',
     // marginTop: 20,
     textAlign: 'center',
   },
@@ -173,34 +307,20 @@ const styles = StyleSheet.create({
     resizeMode: 'contain',
   },
   indicator: {
-    height: 10,
-    width: 10,
-    borderRadius: 50,
-    backgroundColor: 'grey',
-    marginHorizontal: 3,
+    height: 8,
+    width: 33,
+    backgroundColor: Theme.lightBlue,
+    // borderLeftWidth:1
   },
   btn: {
     flex: 1,
     height: 50,
-    borderRadius: 5,
-    backgroundColor: 'rgb(0, 0, 95)',
+    // width:360,
+    borderRadius: 30,
+    flexShrink: 0,
+    backgroundColor: '#000',
     justifyContent: 'center',
     alignItems: 'center',
-  },
-  textType1: {
-    fontWeight: '500',
-    fontSize: 24,
-    color: Theme.Dune,
-    fontFamily: 'Circular Std Book',
-    lineHeight: 24,
-    fontStyle: 'normal',
-  },
-  textType3: {
-    color: Theme.Dune,
-    fontWeight: '500',
-    fontSize: 16,
-    fontFamily: 'Circular Std Book',
-    fontStyle: 'normal',
   },
 });
 export default OnBoarding;

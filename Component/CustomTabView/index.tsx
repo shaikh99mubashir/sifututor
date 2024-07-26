@@ -57,11 +57,14 @@ const CustomTabView = (Props: any): any => {
             ,
             borderRadius: 50,
 
-            paddingVertical: 
-            currentTab &&
-            currentTab.some((e: any, i: any) => e.index == 0 && e.selected)
-            ? 15
-            : 10,
+            // paddingVertical: 
+            // currentTab &&
+            // currentTab.some((e: any, i: any) => e.index == 0 && e.selected)
+            // ? 15
+            // : 10,
+            height:45,
+            alignItems:'center',
+            justifyContent:'center',
             
             paddingHorizontal: 
             currentTab &&
@@ -89,6 +92,7 @@ const CustomTabView = (Props: any): any => {
                     ? 'white'
                     : Theme.Dune,
                 // borderBottomWidth: 3,
+                textAlign:'center',
                 fontFamily: 'Circular Std Medium',
                 fontSize:
                 currentTab &&
@@ -111,11 +115,14 @@ const CustomTabView = (Props: any): any => {
                 : '55%'
             ,
             borderRadius: 50,
-            paddingVertical: 
-            currentTab &&
-            currentTab.some((e: any, i: any) => e.index == 0 && e.selected)
-            ? 10
-            : 15,
+            // paddingVertical: 
+            // currentTab &&
+            // currentTab.some((e: any, i: any) => e.index == 0 && e.selected)
+            // ? 10
+            // : 15,
+            height:45,
+            alignItems:'center',
+            justifyContent:'center',
             paddingHorizontal: 
             currentTab &&
             currentTab.some((e: any, i: any) => e.index == 0 && e.selected)
@@ -145,6 +152,7 @@ const CustomTabView = (Props: any): any => {
                     )
                     ? 'white'
                     : Theme.Dune,
+                    textAlign:'center',
                 // borderBottomWidth: 3,
                 fontFamily: 'Circular Std Medium',
                 fontSize:

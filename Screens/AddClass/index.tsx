@@ -27,6 +27,11 @@ import CustomLoader from '../../Component/CustomLoader';
 import AntDesign from 'react-native-vector-icons/AntDesign';
 import DateTimePickerModal from 'react-native-modal-datetime-picker';
 import Toast from 'react-native-toast-message';
+import DeleteIcon from '../../SVGs/DeleteIcon';
+import ScheduleIcon from '../../SVGs/ScheduleIcon';
+import Schedule from '../../SVGs/Schedule';
+import Clock from '../../SVGs/Clock';
+import CustomButton from '../../Component/CustomButton';
 
 function AddClass({navigation}: any) {
   const [student, setStudent] = useState([]);
@@ -46,7 +51,7 @@ function AddClass({navigation}: any) {
   const context = useContext(StudentContext);
   const {students, subjects} = context;
   const {updateStudent} = studentAndSubjectContext;
-
+  
   const [classes, setClasses] = useState<any>([
     {
       tutorID: tutorId,
@@ -291,11 +296,7 @@ function AddClass({navigation}: any) {
             activeOpacity={0.8}
             style={{paddingRight: 15}}
             onPress={() => handleFilterPress(index)}>
-            <Image
-              source={require('../../Assets/Images/delicon.png')}
-              resizeMode="contain"
-              style={{width: 20, height: 20}}
-            />
+            <DeleteIcon/>
           </TouchableOpacity>
         </View>
         <View>
@@ -312,7 +313,7 @@ function AddClass({navigation}: any) {
               flexDirection: 'row',
               justifyContent: 'space-between',
               alignItems: 'center',
-              backgroundColor: Theme.liteBlue,
+              backgroundColor: Theme.white,
               padding: 20,
               marginTop: 5,
               borderRadius: 15,
@@ -329,10 +330,7 @@ function AddClass({navigation}: any) {
             <TouchableOpacity
               activeOpacity={0.8}
               onPress={() => setClassDate('date', index)}>
-              <Image
-                source={require('../../Assets/Images/ScheduleIcon.png')}
-                style={{width: 20, height: 20}}
-              />
+             <Schedule width={22} height={22}/>
             </TouchableOpacity>
           </View>
         </View>
@@ -350,7 +348,7 @@ function AddClass({navigation}: any) {
                 justifyContent: 'space-between',
                 alignItems: 'center',
                 // backgroundColor: '#E6F2FF',
-                backgroundColor: Theme.liteBlue,
+                backgroundColor: Theme.white,
                 padding: 20,
                 marginTop: 5,
                 borderRadius: 15,
@@ -372,10 +370,7 @@ function AddClass({navigation}: any) {
               <TouchableOpacity
                 activeOpacity={0.8}
                 onPress={() => setClassDate('time', index, true)}>
-                <Image
-                  source={require('../../Assets/Images/ClockiconCopy.png')}
-                  style={{width: 20, height: 20}}
-                />
+                <Clock width={22} height={22}/>
               </TouchableOpacity>
             </View>
           </View>
@@ -389,7 +384,7 @@ function AddClass({navigation}: any) {
                 flexDirection: 'row',
                 justifyContent: 'space-between',
                 alignItems: 'center',
-                backgroundColor: Theme.liteBlue,
+                backgroundColor: Theme.white,
                 padding: 20,
                 marginTop: 5,
                 borderRadius: 15,
@@ -401,24 +396,15 @@ function AddClass({navigation}: any) {
                   fontWeight: '500',
                   fontFamily: 'Circular Std Medium',
                 }}>
-                {/* {item?.endTime !== '-'
-                  ? new Date(item?.endTime).toLocaleTimeString([], {
-                      hour: '2-digit',
-                      minute: '2-digit',
-                    })
-                  : '00:00 AM'} */}
                 {endTimeFormatted == 'Invalid Date'
                   ? '00:00 AM'
                   : endTimeFormatted}
               </Text>
               <TouchableOpacity
                 activeOpacity={0.8}
-                // onPress={() => setClassDate('time', index)}
               >
-                <Image
-                  source={require('../../Assets/Images/ClockiconCopy.png')}
-                  style={{width: 20, height: 20}}
-                />
+
+                   <Clock width={22} height={22}/>
               </TouchableOpacity>
             </View>
           </View>
@@ -722,8 +708,7 @@ function AddClass({navigation}: any) {
     setClickedStartTime(false);
   };
   return (
-    <View style={{flex: 1, backgroundColor: Theme.white}}>
-      <View style={{margin: 20}}></View>
+    <View style={{flex: 1, backgroundColor: Theme.GhostWhite}}>
       <Header title={'Add Class'} backBtn navigation={navigation} />
 
       {student && student.length !== 0 ? (
@@ -784,7 +769,7 @@ function AddClass({navigation}: any) {
                   </Text>
                   <View
                     style={{
-                      backgroundColor: Theme.liteBlue,
+                      backgroundColor: Theme.white,
                       padding: 20,
                       borderRadius: 10,
                       marginVertical: 5,
@@ -807,7 +792,21 @@ function AddClass({navigation}: any) {
                 <FlatList data={classes} renderItem={renderClasses} />
               </View>
             </ScrollView>
+            <View style={{margin:10}}></View>
             {MAX_CLASSES > 0 && MAX_CLASSES > classes.length && (
+              <CustomButton backgroundColor={Theme.WhiteSmoke}
+              color={Theme.Black} btnTitle= {classes.length > 0 ? 'Add More Classes' : 'Add Classes'} onPress={() => addClass()}/>
+              
+            )}
+            <View style={{margin:5}}></View>
+             {MAX_CLASSES > 0 && MAX_CLASSES >= classes.length && (
+              <CustomButton btnTitle='Confirm Class'
+              opacity= {classes.length > 0 ? 1 : 0.7}
+              disabled={classes.length === 0}
+              onPress={() => confirmClass()}
+              />
+             )}
+            {/* {MAX_CLASSES > 0 && MAX_CLASSES > classes.length && (
               <View
                 style={{
                   width: '100%',
@@ -835,7 +834,7 @@ function AddClass({navigation}: any) {
                   </Text>
                 </TouchableOpacity>
               </View>
-            )}
+            )} */}
 
             <DateTimePickerModal
               isVisible={isDatePickerVisible}
@@ -856,7 +855,7 @@ function AddClass({navigation}: any) {
               />
             )}
           </View>
-          {MAX_CLASSES > 0 && MAX_CLASSES >= classes.length && (
+          {/* {MAX_CLASSES > 0 && MAX_CLASSES >= classes.length && (
             <View
               style={{
                 width: '100%',
@@ -886,7 +885,7 @@ function AddClass({navigation}: any) {
                 </Text>
               </TouchableOpacity>
             </View>
-          )}
+          )} */}
         </>
       ) : (
         <View style={{justifyContent: 'center', alignItems: 'center', flex: 1}}>
@@ -899,82 +898,44 @@ function AddClass({navigation}: any) {
 
       <CustomLoader visible={loading} />
       <Modal visible={modalVisible} animationType="fade" transparent={true}>
-        <View
+      <View
           style={{
             flex: 1,
             justifyContent: 'center',
-            backgroundColor: 'rgba(0,0,0,0.5)',
+            backgroundColor: 'rgba(0,0,0,0.9)',
           }}>
           <View
             style={[
               styles.modalContainer,
-              {padding: 30, marginHorizontal: 40},
+              {padding: 30, marginHorizontal: 20,},
             ]}>
-            <Text
-              style={{
-                color: Theme.darkGray,
-                fontSize: 18,
-                fontWeight: 'bold',
-                fontFamily: 'Circular Std Medium',
-              }}>
-              Remove this Class?
-            </Text>
+            <Text style={styles.textType1}>Remove this Class?</Text>
+            
+            <View style={{margin: 15}}></View>
             <View
               style={{
-                display: 'flex',
                 flexDirection: 'row',
-                justifyContent: 'center',
-                gap: 10,
-                marginTop: 20,
-                marginBottom: 20,
+                justifyContent: 'space-between',
+                gap: 8,
               }}>
-              <TouchableOpacity
-                onPressIn={() => setCancel(true)}
-                onPressOut={() => setCancel(false)}
-                onPress={CancelButton}
-                activeOpacity={0.8}
-                style={{
-                  borderWidth: 1,
-                  paddingVertical: 5,
-                  borderRadius: 50,
-                  borderColor: Theme.lightGray,
-                  alignItems: 'center',
-                  width: 100,
-                  backgroundColor: cancel ? Theme.darkGray : 'white',
-                }}>
-                <Text
-                  style={{
-                    fontSize: 16,
-                    fontFamily: 'Circular Std Medium',
-                    color: cancel ? 'white' : Theme.darkGray,
-                  }}>
-                  No
-                </Text>
-              </TouchableOpacity>
-              <TouchableOpacity
+              <View style={{width: '48%'}}>
+                <CustomButton
+                  btnTitle="No"
+                  backgroundColor={Theme.WhiteSmoke}
+                  color={Theme.Black}
+                  onPressIn={() => setCancel(true)}
+                  onPressOut={() => setCancel(false)}
+                  onPress={CancelButton}
+                />
+              </View>
+              <View style={{width: '48%'}}>
+                <CustomButton btnTitle="Yes"   
                 onPressIn={() => setApply(true)}
                 onPressOut={() => setApply(false)}
                 onPress={ApplyButton}
-                activeOpacity={0.8}
-                style={{
-                  borderWidth: 1,
-                  paddingVertical: 5,
-                  borderRadius: 50,
-                  borderColor: Theme.lightGray,
-                  alignItems: 'center',
-                  width: 100,
-                  backgroundColor: apply ? 'white' : Theme.darkGray,
-                }}>
-                <Text
-                  style={{
-                    color: apply ? Theme.darkGray : 'white',
-
-                    fontSize: 16,
-                    fontFamily: 'Circular Std Medium',
-                  }}>
-                  Yes
-                </Text>
-              </TouchableOpacity>
+                 />
+                
+              </View>
             </View>
           </View>
         </View>

@@ -30,11 +30,15 @@ import Ionicons from 'react-native-vector-icons/Ionicons';
 import Feather from 'react-native-vector-icons/Feather';
 import FontAwesome from 'react-native-vector-icons/FontAwesome';
 import bannerContext from '../../context/bannerContext';
+import Status from '../Status';
 import filterContext from '../../context/filterContext';
 import CustomLoader from '../../Component/CustomLoader';
-import BackToDashboardModal from '../../Component/BackToDashboardModal';
+import BackToDashboard from '../../Component/BackToDashboard';
 import subscribeToChannel from '../../Component/subscribeToChannel';
+import SubjectIcon from '../../SVGs/SubjectIcon';
 import Toast from 'react-native-toast-message';
+import Level from '../../SVGs/LevelIcon';
+import LevelIcon from '../../SVGs/LevelIcon';
 interface LoginAuth {
   status: Number;
   tutorID: Number;
@@ -44,9 +48,13 @@ function JobTicket({ navigation, route }: any) {
   const focus = useIsFocused();
   const filter = useContext(filterContext);
   const { setCategory, setSubjects, setState, setCity } = filter;
+  let data = route.params;
+
   const bannerCont = useContext(bannerContext);
+
   let { jobTicketBanner, setJobTicketBanner } = bannerCont;
   let loginData: LoginAuth;
+  const [isSearchItems, setIsSearchItems] = useState(false);
   const [loading, setLoading] = useState(true);
   const [refresh, setRefresh] = useState(false);
   const tutor = useContext(TutorDetailsContext);
@@ -70,16 +78,32 @@ function JobTicket({ navigation, route }: any) {
       ...e,
       selected: e.index === index,
     }));
+
+    // Check if the user is switching between the first and second route
+    const switchingFirstToSecond =
+      currentTab[0]?.selected && newTabs[1]?.selected;
+    const switchingSecondToFirst =
+      newTabs[0]?.selected && currentTab[1]?.selected;
+
     setCurrentTab(newTabs);
+
+    // Trigger the refresh when switching between the first and second route
+    // if (switchingFirstToSecond || switchingSecondToFirst) {
+    //   onRefresh();
+    // }
   };
 
   const [openData, setOpenData] = useState<any>([]);
+  const [closeData, setCloseData] = useState<any>([]);
+
   const [appliedData, setAppliedData] = useState([]);
+  const [assignedData, setAssignedData] = useState([]);
   const [refreshing, setRefreshing] = React.useState(false);
 
   const onRefresh = React.useCallback(() => {
     if (!refreshing) {
-      setLoading(true);
+      // setRefreshing(true);
+      // setLoading(true);
       setTimeout(() => {
         setRefreshing(false);
         setOpenPPModal(true);
@@ -89,11 +113,12 @@ function JobTicket({ navigation, route }: any) {
     }
   }, [refresh]);
 
-  const [tutorId, setTutorId] = useState<Number | null>(null);
+  const [tutorId, setTutorId] = useState<Number | null>(null)
 
   const getTutorId = async () => {
     const data: any = await AsyncStorage.getItem('loginAuth');
     loginData = JSON.parse(data);
+
     let { tutorID } = loginData;
     setTutorId(tutorID);
   };
@@ -152,6 +177,7 @@ function JobTicket({ navigation, route }: any) {
       .get(`${Base_Uri}getStates`)
       .then(({ data }) => {
         let { states } = data;
+
         let myStates =
           states &&
           states.length > 0 &&
@@ -199,8 +225,14 @@ function JobTicket({ navigation, route }: any) {
     getStates();
     getCities();
   }, [refreshing]);
-
+  let isVerified = false;
   const checkTutorStatus = async () => {
+    // isVerified = true
+    // if(isVerified){
+    //   setModalVisible(true)
+    // }
+    console.log('tutorId', tutorId);
+
     axios
       .get(`${Base_Uri}getTutorDetailByID/${tutorId}`)
       .then(({ data }) => {
@@ -209,10 +241,12 @@ function JobTicket({ navigation, route }: any) {
         if (data.tutorDetailById == null) {
           AsyncStorage.removeItem('loginAuth');
           navigation.replace('Login');
-          setTutorDetail('');
+          setTutorDetail('')
+          // ToastAndroid.show('Terminated', ToastAndroid.SHORT);
           Toast.show({
             type: 'info',
-            text1: 'Terminated',
+            // text1: 'Request timeout:',
+            text2: `Terminated`,
             position: 'bottom'
           });
           return;
@@ -230,14 +264,11 @@ function JobTicket({ navigation, route }: any) {
           status: tutorDetails?.status,
         };
         updateTutorDetails(details);
-        if (
-          tutorDetailById[0].status.toLowerCase() == 'verified' &&
-          tutorDetailById[0]?.open_dashboard != 'yes'
-        ) {
+        if (tutorDetailById[0].status.toLowerCase() == 'verified' && tutorDetailById[0]?.open_dashboard != 'yes') {
           axios
             .get(`${Base_Uri}api/update_dashboard_status/${tutorId}`)
             .then(({ data }) => {
-              setModalVisible(true);
+              setModalVisible(true)
             })
             .catch((error: any) => {
               console.log('errror========>', error);
@@ -246,11 +277,15 @@ function JobTicket({ navigation, route }: any) {
         }
       })
       .catch(error => {
-        console.log('error', error);
+        // ToastAndroid.show(
+        //   'Internal Server Error getTutorDetailByID ',
+        //   ToastAndroid.SHORT,
+        // );
       });
   };
 
   const getTicketsData = async () => {
+    // setLoading(true);
     let filter: any = await AsyncStorage.getItem('filter');
     if (filter) {
       filter = JSON.parse(filter);
@@ -283,6 +318,10 @@ function JobTicket({ navigation, route }: any) {
         })
         .catch(error => {
           setLoading(false);
+          // ToastAndroid.show(
+          //   'Internal Server Error ticketsAPI1',
+          //   ToastAndroid.SHORT,
+          // );
         });
 
       return;
@@ -298,11 +337,16 @@ function JobTicket({ navigation, route }: any) {
         })
         .catch(error => {
           setLoading(false);
+          // ToastAndroid.show(
+          //   'Internal Server Error ticketsAPI',
+          //   ToastAndroid.SHORT,
+          // );
         });
     }
   };
 
   const getAppliedData = async () => {
+    // setLoading(true)
     let tutorData: any = await AsyncStorage.getItem('loginAuth');
     tutorData = JSON.parse(tutorData);
     let tutor_id = tutorData?.tutorID;
@@ -325,7 +369,11 @@ function JobTicket({ navigation, route }: any) {
           setAppliedData(tutorOffer);
           setLoading(false);
         })
-        .catch(error => {
+        .catch((error) => {
+          // ToastAndroid.show(
+          //   'Internal Server Error getTutorOffers filter DATA',
+          //   ToastAndroid.SHORT,
+          // );
           setLoading(false);
         });
       return;
@@ -339,30 +387,45 @@ function JobTicket({ navigation, route }: any) {
         setLoading(false);
       })
       .catch(error => {
+        // ToastAndroid.show(
+        //   'Internal Server Error getTutorOffers3',
+        //   ToastAndroid.SHORT,
+        // );
         setLoading(false);
       });
   };
 
   useEffect(() => {
     getTutorId();
-  }, [focus]);
+  }, [focus, loading]);
 
   useEffect(() => {
     if (tutorId) {
-      setLoading(true);
+      setLoading(true)
       checkTutorStatus();
       getTicketsData();
       getAppliedData();
+
+      // const intervalId = setInterval(() => {
+      //   checkTutorStatus();
+      //   getTicketsData();
+      //   getAppliedData();
+      // }, 30000); // 60000 milliseconds = 1 minute
+
+      // // Clean up the interval when the component unmounts or dependencies change
+      // return () => clearInterval(intervalId);
     }
   }, [route, refresh, tutorId]);
+
 
   useEffect(() => {
     const unsubscribe = subscribeToChannel({
       channelName: 'tutor-approved',
       eventName: 'App\\Events\\TutorApproved',
       callback: (data: any) => {
+        console.log('Event received:', data);
         checkTutorStatus();
-      },
+      }
     });
 
     return unsubscribe;
@@ -376,7 +439,7 @@ function JobTicket({ navigation, route }: any) {
         console.log('Event received:', data);
         checkTutorStatus();
         getTicketsData();
-      },
+      }
     });
 
     return unsubscribe;
@@ -388,17 +451,30 @@ function JobTicket({ navigation, route }: any) {
       eventName: 'App\\Events\\TutorOffers',
       callback: (data: any) => {
         console.log('Event received:', data);
-        getAppliedData();
+        getAppliedData()
         checkTutorStatus();
-      },
+      }
     });
 
     return unsubscribe;
   }, [focus]);
 
+
   const HandelGoToDashboard = () => {
     setModalVisible(false);
-    navigation.navigate('Home');
+    navigation.navigate('Home')
+    // navigation.reset({
+    //   index: 0,
+    //   routes: [
+    //     {
+    //       name: 'Main', // Change 'Login' to 'Main'
+    //       screen: 'Home',
+    //     },
+    //   ],
+    // });
+  };
+  const checkSearchItems = () => {
+    searchText && foundName.length == 0 && setIsSearchItems(true);
   };
 
   const [foundName, setFoundName] = useState([]);
@@ -440,306 +516,7 @@ function JobTicket({ navigation, route }: any) {
     setFoundName(filteredItems);
   };
 
-  const renderOpenData: any = ({ item }: any) => {
-    return (
-      <>
-        <TouchableOpacity
-          onPress={() => navigation.navigate('OpenDetails', item)}
-          activeOpacity={0.8}
-          style={{
-            borderWidth: 1,
-            borderRadius: 20,
-            marginBottom: 10,
-            padding: 20,
-            borderColor: Theme.lightGray,
-            borderBottomColor: Theme.lightGray,
-            backgroundColor: Theme.white,
-          }}>
-          <View
-            style={{
-              flexDirection: 'row',
-              justifyContent: 'space-between',
-              width: '100%',
-              borderColor: Theme.lightGray,
-            }}>
-            <View>
-              <Text
-                style={[styles.textType3, { fontFamily: 'Circular Std Medium' }]}>
-                {item?.jtuid}
-              </Text>
-              <Text
-                style={[
-                  styles.textType1,
-                  { lineHeight: 30, fontFamily: 'Circular Std Medium' },
-                ]}>
-                RM {item?.price}
-              </Text>
-            </View>
-            <View style={{ alignItems: 'center', justifyContent: 'center' }}>
-              <View
-                style={{
-                  backgroundColor:
-                    item.mode == 'online' ? '#298CFF33' : Theme.lightGreen,
-                  paddingVertical: 5,
-                  paddingHorizontal: 30,
-                  borderRadius: 30,
-                }}>
-                <Text
-                  style={[
-                    styles.textType3,
-                    {
-                      color: item.mode == 'online' ? Theme.darkGray : '#1FC07D',
 
-                      fontFamily: 'Circular Std Medium',
-
-                      textTransform: 'capitalize',
-                    },
-                  ]}>
-                  {item?.mode}
-                </Text>
-              </View>
-            </View>
-          </View>
-          {item?.mode.toLowerCase() == 'physical' && (
-            <View
-              style={{
-                flexDirection: 'row',
-                gap: 5,
-                alignItems: 'center',
-              }}>
-              <Feather name="map-pin" size={18} color={'#003E9C'} />
-              <Text
-                style={[
-                  styles.textType3,
-                  { color: '#003E9C', fontFamily: 'Circular Std Medium' },
-                ]}>
-                {item?.city}
-              </Text>
-            </View>
-          )}
-          <View
-            style={{
-              borderBottomWidth: 2,
-              paddingBottom: 20,
-              borderColor: Theme.lightGray,
-            }}></View>
-          <View
-            style={{
-              paddingVertical: 20,
-              borderBottomWidth: 2,
-              borderBottomColor: Theme.lightGray,
-            }}>
-            <View
-              style={{
-                justifyContent: 'space-between',
-                flexDirection: 'row',
-                alignItems: 'center',
-              }}>
-              <View
-                style={{
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                  flexDirection: 'row',
-                  gap: 8,
-                }}>
-                <AntDesign name="copy1" size={18} color={'#298CFF'} />
-                <Text
-                  style={[
-                    styles.textType3,
-                    {
-                      fontFamily: 'Circular Std Medium',
-                      color: Theme.ironsidegrey1,
-                    },
-                  ]}>
-                  Subject
-                </Text>
-              </View>
-              <Text
-                style={[
-                  styles.textType1,
-                  {
-                    fontSize: 20,
-                    textTransform: 'capitalize',
-                    fontFamily: 'Circular Std Bold',
-                  },
-                ]}>
-                {item?.subject_name}
-              </Text>
-            </View>
-            <View
-              style={{
-                justifyContent: 'space-between',
-                flexDirection: 'row',
-                alignItems: 'center',
-                marginTop: 10,
-              }}>
-              <View
-                style={{
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                  flexDirection: 'row',
-                  gap: 10,
-                }}>
-                <FontAwesome name="user-o" size={18} color={'#298CFF'} />
-                <Text
-                  style={[
-                    styles.textType3,
-                    {
-                      fontFamily: 'Circular Std Medium',
-                      color: Theme.ironsidegrey1,
-                    },
-                  ]}>
-                  Pref. Tutor
-                </Text>
-              </View>
-              <Text
-                style={[
-                  styles.textType1,
-                  {
-                    fontSize: 20,
-                    textTransform: 'capitalize',
-                    fontFamily: 'Circular Std Bold',
-                  },
-                ]}>
-                {item?.tutorPereference}
-              </Text>
-            </View>
-            <View
-              style={{
-                justifyContent: 'space-between',
-                flexDirection: 'row',
-                alignItems: 'center',
-                marginTop: 10,
-              }}>
-              <View
-                style={{
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                  flexDirection: 'row',
-                  gap: 14,
-                }}>
-                <FontAwesome name="level-up" size={18} color={'#298CFF'} />
-                <Text
-                  style={[
-                    styles.textType3,
-                    {
-                      fontFamily: 'Circular Std Medium',
-                      color: Theme.ironsidegrey1,
-                    },
-                  ]}>
-                  Level
-                </Text>
-              </View>
-              <Text
-                style={[
-                  styles.textType1,
-                  {
-                    fontSize: 20,
-                    textTransform: 'capitalize',
-                    fontFamily: 'Circular Std Bold',
-                  },
-                ]}>
-                {item?.categoryName}
-              </Text>
-            </View>
-            <View
-              style={{
-                justifyContent: 'space-between',
-                flexDirection: 'row',
-                alignItems: 'center',
-                marginTop: 10,
-              }}>
-              <View
-                style={{
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                  flexDirection: 'row',
-                  gap: 6,
-                }}>
-                <Ionicons name="recording-sharp" size={18} color={'#298CFF'} />
-                <Text
-                  style={[
-                    styles.textType3,
-                    {
-                      fontFamily: 'Circular Std Medium',
-                      color: Theme.ironsidegrey1,
-                    },
-                  ]}>
-                  Subscription{' '}
-                </Text>
-              </View>
-              <Text
-                style={[
-                  styles.textType1,
-                  {
-                    fontSize: 20,
-                    textTransform: 'capitalize',
-                    fontFamily: 'Circular Std Bold',
-                  },
-                ]}>
-                {item?.subscription}
-              </Text>
-            </View>
-          </View>
-
-          <View style={{ flexDirection: 'row', gap: 10, marginTop: 15 }}>
-            <View
-              style={{
-                backgroundColor: '#E6F2FF',
-                paddingVertical: 10,
-                borderRadius: 10,
-              }}>
-              <View
-                style={{
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                  flexDirection: 'row',
-                  gap: 10,
-                  paddingHorizontal: 10,
-                }}>
-                <AntDesign name="calendar" size={20} color={'#298CFF'} />
-                <Text
-                  style={[
-                    styles.textType3,
-                    {
-                      color: '#298CFF',
-                      textTransform: 'capitalize',
-                      fontFamily: 'Circular Std Medium',
-                    },
-                  ]}>
-                  {item?.classDayType}
-                </Text>
-              </View>
-            </View>
-            <View
-              style={{
-                backgroundColor: '#E6F2FF',
-                paddingVertical: 10,
-                borderRadius: 10,
-                paddingHorizontal: 10,
-              }}>
-              <View
-                style={{
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                  flexDirection: 'row',
-                  gap: 10,
-                }}>
-                <AntDesign name="clockcircleo" size={20} color={'#298CFF'} />
-                <Text
-                  style={[
-                    styles.textType3,
-                    { color: '#298CFF', fontFamily: 'Circular Std Medium' },
-                  ]}>
-                  {item?.classTime}
-                </Text>
-              </View>
-            </View>
-          </View>
-        </TouchableOpacity>
-      </>
-    );
-  };
   const renderCloseData = ({ item }: any) => {
     return (
       <>
@@ -795,33 +572,34 @@ function JobTicket({ navigation, route }: any) {
               flexDirection: 'row',
               justifyContent: 'space-between',
               width: '100%',
+
+
             }}>
             <View>
+              <Text style={[styles.textType3, { fontFamily: 'Circular Std Medium' }]}>{item?.jtuid}</Text>
               <Text
-                style={[styles.textType3, { fontFamily: 'Circular Std Medium' }]}>
-                {item?.jtuid}
-              </Text>
-              <Text style={[styles.textType1, { lineHeight: 30 }]}>
+                style={[
+                  styles.textType1,
+                  { lineHeight: 30, },
+                ]}>
                 RM {item?.price}
               </Text>
+
             </View>
             <View style={{ alignItems: 'center', justifyContent: 'center' }}>
-              <View
-                style={{
-                  backgroundColor:
-                    item.mode == 'online' ? '#298CFF33' : Theme.lightGreen,
-                  paddingVertical: 5,
-                  paddingHorizontal: 30,
-                  borderRadius: 30,
-                }}>
+              <View style={{
+                borderRadius: 30,
+                width: 100,
+                backgroundColor: item.mode == 'online' ? '#298CFF33' : Theme.lightGreen,
+              }}>
                 <Text
                   style={[
                     styles.textType3,
                     {
                       color: item.mode == 'online' ? Theme.darkGray : '#1FC07D',
-
                       fontFamily: 'Circular Std Medium',
-
+                      paddingVertical: 5,
+                      textAlign: 'center',
                       textTransform: 'capitalize',
                     },
                   ]}>
@@ -830,33 +608,25 @@ function JobTicket({ navigation, route }: any) {
               </View>
             </View>
           </View>
-          {item?.mode.toLowerCase() == 'physical' && (
+          {item?.mode.toLowerCase() == 'physical' &&
             <View
               style={{
-                flexDirection: 'row',
-                gap: 10,
-                alignItems: 'center',
+                flexDirection: 'row', gap: 10, alignItems: 'center',
               }}>
-              <Feather name="map-pin" size={18} color={'#298CFF'} />
+              <Feather name="map-pin" size={18} color={Theme.darkGray} />
               <Text
                 style={[
                   styles.textType3,
-                  {
-                    color: '#003E9C',
-                    textTransform: 'capitalize',
-                    fontFamily: 'Circular Std Medium',
-                  },
+                  { color: '#003E9C', textTransform: 'capitalize', fontFamily: 'Circular Std Medium' },
                 ]}>
                 {item?.city}
               </Text>
             </View>
-          )}
-          <View
-            style={{
-              borderBottomWidth: 2,
-              paddingBottom: 20,
-              borderColor: Theme.lightGray,
-            }}></View>
+          }
+          <View style={{
+            borderBottomWidth: 2,
+            paddingBottom: 15, borderColor: Theme.lightGray,
+          }}></View>
           <View
             style={{
               paddingVertical: 20,
@@ -876,26 +646,13 @@ function JobTicket({ navigation, route }: any) {
                   flexDirection: 'row',
                   gap: 10,
                 }}>
-                <AntDesign name="copy1" size={18} color={'#298CFF'} />
-                <Text
-                  style={[
-                    styles.textType3,
-                    {
-                      fontFamily: 'Circular Std Medium',
-                      color: Theme.ironsidegrey1,
-                    },
-                  ]}>
-                  Subject
-                </Text>
+                <SubjectIcon/>
+                <Text style={[styles.textType3, { fontFamily: 'Circular Std Medium', color: Theme.ironsidegrey1 }]}>Subject</Text>
               </View>
               <Text
                 style={[
                   styles.textType1,
-                  {
-                    fontSize: 20,
-                    textTransform: 'capitalize',
-                    fontFamily: 'Circular Std Bold',
-                  },
+                  { fontSize: 20, textTransform: 'capitalize', fontFamily: 'Circular Std Bold' },
                 ]}>
                 {item?.subject_name}
               </Text>
@@ -914,26 +671,13 @@ function JobTicket({ navigation, route }: any) {
                   flexDirection: 'row',
                   gap: 10,
                 }}>
-                <FontAwesome name="user-o" size={18} color={'#298CFF'} />
-                <Text
-                  style={[
-                    styles.textType3,
-                    {
-                      fontFamily: 'Circular Std Medium',
-                      color: Theme.ironsidegrey1,
-                    },
-                  ]}>
-                  Pref. Tutor
-                </Text>
+                <FontAwesome name="user-o" size={18} color={Theme.darkGray} />
+                <Text style={[styles.textType3, { fontFamily: 'Circular Std Medium', color: Theme.ironsidegrey1 }]}>Pref. Tutor</Text>
               </View>
               <Text
                 style={[
                   styles.textType1,
-                  {
-                    fontSize: 20,
-                    textTransform: 'capitalize',
-                    fontFamily: 'Circular Std Medium',
-                  },
+                  { fontSize: 20, textTransform: 'capitalize', fontFamily: 'Circular Std Medium' },
                 ]}>
                 {item?.tutorPereference}
               </Text>
@@ -952,26 +696,13 @@ function JobTicket({ navigation, route }: any) {
                   flexDirection: 'row',
                   gap: 14,
                 }}>
-                <FontAwesome name="level-up" size={18} color={'#298CFF'} />
-                <Text
-                  style={[
-                    styles.textType3,
-                    {
-                      fontFamily: 'Circular Std Medium',
-                      color: Theme.ironsidegrey1,
-                    },
-                  ]}>
-                  Level
-                </Text>
+                <FontAwesome name="level-up" size={18} color={Theme.darkGray} />
+                <Text style={[styles.textType3, { fontFamily: 'Circular Std Medium', color: Theme.ironsidegrey1 }]}>Level</Text>
               </View>
               <Text
                 style={[
                   styles.textType1,
-                  {
-                    fontSize: 20,
-                    textTransform: 'capitalize',
-                    fontFamily: 'Circular Std Medium',
-                  },
+                  { fontSize: 20, textTransform: 'capitalize', fontFamily: 'Circular Std Medium' },
                 ]}>
                 {item?.categoryName}
               </Text>
@@ -990,26 +721,13 @@ function JobTicket({ navigation, route }: any) {
                   flexDirection: 'row',
                   gap: 6,
                 }}>
-                <Ionicons name="recording-sharp" size={18} color={'#298CFF'} />
-                <Text
-                  style={[
-                    styles.textType3,
-                    {
-                      fontFamily: 'Circular Std Medium',
-                      color: Theme.ironsidegrey1,
-                    },
-                  ]}>
-                  Subscription{' '}
-                </Text>
+                <Ionicons name="recording-sharp" size={18} color={Theme.darkGray} />
+                <Text style={[styles.textType3, { fontFamily: 'Circular Std Medium', color: Theme.ironsidegrey1 }]}>Subscription </Text>
               </View>
               <Text
                 style={[
                   styles.textType1,
-                  {
-                    fontSize: 20,
-                    textTransform: 'capitalize',
-                    fontFamily: 'Circular Std Bold',
-                  },
+                  { fontSize: 20, textTransform: 'capitalize', fontFamily: 'Circular Std Bold' },
                 ]}>
                 {item?.subscription}
               </Text>
@@ -1031,15 +749,11 @@ function JobTicket({ navigation, route }: any) {
                   gap: 10,
                   paddingHorizontal: 10,
                 }}>
-                <AntDesign name="calendar" size={20} color={'#298CFF'} />
+                <AntDesign name="calendar" size={20} color={Theme.darkGray} />
                 <Text
                   style={[
                     styles.textType3,
-                    {
-                      color: '#298CFF',
-                      textTransform: 'capitalize',
-                      fontFamily: 'Circular Std Medium',
-                    },
+                    { color: Theme.darkGray, textTransform: 'capitalize', fontFamily: 'Circular Std Medium' },
                   ]}>
                   {item?.classDayType}
                 </Text>
@@ -1059,15 +773,11 @@ function JobTicket({ navigation, route }: any) {
                   flexDirection: 'row',
                   gap: 10,
                 }}>
-                <AntDesign name="clockcircleo" size={20} color={'#298CFF'} />
+                <AntDesign name="clockcircleo" size={20} color={Theme.darkGray} />
                 <Text
                   style={[
                     styles.textType3,
-                    {
-                      color: '#298CFF',
-                      textTransform: 'capitalize',
-                      fontFamily: 'Circular Std Medium',
-                    },
+                    { color: Theme.darkGray, textTransform: 'capitalize', fontFamily: 'Circular Std Medium' },
                   ]}>
                   {item?.classTime}
                 </Text>
@@ -1080,75 +790,654 @@ function JobTicket({ navigation, route }: any) {
   };
 
   const firstRoute = useCallback(() => {
-    return (
-      <View style={{ marginVertical: 20, marginBottom: 10 }}>
-        {/* Search */}
-        <View style={{ justifyContent: 'center', alignItems: 'center' }}>
-          <View
-            style={{
-              width: '100%',
-              backgroundColor: Theme.lightGray,
-              borderRadius: 10,
-              display: 'flex',
-              flexDirection: 'row',
-              alignItems: 'center',
-              paddingVertical: 4,
-              paddingHorizontal: 15,
-              marginBottom: 15,
-              gap: 10,
-            }}>
-            <TouchableOpacity onPress={() => navigation}>
-              <Image
-                source={require('../../Assets/Images/search.png')}
-                style={{ width: 15, height: 15 }}
-              />
-            </TouchableOpacity>
-            <TextInput
-              placeholder="Search"
-              placeholderTextColor="black"
-              onChangeText={e => searchOpen(e)}
-              style={{
-                width: '90%',
-                padding: 8,
-                color: 'black',
-                fontFamily: 'Circular Std Book',
-                fontSize: 16,
-              }}
-            />
-          </View>
-        </View>
+    const data = [
+      { id: '1', title: 'All', jtuid: 'J9003428', mode: 'online' },
+      { id: '2', title: 'Biology', jtuid: 'J9003428', mode: 'Physical' },
+      { id: '3', title: 'Mathematics', jtuid: 'J9003428', mode: 'online' },
+      { id: '4', title: 'Bahasa Melayu', jtuid: 'J9003428', mode: 'online' },
+      { id: '5', title: 'English ', jtuid: 'J9003428', mode: 'online' },
+    ];
+    const [selectedJT, setSelectedJT] = useState(0)
+    const handelJobTicketPress = (item: any) => {
+      setSelectedJT(item.id === selectedJT ? null : item.id);
+      navigation.navigate('TicketsDetails', item)
+    }
 
+    // const [selectedItem, setSelectedItem] = useState(openData[0].id);
+    const [selectedItem, setSelectedItem] = useState<string | null>('All');
+
+    const uniqueSubjects = [
+      { id: 0, subject_name: 'All' }, // Adding 'All' as the first item
+      ...Array.from(new Set(openData.map((subject:any) => subject.subject_name))).map((subjectName:any) => {
+        return openData.find((subject:any) => subject.subject_name === subjectName);
+      }).filter(Boolean)
+    ];
+
+    
+    const renderSubject = ({ item }: any) => {
+      
+      const isSelected = selectedItem === item.subject_name;
+
+      return (
+        <TouchableOpacity
+          onPress={() => setSelectedItem(item.subject_name)}
+          style={{
+            paddingHorizontal: 15,
+            height: 30,
+            borderBottomWidth: isSelected ? 3 : 2,
+            borderBottomColor: isSelected ? Theme.darkGray : Theme.shinyGrey,
+            marginTop: 20,
+          }}>
+          <Text style={[styles.textType3, { color: isSelected ? Theme.darkGray : 'black', }]}>
+          {item.subject_name === 'All' ? 'All' : item.subject_name}
+          </Text>
+        </TouchableOpacity>
+      );
+    };
+
+   
+    
+
+    const renderTicketData: any = ({ item }: any) => {
+
+      return (
+        <>
+          <TouchableOpacity
+            onPress={() => navigation.navigate('OpenDetails', item)}
+            activeOpacity={0.8}
+            style={{
+              borderWidth: 1,
+              borderRadius: 20,
+              marginBottom: 10,
+              padding: 20,
+              borderColor: Theme.lightGray,
+              borderBottomColor: Theme.lightGray,
+              backgroundColor: Theme.white,
+            }}>
+            <View
+              style={{
+                flexDirection: 'row',
+                justifyContent: 'space-between',
+                width: '100%',
+                borderColor: Theme.lightGray,
+              }}>
+              <View>
+                <Text style={[styles.textType3, { fontFamily: 'Circular Std Medium' }]}>{item?.jtuid}</Text>
+                <Text style={[styles.textType1, { lineHeight: 25, fontFamily: 'Circular Std Medium' }]}>
+                  RM {item?.price}
+                </Text>
+
+              </View>
+              <View style={{ alignItems: 'center', justifyContent: 'center' }}>
+                <View style={{
+                  borderRadius: 30,
+                  width: 100,
+                  backgroundColor: item.mode == 'online' ? '#298CFF33' : Theme.lightGreen,
+                }}>
+                  <Text
+                    style={[
+                      styles.textType3,
+                      {
+                        color: item.mode == 'online' ? Theme.darkGray : '#1FC07D',
+                        fontFamily: 'Circular Std Medium',
+                        paddingVertical: 5,
+                        textAlign: 'center',
+                        textTransform: 'capitalize',
+                      },
+                    ]}>
+                    {item?.mode}
+                  </Text>
+                </View>
+              </View>
+            </View>
+            {item?.mode.toLowerCase() == 'physical' &&
+              <View
+                style={{
+                  flexDirection: 'row', gap: 5, alignItems: 'center',
+                }}>
+                <Feather name="map-pin" size={18} color={'#003E9C'} />
+                <Text style={[styles.textType3, { color: '#003E9C', fontFamily: 'Circular Std Medium' }]}>
+                  {item?.city}
+                </Text>
+              </View>
+            }
+            <View style={{
+              borderBottomWidth: 2,
+              paddingBottom: 15, borderColor: Theme.lightGray,
+            }}></View>
+            <View
+              style={{
+                paddingVertical: 20,
+                borderBottomWidth: 2,
+                borderBottomColor: Theme.lightGray,
+              }}>
+              <View
+                style={{
+                  justifyContent: 'space-between',
+                  flexDirection: 'row',
+                  alignItems: 'center',
+                }}>
+                <View
+                  style={{
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    flexDirection: 'row',
+                    gap: 8,
+                  }}>
+                  <SubjectIcon />
+                  <Text style={[styles.textType3, { fontFamily: 'Circular Std Medium', color: Theme.ironsidegrey1 }]}>Subject</Text>
+                </View>
+                <Text
+                  style={[
+                    styles.textType1,
+                    { fontSize: 18, textTransform: 'capitalize', fontFamily: 'Circular Std Bold' },
+                  ]}>
+                  {item?.subject_name}
+                </Text>
+              </View>
+              <View
+                style={{
+                  justifyContent: 'space-between',
+                  flexDirection: 'row',
+                  alignItems: 'center',
+                  marginTop: 10,
+                }}>
+                <View
+                  style={{
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    flexDirection: 'row',
+                    gap: 10,
+                  }}>
+                  <FontAwesome name="user-o" size={18} color={Theme.darkGray} />
+                  <Text style={[styles.textType3, { fontFamily: 'Circular Std Medium', color: Theme.ironsidegrey1 }]}>Pref. Tutor</Text>
+                </View>
+                <Text
+                  style={[
+                    styles.textType1,
+                    { fontSize: 20, textTransform: 'capitalize', fontFamily: 'Circular Std Bold' },
+                  ]}>
+                  {item?.tutorPereference}
+                </Text>
+              </View>
+              <View
+                style={{
+                  justifyContent: 'space-between',
+                  flexDirection: 'row',
+                  alignItems: 'center',
+                  marginTop: 10,
+                }}>
+                <View
+                  style={{
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    flexDirection: 'row',
+                    gap: 14,
+                  }}>
+                  <LevelIcon/>
+                  <Text style={[styles.textType3, { fontFamily: 'Circular Std Medium', color: Theme.ironsidegrey1 }]}>Level</Text>
+                </View>
+                <Text
+                  style={[
+                    styles.textType1,
+                    { fontSize: 20, textTransform: 'capitalize', fontFamily: 'Circular Std Bold' },
+                  ]}>
+                  {item?.categoryName}
+                </Text>
+              </View>
+              <View
+                style={{
+                  justifyContent: 'space-between',
+                  flexDirection: 'row',
+                  alignItems: 'center',
+                  marginTop: 10,
+                }}>
+                <View
+                  style={{
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    flexDirection: 'row',
+                    gap: 6,
+                  }}>
+                  <Ionicons name="recording-sharp" size={18} color={Theme.darkGray} />
+                  <Text style={[styles.textType3, { fontFamily: 'Circular Std Medium', color: Theme.ironsidegrey1 }]}>Subscription </Text>
+                </View>
+                <Text
+                  style={[
+                    styles.textType1,
+                    { fontSize: 20, textTransform: 'capitalize', fontFamily: 'Circular Std Bold' },
+                  ]}>
+                  {item?.subscription}
+                </Text>
+              </View>
+            </View>
+
+            <View style={{ flexDirection: 'row', gap: 10, marginTop: 15 }}>
+              <View
+                style={{
+                  backgroundColor: '#E6F2FF',
+                  paddingVertical: 10,
+                  borderRadius: 10,
+                }}>
+                <View
+                  style={{
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    flexDirection: 'row',
+                    gap: 10,
+                    paddingHorizontal: 10,
+                  }}>
+                  <AntDesign name="calendar" size={20} color={Theme.darkGray} />
+                  <Text
+                    style={[
+                      styles.textType3,
+                      { color: Theme.darkGray, textTransform: 'capitalize', fontFamily: 'Circular Std Medium' },
+                    ]}>
+                    {item?.classDayType}
+                  </Text>
+                </View>
+              </View>
+              <View
+                style={{
+                  backgroundColor: '#E6F2FF',
+                  paddingVertical: 10,
+                  borderRadius: 10,
+                  paddingHorizontal: 10,
+                }}>
+                <View
+                  style={{
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    flexDirection: 'row',
+                    gap: 10,
+                  }}>
+                  <AntDesign name="clockcircleo" size={20} color={Theme.darkGray} />
+                  <Text style={[styles.textType3, { color: Theme.darkGray, fontFamily: 'Circular Std Medium' }]}>
+                    {item?.classTime}
+                  </Text>
+                </View>
+              </View>
+            </View>
+          </TouchableOpacity>
+        </>
+      );
+    };
+
+    return (
+      <View style={{ flex: 1 }}>
         {openData.length > 0 ? (
-          <View>
-            <FlatList
-              data={searchText && foundName.length > 0 ? foundName : openData}
-              renderItem={renderOpenData}
-              scrollEnabled={true}
-              nestedScrollEnabled={true}
-              keyExtractor={(items: any, index: number): any => index}
-            />
-          </View>
+          <>
+        <FlatList
+          data={uniqueSubjects}
+          renderItem={renderSubject}
+          keyExtractor={(items: any, index: number): any => index}
+          horizontal
+          showsHorizontalScrollIndicator={false}
+          />
+        <View style={{ marginTop: 20 }}></View>
+        <FlatList
+          data={selectedItem === 'All' ? openData : openData.filter((item:any) => item.subject_name === selectedItem)}
+          renderItem={renderTicketData}
+          keyExtractor={(items: any, index: number): any => index}
+          showsHorizontalScrollIndicator={false}
+          />
+          </>
         ) : (
-          <View style={{ justifyContent: 'center', alignItems: 'center' }}>
-            <Image
+           <View style={{ justifyContent: 'center', alignItems: 'center' }}>
+             <Image
               source={require('../../Assets/Images/nojobticketavailable.png')}
               style={{ width: 300, height: 300 }}
             />
           </View>
         )}
+        <View style={{ marginBottom: 50 }}></View>
       </View>
     );
   }, [openData, searchText, foundName, refreshing]);
+  // const firstRoute = useCallback(() => {
+
+  //   const data = [
+  //     { id: '1', title: 'All', jtuid: 'J9003428', mode: 'online' },
+  //     { id: '2', title: 'Biology', jtuid: 'J9003428', mode: 'Physical' },
+  //     { id: '3', title: 'Mathematics', jtuid: 'J9003428', mode: 'online' },
+  //     { id: '4', title: 'Bahasa Melayu', jtuid: 'J9003428', mode: 'online' },
+  //     { id: '5', title: 'English ', jtuid: 'J9003428', mode: 'online' },
+  //   ];
+  //   const [selectedJT, setSelectedJT] = useState(0)
+  //   const handelJobTicketPress = (item: any) => {
+  //     setSelectedJT(item.id === selectedJT ? null : item.id);
+  //     navigation.navigate('TicketsDetails', item)
+  //   }
+
+  //   const [selectedItem, setSelectedItem] = useState(data[0].id);
+  //   const renderSubject = ({ item }: any) => {
+  //     const isSelected = selectedItem === item.id;
+
+  //     return (
+  //       <TouchableOpacity
+  //         onPress={() => setSelectedItem(item.id)}
+  //         style={{
+  //           paddingHorizontal: 15,
+  //           height: 30,
+  //           borderBottomWidth: isSelected ? 3 : 2,
+  //           borderBottomColor: isSelected ? Theme.darkGray : Theme.shinyGrey,
+  //           marginTop: 20,
+  //         }}>
+  //         <Text style={[styles.textType3, { color: isSelected ? Theme.darkGray : 'black', }]}>{item.title}</Text>
+  //       </TouchableOpacity>
+  //     );
+  //   };
+
+  //   const renderOpenData: any = ({ item }: any) => {
+
+  //     return (
+  //       <>
+  //         <TouchableOpacity
+  //           onPress={() => navigation.navigate('OpenDetails', item)}
+  //           activeOpacity={0.8}
+  //           style={{
+  //             borderWidth: 1,
+  //             borderRadius: 20,
+  //             marginBottom: 10,
+  //             padding: 20,
+  //             borderColor: Theme.lightGray,
+  //             borderBottomColor: Theme.lightGray,
+  //             backgroundColor: Theme.white,
+  //           }}>
+  //           <View
+  //             style={{
+  //               flexDirection: 'row',
+  //               justifyContent: 'space-between',
+  //               width: '100%',
+  //               borderColor: Theme.lightGray,
+  //             }}>
+  //             <View>
+  //               <Text style={[styles.textType3, { fontFamily: 'Circular Std Medium' }]}>{item?.jtuid}</Text>
+  //               <Text style={[styles.textType1, { lineHeight: 25, fontFamily: 'Circular Std Medium' }]}>
+  //                 RM {item?.price}
+  //               </Text>
+
+  //             </View>
+  //             <View style={{ alignItems: 'center', justifyContent: 'center' }}>
+  //               <View style={{
+  //                 borderRadius: 30,
+  //                 width: 100,
+  //                 backgroundColor: item.mode == 'online' ? '#298CFF33' : Theme.lightGreen,
+  //               }}>
+  //                 <Text
+  //                   style={[
+  //                     styles.textType3,
+  //                     {
+  //                       color: item.mode == 'online' ? Theme.darkGray : '#1FC07D',
+  //                       fontFamily: 'Circular Std Medium',
+  //                       paddingVertical: 5,
+  //                       textAlign: 'center',
+  //                       textTransform: 'capitalize',
+  //                     },
+  //                   ]}>
+  //                   {item?.mode}
+  //                 </Text>
+  //               </View>
+  //             </View>
+  //           </View>
+  //           {item?.mode.toLowerCase() == 'physical' &&
+  //             <View
+  //               style={{
+  //                 flexDirection: 'row', gap: 5, alignItems: 'center',
+  //               }}>
+  //               <Feather name="map-pin" size={18} color={'#003E9C'} />
+  //               <Text style={[styles.textType3, { color: '#003E9C', fontFamily: 'Circular Std Medium' }]}>
+  //                 {item?.city}
+  //               </Text>
+  //             </View>
+  //           }
+  //           <View style={{
+  //             borderBottomWidth: 2,
+  //             paddingBottom: 15, borderColor: Theme.lightGray,
+  //           }}></View>
+  //           <View
+  //             style={{
+  //               paddingVertical: 20,
+  //               borderBottomWidth: 2,
+  //               borderBottomColor: Theme.lightGray,
+  //             }}>
+  //             <View
+  //               style={{
+  //                 justifyContent: 'space-between',
+  //                 flexDirection: 'row',
+  //                 alignItems: 'center',
+  //               }}>
+  //               <View
+  //                 style={{
+  //                   alignItems: 'center',
+  //                   justifyContent: 'center',
+  //                   flexDirection: 'row',
+  //                   gap: 8,
+  //                 }}>
+  //                 <SubjectIcon />
+  //                 <Text style={[styles.textType3, { fontFamily: 'Circular Std Medium', color: Theme.ironsidegrey1 }]}>Subject</Text>
+  //               </View>
+  //               <Text
+  //                 style={[
+  //                   styles.textType1,
+  //                   { fontSize: 18, textTransform: 'capitalize', fontFamily: 'Circular Std Bold' },
+  //                 ]}>
+  //                 {item?.subject_name}
+  //               </Text>
+  //             </View>
+  //             <View
+  //               style={{
+  //                 justifyContent: 'space-between',
+  //                 flexDirection: 'row',
+  //                 alignItems: 'center',
+  //                 marginTop: 10,
+  //               }}>
+  //               <View
+  //                 style={{
+  //                   alignItems: 'center',
+  //                   justifyContent: 'center',
+  //                   flexDirection: 'row',
+  //                   gap: 10,
+  //                 }}>
+  //                 <FontAwesome name="user-o" size={18} color={Theme.darkGray} />
+  //                 <Text style={[styles.textType3, { fontFamily: 'Circular Std Medium', color: Theme.ironsidegrey1 }]}>Pref. Tutor</Text>
+  //               </View>
+  //               <Text
+  //                 style={[
+  //                   styles.textType1,
+  //                   { fontSize: 20, textTransform: 'capitalize', fontFamily: 'Circular Std Bold' },
+  //                 ]}>
+  //                 {item?.tutorPereference}
+  //               </Text>
+  //             </View>
+  //             <View
+  //               style={{
+  //                 justifyContent: 'space-between',
+  //                 flexDirection: 'row',
+  //                 alignItems: 'center',
+  //                 marginTop: 10,
+  //               }}>
+  //               <View
+  //                 style={{
+  //                   alignItems: 'center',
+  //                   justifyContent: 'center',
+  //                   flexDirection: 'row',
+  //                   gap: 14,
+  //                 }}>
+  //                 <FontAwesome name="level-up" size={18} color={Theme.darkGray} />
+  //                 <Text style={[styles.textType3, { fontFamily: 'Circular Std Medium', color: Theme.ironsidegrey1 }]}>Level</Text>
+  //               </View>
+  //               <Text
+  //                 style={[
+  //                   styles.textType1,
+  //                   { fontSize: 20, textTransform: 'capitalize', fontFamily: 'Circular Std Bold' },
+  //                 ]}>
+  //                 {item?.categoryName}
+  //               </Text>
+  //             </View>
+  //             <View
+  //               style={{
+  //                 justifyContent: 'space-between',
+  //                 flexDirection: 'row',
+  //                 alignItems: 'center',
+  //                 marginTop: 10,
+  //               }}>
+  //               <View
+  //                 style={{
+  //                   alignItems: 'center',
+  //                   justifyContent: 'center',
+  //                   flexDirection: 'row',
+  //                   gap: 6,
+  //                 }}>
+  //                 <Ionicons name="recording-sharp" size={18} color={Theme.darkGray} />
+  //                 <Text style={[styles.textType3, { fontFamily: 'Circular Std Medium', color: Theme.ironsidegrey1 }]}>Subscription </Text>
+  //               </View>
+  //               <Text
+  //                 style={[
+  //                   styles.textType1,
+  //                   { fontSize: 20, textTransform: 'capitalize', fontFamily: 'Circular Std Bold' },
+  //                 ]}>
+  //                 {item?.subscription}
+  //               </Text>
+  //             </View>
+  //           </View>
+
+  //           <View style={{ flexDirection: 'row', gap: 10, marginTop: 15 }}>
+  //             <View
+  //               style={{
+  //                 backgroundColor: '#E6F2FF',
+  //                 paddingVertical: 10,
+  //                 borderRadius: 10,
+  //               }}>
+  //               <View
+  //                 style={{
+  //                   alignItems: 'center',
+  //                   justifyContent: 'center',
+  //                   flexDirection: 'row',
+  //                   gap: 10,
+  //                   paddingHorizontal: 10,
+  //                 }}>
+  //                 <AntDesign name="calendar" size={20} color={Theme.darkGray} />
+  //                 <Text
+  //                   style={[
+  //                     styles.textType3,
+  //                     { color: Theme.darkGray, textTransform: 'capitalize', fontFamily: 'Circular Std Medium' },
+  //                   ]}>
+  //                   {item?.classDayType}
+  //                 </Text>
+  //               </View>
+  //             </View>
+  //             <View
+  //               style={{
+  //                 backgroundColor: '#E6F2FF',
+  //                 paddingVertical: 10,
+  //                 borderRadius: 10,
+  //                 paddingHorizontal: 10,
+  //               }}>
+  //               <View
+  //                 style={{
+  //                   alignItems: 'center',
+  //                   justifyContent: 'center',
+  //                   flexDirection: 'row',
+  //                   gap: 10,
+  //                 }}>
+  //                 <AntDesign name="clockcircleo" size={20} color={Theme.darkGray} />
+  //                 <Text style={[styles.textType3, { color: Theme.darkGray, fontFamily: 'Circular Std Medium' }]}>
+  //                   {item?.classTime}
+  //                 </Text>
+  //               </View>
+  //             </View>
+  //           </View>
+  //         </TouchableOpacity>
+  //       </>
+  //     );
+  //   };
+  //   return (
+  //     <View style={{ marginVertical: 20, marginBottom: 0,backgroundColor:'pink' }}>
+  //       {/* Search */}
+  //       {/* <View style={{ justifyContent: 'center', alignItems: 'center' }}>
+  //         <View
+  //           style={{
+  //             width: '100%',
+  //             backgroundColor: Theme.white,
+  //             borderRadius: 10,
+  //             display: 'flex',
+  //             flexDirection: 'row',
+  //             alignItems: 'center',
+  //             paddingVertical: 4,
+  //             paddingHorizontal: 15,
+  //             marginBottom: 15,
+  //             gap: 10,
+  //           }}>
+  //           <TouchableOpacity onPress={() => navigation}>
+  //             <Image
+  //               source={require('../../Assets/Images/search.png')}
+  //               style={{ width: 15, height: 15 }}
+  //             />
+  //           </TouchableOpacity>
+  //           <TextInput
+  //             placeholder="Search"
+  //             placeholderTextColor="black"
+  //             onChangeText={e => searchOpen(e)}
+  //             style={{
+  //               width: '90%',
+  //               padding: 8,
+  //               color: 'black',
+  //               fontFamily: 'Circular Std Book',
+  //               fontSize: 16,
+  //             }}
+  //           />
+  //         </View>
+  //       </View> */}
+
+  //       {openData.length > 0 ? (
+  //         <View style={{flex:1}}>
+  //           {/* <FlatList
+  //             data={data}
+  //             renderItem={renderSubject}
+  //             keyExtractor={(item) => item.id.toString()}
+  //             horizontal
+  //             showsHorizontalScrollIndicator={false}
+  //           /> */}
+  //           {/* <View style={{ marginTop: 20 }}></View> */}
+  //           {openData.map((e:any,i:number)=>{
+  //             return(
+  //               <TouchableOpacity style={{flexDirection:'column'}}>
+  //               <Text>{e.subject_name}</Text>
+  //               </TouchableOpacity>
+  //             )
+  //           })}
+
+  //           <FlatList
+  //             // data={searchText && foundName.length > 0 ? foundName : openData}
+  //             data={openData}
+  //             renderItem={renderOpenData}
+  //             scrollEnabled={true}
+  //             nestedScrollEnabled={true}
+  //             keyExtractor={(items: any, index: number): any => index}
+  //           />
+  //         </View>
+  //       ) : (
+  //         <View style={{ justifyContent: 'center', alignItems: 'center' }}>
+  //           <Image
+  //             source={require('../../Assets/Images/nojobticketavailable.png')}
+  //             style={{ width: 300, height: 300 }}
+  //           />
+  //         </View>
+  //       )}
+  //     </View>
+  //   );
+  // }, [openData, searchText, foundName, refreshing]);
 
   const secondRoute = useCallback(() => {
     return (
       <View style={{ marginVertical: 20, marginBottom: 10 }}>
         {/* Search */}
-        <View style={{ justifyContent: 'center', alignItems: 'center' }}>
+        {/* <View style={{ justifyContent: 'center', alignItems: 'center' }}>
           <View
             style={{
               width: '100%',
-              backgroundColor: Theme.lightGray,
+              backgroundColor: Theme.white,
               borderRadius: 10,
               display: 'flex',
               flexDirection: 'row',
@@ -1170,13 +1459,12 @@ function JobTicket({ navigation, route }: any) {
               />
             </TouchableOpacity>
           </View>
-        </View>
+        </View> */}
         {appliedData && appliedData.length > 0 ? (
           <View>
+
             <FlatList
-              data={
-                searchText && foundName.length > 0 ? foundName : appliedData
-              }
+              data={searchText && foundName.length > 0 ? foundName : appliedData}
               renderItem={renderCloseData}
               nestedScrollEnabled={true}
               keyExtractor={(items: any, index: number): any => index}
@@ -1249,30 +1537,24 @@ function JobTicket({ navigation, route }: any) {
   };
 
   return (
-    <View style={{ backgroundColor: Theme.white, height: '100%' }}>
-      <View style={{ margin: 20 }}></View>
+    <View style={{ backgroundColor: Theme.GhostWhite, height: '100%', paddingHorizontal: 25 }}>
       <Header
         tab={currentTab}
-        title="Job Ticket"
+        title="Job Tickets"
         filter
         navigation={navigation}
       />
-
       <ScrollView
-        refreshControl={
-          <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
-        }
         showsVerticalScrollIndicator={false}
         nestedScrollEnabled>
-        <View style={{ paddingHorizontal: 15, marginTop: 20 }}>
+        <View style={{ paddingHorizontal: 0, marginTop: 20 }}>
           <CustomTabView
             currentTab={currentTab}
             firstRoute={firstRoute}
             secondRoute={secondRoute}
             activateTab={activateTab}
             firstRouteTitle="Latest"
-            secondRouteTitle={`Applied (${appliedData.length ? appliedData.length : 0
-              })`}
+            secondRouteTitle={`Applied (${appliedData.length ? appliedData.length : 0})`}
           />
         </View>
       </ScrollView>
@@ -1296,6 +1578,7 @@ function JobTicket({ navigation, route }: any) {
                 <View
                   style={{
                     backgroundColor: 'white',
+                    // padding: 15,
                     borderRadius: 5,
                     marginHorizontal: 20,
                   }}>
@@ -1313,6 +1596,7 @@ function JobTicket({ navigation, route }: any) {
                       />
                     </View>
                   </TouchableOpacity>
+                  {/* <Image source={{uri:}} style={{width:Dimensions.get('screen').width/1.1,height:'80%',}} resizeMode='contain'/> */}
                   <Image
                     source={{ uri: jobTicketBanner.bannerImages }}
                     style={{
@@ -1326,11 +1610,13 @@ function JobTicket({ navigation, route }: any) {
             </Modal>
           </View>
         )}
-      <BackToDashboardModal
+
+      <BackToDashboard
         modalVisible={modalVisible}
         handleGoToDashboard={() => HandelGoToDashboard()}
       />
       <CustomLoader visible={loading} />
+
     </View>
   );
 }

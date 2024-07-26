@@ -233,12 +233,15 @@ function Inbox({ navigation }: any) {
   };
 
   return (
+    //   <View style={{flex: 1, justifyContent: 'center', alignItems: 'center'}}>
+    //     <ActivityIndicator size="large" color="black" />
+    //   </View>
+    // ) : (
     <ScrollView
       refreshControl={
         <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
       }
       style={{ flex: 1, backgroundColor: Theme.white }}>
-         <View style={{margin:20}}></View>
       <View>
         <CustomHeader title="Inbox" />
       </View>

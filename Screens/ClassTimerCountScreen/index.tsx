@@ -419,19 +419,9 @@ function ClassTimerCount({ navigation, route }: any) {
     
 
     return (
-        <View style={{ flex: 1, backgroundColor: Theme.white, }} >
-          <View style={{margin:20}}></View>
+        <View style={{ flex: 1, backgroundColor: Theme.GhostWhite, }} >
             <Header backBtn navigation={navigation} title='Class In Progress' containerStyle={{ height: 60 }} />
-            {/* <TouchableOpacity onPress={() => { handleClockOut() }} >
-                <ActivityIndicator size={220} color={Theme.darkGray} style={{ marginTop: 30 }} />
-
-                <View style={{ alignItems: "center", position: "relative", top: -130 }} >
-                    <Text style={{ textAlign: "center", fontSize: 14, color: Theme.black,fontFamily: 'Circular Std Medium' }} >Timer</Text>
-                    {!backTime && <Timer show={"true"} />}
-                </View>
-            </TouchableOpacity> */}
-            {/* <Text style={{ textAlign: "center", color: Theme.black, marginTop: 20, fontSize: 18, fontFamily: 'Circular Std Medium'}} >Class in progress...</Text> */}
-
+            
 
             <View style={{ alignItems: 'center', justifyContent: 'center', flex: 1, }}>
                 <Image source={require('../../Assets/Images/Timmmer1.png')} resizeMode="contain" style={{ width: 350, height: 350 }} />

@@ -15,6 +15,7 @@ import { Theme } from '../../constant/theme';
 import axios from 'axios';
 import HTML from 'react-native-render-html';
 import { Base_Uri } from '../../constant/BaseUri';
+import { useSafeAreaFrame } from 'react-native-safe-area-context';
 import CustomLoader from '../../Component/CustomLoader';
 
 function InboxDetail({ navigation, route }: any) {
@@ -22,6 +23,11 @@ function InboxDetail({ navigation, route }: any) {
 
   const [loading, setLoading] = useState(false);
   const [newsData, setNewsData] = useState<any>({});
+
+  // const handleLinkPress = (url: any) => {
+  //     // Replace with your desired URL
+  //     Linking.openURL(`https://${url}`);
+  // };
 
   const getDetailedNews = () => {
     setLoading(true);
@@ -50,9 +56,14 @@ function InboxDetail({ navigation, route }: any) {
   const handleImageLoad = () => {
     setLoading(false); // Set loading to false when image is loaded
   };
+  // loading ? (
+  //   <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
+  //     <ActivityIndicator size="large" color={'black'} />
+  //   </View>
+  // ) : 
   return (
     <View style={{ flex: 1, backgroundColor: Theme.white }}>
-      <View style={{marginTop:30}}></View>
+      
       <View>
         <CustomHeader
           backBtn

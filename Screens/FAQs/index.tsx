@@ -146,14 +146,15 @@ const FAQs = ({ navigation }: any) => {
       setOpenPPModal(false)
     }
   }
+
   
+
   return (
-    <View style={{ backgroundColor: Theme.white, height: '100%' }}>
-      <View style={{margin:20}}></View>
+    <View style={{ backgroundColor: Theme.GhostWhite, height: '100%' }}>
       <Header title="FAQs" backBtn navigation={navigation} />
      
       <ScrollView showsVerticalScrollIndicator={false} nestedScrollEnabled>
-        <View style={{ paddingHorizontal: 15, marginVertical: 15 }}>
+        <View style={{ paddingHorizontal: 25, marginVertical: 15 }}>
 
           <FlatList
             data={faqsData ?? []}
@@ -170,11 +171,12 @@ const FAQs = ({ navigation }: any) => {
                       flexDirection: 'row',
                       width: '100%',
                       borderRadius: 5,
-                      borderColor: 'gray',
+                      borderColor: Theme.shinyGrey,
                       borderBottomWidth: item.open ? 0 : 1,
                       borderBottomLeftRadius: item.open ? 1 : 5,
                       borderBottomRightRadius: item.open ? 1 : 5,
                       marginBottom: item.open ? 0 : 15,
+                      backgroundColor:Theme.white
                     }}>
                     <View style={{ width: '93%' }}>
                       <HTML
@@ -216,11 +218,12 @@ const FAQs = ({ navigation }: any) => {
                         flexDirection: 'row',
                         width: '100%',
                         borderRadius: 5,
-                        borderColor: 'gray',
+                        borderColor: Theme.shinyGrey,
                         borderTopWidth: 0,
                         borderTopLeftRadius: 0,
                         borderTopRightRadius: 0,
                         marginBottom: 15,
+                        backgroundColor:Theme.white
 
                       }}>
                          <HTML

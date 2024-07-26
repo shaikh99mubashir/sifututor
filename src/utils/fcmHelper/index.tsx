@@ -1,4 +1,5 @@
 import notifee, {EventType} from '@notifee/react-native';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import messaging from '@react-native-firebase/messaging';
 import {PERMISSIONS, request} from 'react-native-permissions';
 //method was called to get FCM tiken for notification
@@ -102,9 +103,48 @@ export function registerListenerWithFCM() {
         //     detail.notification.data.clickAction
         //   );
         // }
+        // let screenName = detail?.notification?.data
+        handleNotification(detail)
         break;
     }
   });
+
+  async function handleNotification(detail: any) {
+    try {
+      const senderData = detail?.notification.data?.sender;
+  
+      if (senderData) {
+        // Parse the JSON string into an array of objects
+        const parsedData = JSON.parse(senderData);
+        console.log("parsedData", parsedData);
+  
+        // Assuming senderData is an array with one object
+        if (Array.isArray(parsedData) && parsedData.length > 0) {
+          const { screen, id } = parsedData[0]; // Access the first object in the array
+          console.log("data handleNotification id", id);
+          console.log("data handleNotification screen", screen);
+  
+          // Save the screen and id to AsyncStorage
+          await AsyncStorage.setItem('notiScreenRoute', JSON.stringify({ screen, id }));
+        }
+      }
+    } catch (error) {
+      console.error("Error handling notification data:", error);
+    }
+  }
+  // async function handleNotification(detail: any) {
+  //   try {
+  //     const data = detail?.notification.data.sender;
+  //     console.log("data handleNotification id", data.id);
+  //     console.log("data handleNotification screen", data.screen);
+
+  //     if (data) {
+  //       await AsyncStorage.setItem('notiScreenRoute', data);
+  //     }
+  //   } catch (error) {
+  //     console.error("Error saving screen name to AsyncStorage:", error);
+  //   }
+  // }
 
   messaging().onNotificationOpenedApp(async remoteMessage => {
     console.log(

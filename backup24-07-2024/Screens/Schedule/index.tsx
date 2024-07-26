@@ -1008,7 +1008,7 @@ function Schedule({navigation, route}: any) {
     <View style={{flex: 1, backgroundColor: 'white'}}>
       <View style={{marginTop: 40}}></View>
       <CustomHeader
-        title="Schedule"
+        title="Class Schedule"
         plus={scheduleData.length !== 0}
         navigation={navigation}
       />

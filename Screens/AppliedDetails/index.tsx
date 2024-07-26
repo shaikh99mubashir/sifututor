@@ -19,6 +19,8 @@ import AntDesign from 'react-native-vector-icons/AntDesign';
 import Feather from 'react-native-vector-icons/Feather';
 import FontAwesome from 'react-native-vector-icons/FontAwesome';
 import TutorDetailsContext from '../../context/tutorDetailsContext';
+import Toast from 'react-native-toast-message';
+import SubjectIcon from '../../SVGs/SubjectIcon';
 
 const AppliedDetails = ({ route, navigation }: any) => {
   const data = route.params;
@@ -30,12 +32,95 @@ const AppliedDetails = ({ route, navigation }: any) => {
 
   const tutor = useContext(TutorDetailsContext);
   let { tutorDetails, updateTutorDetails } = tutor;
+  console.log("tutorDetails",tutorDetails);
+  
+  const [loading, setLoading] = useState(false);
+
+  // console.log(openDetailItem.comment, "comment")
+
+  // console.log(data, "dataaa")
+  // console.log('idddddddddddddd',data)
+  const sendOpenDetailData = async () => {
+    let tutorData: any = await AsyncStorage.getItem('loginAuth');
+
+    tutorData = await JSON.parse(tutorData);
+
+    let subjectId = data?.subject_id;
+    // let ticket_id = data?.ticket_id
+    let ticketID = data?.ticketID;
+    // let id = data?.id
+    let tutor_id = tutorData?.tutorID;
+    let comment = openDetailItem.comment ? openDetailItem?.comment : null;
+    // console.log('idddddddddddddd',data.id)
+    console.log(subjectId, "subjectId")
+    console.log(ticketID, "ticketID")
+    console.log(tutor_id, "tutor_id")
+    console.log(comment, "comment")
+
+    setLoading(true);
+    axios
+      .get(
+        `${Base_Uri}offerSendByTutor/${subjectId}/${tutor_id}/${ticketID}/${comment}`,
+      )
+      .then(({ data }) => {
+
+
+
+        if (data?.result?.status == 'pending') {
+          setLoading(false);
+          // ToastAndroid.show(
+          //   'You have successfully applied for this ticket',
+          //   ToastAndroid.SHORT,
+          // );
+          Toast.show({
+            type: 'info',
+            // text1: 'Request timeout:',
+            text2:  `You have successfully applied for this ticket`,
+            position:'bottom'
+          });
+          navigation.navigate('Job Ticket', ticketID);
+        } else {
+          console.log(data, 'dataaa');
+          // ToastAndroid.show(data?.result, ToastAndroid.SHORT);
+          Toast.show({
+            type: 'info',
+            // text1: 'Request timeout:',
+            text2:  `${data?.result}`,
+            position:'bottom'
+          });
+          setLoading(false);
+        }
+      })
+      .catch(error => {
+        setLoading(false);
+        console.log(error, 'error');
+        // ToastAndroid.show('Internal Server Error', ToastAndroid.SHORT);
+        Toast.show({
+          type: 'info',
+          // text1: 'Request timeout:',
+          text2:  `Network Error`,
+          position:'bottom'
+        });
+      });
+  };
+  // console.log('data=============>', data);
+
   return (
-    <View style={{ backgroundColor: Theme.white, height: '100%' }}>
-      <View style={{margin:20}}></View>
+    <View style={{ backgroundColor: Theme.GhostWhite, height: '100%' }}>
       <Header title={data?.jtuid} backBtn navigation={navigation} />
       <ScrollView showsVerticalScrollIndicator={false} nestedScrollEnabled>
         <View style={{ paddingHorizontal: 15 }}>
+          {/* <Text
+            style={{
+              color: 'green',
+              fontSize: 15,
+              fontWeight: '500',
+              paddingVertical: 8,
+              borderBottomWidth: 1,
+              borderColor: '#eee',
+            }}>
+            {data?.studentAddress1} {data?.studentAddress2}
+          </Text> */}
           <View
             style={{
               backgroundColor: Theme.darkGray,
@@ -66,16 +151,17 @@ const AppliedDetails = ({ route, navigation }: any) => {
               </View>
             </View>
             <View style={{ alignItems: 'center', justifyContent: 'center' }}>
-              <View style={{backgroundColor: '#000',
-                      paddingVertical: 5,
-                      paddingHorizontal: 30,
-                      borderRadius: 30,}}>
-                
+              <View style={{borderRadius: 30,
+                    backgroundColor: '#000',}}>
+
               <Text
                 style={[
                   styles.textType3,
                   {
                     color: '#fff',
+                    paddingVertical: 5,
+                    paddingHorizontal: 15,
+                    
                     textTransform:'capitalize'
                   },
                 ]}>
@@ -89,10 +175,10 @@ const AppliedDetails = ({ route, navigation }: any) => {
 
             <View
               style={{
-                backgroundColor: Theme.liteBlue,
+                backgroundColor: Theme.white,
                 padding: 15,
                 marginTop: 10,
-                borderRadius: 12,
+                borderRadius: 20,
               }}>
                 <View
                 style={{
@@ -112,7 +198,7 @@ const AppliedDetails = ({ route, navigation }: any) => {
                   <FontAwesome
                     name="user-o"
                     size={18}
-                    color={'#298CFF'}
+                    color={Theme.darkGray}
                   />
                   <Text style={styles.textType3}>Student Name</Text>
                 </View>
@@ -136,12 +222,12 @@ const AppliedDetails = ({ route, navigation }: any) => {
                   <FontAwesome
                     name="graduation-cap"
                     size={18}
-                    color={'#298CFF'}
+                    color={Theme.darkGray}
                   />
                   <Text style={styles.textType3}>Student Detail</Text>
                 </View>
                 <Text style={[styles.textType1, { fontSize: 18 }]}>
-                  {data?.studentGender},({data?.student_age} y/o)
+                  {data?.studentGender} ({data?.student_age} y/o)
                 </Text>
               </View>
               <View
@@ -161,40 +247,40 @@ const AppliedDetails = ({ route, navigation }: any) => {
                   <Feather
                     name="hash"
                     size={18}
-                    color={'#298CFF'}
+                    color={Theme.darkGray}
                   />
                   <Text style={styles.textType3}>No. of Sessions</Text>
                 </View>
-                <View style={{ backgroundColor: '#298CFF33',
-                      paddingVertical: 2,
-                      // paddingHorizontal: 10,
-                      borderRadius: 50,
-                      
-                      width:30,
-                      height:30,}}>
+             <View style={{backgroundColor: '#298CFF33',
+                      borderRadius: 50,}}>
 
-                
                 <Text
                   style={[
                     styles.textType1,
                     {
                       color: '#003E9C',
+                      paddingVertical: 2,
+                      // paddingHorizontal: 10,
+                      
                       textAlign:'center',
+                      width:30,
+                      height:30,
                       fontSize: 18,
                     },
                   ]}>
                   {data?.classFrequency}
                 </Text>
-                </View>
+               
+                    </View>
               </View>
             </View>
 
             <View
               style={{
-                backgroundColor: Theme.liteBlue,
+                backgroundColor: Theme.white,
                 padding: 15,
                 marginTop: 10,
-                borderRadius: 12,
+                borderRadius: 20,
               }}>
                  <View
                 style={{
@@ -213,7 +299,7 @@ const AppliedDetails = ({ route, navigation }: any) => {
                   <FontAwesome
                     name="level-up"
                     size={22}
-                    color={'#298CFF'}
+                    color={Theme.darkGray}
                   />
                   <Text style={styles.textType3}>Level</Text>
                 </View>
@@ -234,11 +320,7 @@ const AppliedDetails = ({ route, navigation }: any) => {
                     flexDirection: 'row',
                     gap: 10,
                   }}>
-                  <AntDesign
-                    name="copy1"
-                    size={18}
-                    color={'#298CFF'}
-                  />
+                  <SubjectIcon/>
                   <Text style={styles.textType3}>Subject</Text>
                 </View>
                 <Text style={[styles.textType1, { fontSize: 18 }]}>
@@ -264,7 +346,7 @@ const AppliedDetails = ({ route, navigation }: any) => {
                   <FontAwesome
                     name="user-o"
                     size={18}
-                    color={'#298CFF'}
+                    color={Theme.darkGray}
                   />
                   <Text style={styles.textType3}>Pref. Tutor</Text>
                 </View>
@@ -279,9 +361,9 @@ const AppliedDetails = ({ route, navigation }: any) => {
                     <AntDesign
                       name="calendar"
                       size={20}
-                      color={'#298CFF'}
+                      color={Theme.darkGray}
                     />
-                    <Text style={[styles.textType3, { color: '#298CFF' }]}>{data?.classDay}</Text>
+                    <Text style={[styles.textType3, { color: Theme.darkGray }]}>{data?.classDay}</Text>
                   </View>
                 </View>
                 <View style={{ backgroundColor: "#E6F2FF", paddingVertical: 10, borderRadius: 10, paddingHorizontal: 10 }}>
@@ -289,9 +371,9 @@ const AppliedDetails = ({ route, navigation }: any) => {
                     <AntDesign
                       name="clockcircleo"
                       size={20}
-                      color={'#298CFF'}
+                      color={Theme.darkGray}
                     />
-                    <Text style={[styles.textType3, { color: '#298CFF' }]}>{data?.classTime}</Text>
+                    <Text style={[styles.textType3, { color: Theme.darkGray }]}>{data?.classTime}</Text>
                   </View>
                 </View>
 
@@ -311,7 +393,7 @@ const AppliedDetails = ({ route, navigation }: any) => {
                 </Text>
                 <View
                   style={{
-                    backgroundColor: Theme.liteBlue,
+                    backgroundColor: Theme.white,
                     paddingHorizontal: 10,
                     paddingVertical: 12,
                     borderRadius: 10,
@@ -334,7 +416,7 @@ const AppliedDetails = ({ route, navigation }: any) => {
                 </Text>
                 <View
                   style={{
-                    backgroundColor: Theme.liteBlue,
+                    backgroundColor: Theme.white,
                     paddingHorizontal: 10,
                     paddingVertical: 12,
                     borderRadius: 10,
@@ -359,7 +441,7 @@ const AppliedDetails = ({ route, navigation }: any) => {
                   <View
                   key={i}
                     style={{
-                      backgroundColor: Theme.liteBlue,
+                      backgroundColor: Theme.white,
                       paddingHorizontal: 10,
                       paddingVertical: 12,
                       borderRadius: 10,
@@ -370,21 +452,49 @@ const AppliedDetails = ({ route, navigation }: any) => {
                       Student Name : {e?.student_name}
                     </Text>
                     <Text
+                      // style={{
+                      //   color: Theme.black,
+                      //   fontSize: 14,
+                      //   fontWeight: '400',
+                      //   marginTop: 5,
+                      //   fontFamily: 'Circular Std Book',
+                      // }}
                       style={styles.textType3}
                       >
                       Age : {e?.student_age}
                     </Text>
                     <Text
+                      // style={{
+                      //   color: Theme.black,
+                      //   fontSize: 14,
+                      //   fontWeight: '400',
+                      //   marginTop: 5,
+                      //   fontFamily: 'Circular Std Book',
+                      // }}
                       style={styles.textType3}
                       >
                       Gender : {e?.student_gender}
                     </Text>
                     <Text
+                      // style={{
+                      //   color: Theme.black,
+                      //   fontSize: 14,
+                      //   fontWeight: '400',
+                      //   marginTop: 5,
+                      //   fontFamily: 'Circular Std Book',
+                      // }}
                       style={styles.textType3}
                       >
                       Birth Year : {e?.year_of_birth}
                     </Text>
                     <Text
+                      // style={{
+                      //   color: Theme.black,
+                      //   fontSize: 14,
+                      //   fontWeight: '400',
+                      //   marginTop: 5,
+                      //   fontFamily: 'Circular Std Book',
+                      // }}
                       style={styles.textType3}
                       >
                       Special Need : {e?.special_need}

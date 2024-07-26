@@ -23,13 +23,15 @@ import axios, { isAxiosError } from 'axios';
 import { Base_Uri } from '../../constant/BaseUri';
 import TutorDetailsContext from '../../context/tutorDetailsContext';
 import RNHTMLtoPDF from 'react-native-html-to-pdf';
+import Share from 'react-native-share';
+import { touch } from 'react-native-fs';
 import AntDesign from 'react-native-vector-icons/AntDesign';
 import DropDownModalView from '../../Component/DropDownModalView';
 import bannerContext from '../../context/bannerContext';
 import ModalImg from '../../Component/Modal/modal';
 import CustomLoader from '../../Component/CustomLoader';
 import { useIsFocused } from '@react-navigation/native';
-import { PERMISSIONS, request } from 'react-native-permissions';
+import CustomButton from '../../Component/CustomButton';
 import Toast from 'react-native-toast-message';
 
 const Profile = ({ navigation }: any) => {
@@ -42,6 +44,14 @@ const Profile = ({ navigation }: any) => {
     nric: string | undefined;
   }
 
+  // const [tutorDetail, setTutorDetail] = useState<ITutorDetails>({
+  //   full_name: '',
+  //   email: '',
+  //   gender: '',
+  //   phoneNumber: '',
+  //   age: null,
+  //   nric: '',
+  // });
   const [loading, setLoading] = useState(false);
   const [image, setImage] = useState('');
   const [email, setEmail] = React.useState('');
@@ -58,20 +68,22 @@ const Profile = ({ navigation }: any) => {
 
   let tutorDetail = context?.tutorDetails;
   let tutorDetails = context?.tutorDetails;
+  console.log('tutorDetails', tutorDetails);
+  console.log('tutorDetail', tutorDetail);
   let bannerCont = useContext(bannerContext);
+
   let { profileBanner, setProfileBanner }: any = bannerCont;
+
   let { updateTutorDetails, setTutorDetail } = context;
 
   const openPhoto = async () => {
     setOpenPhotoModal(false);
-    let permission: any;
-    if (Platform.OS === 'ios') {
-      permission = PERMISSIONS.IOS.CAMERA;
-    } else if (Platform.OS === 'android') {
-      permission = PermissionsAndroid.PERMISSIONS.CAMERA;
-    }
-    const granted: any = await request(permission);
-    if (granted === 'granted') {
+
+    const granted = await PermissionsAndroid.request(
+      PermissionsAndroid.PERMISSIONS.CAMERA,
+    );
+
+    if (granted === PermissionsAndroid.RESULTS.GRANTED) {
       const options: any = {
         title: 'Select Picture',
         storageOptions: {
@@ -105,14 +117,11 @@ const Profile = ({ navigation }: any) => {
   const uploadProfilePicture = async () => {
     setOpenPhotoModal(false);
 
-    let permission: any;
-    if (Platform.OS === 'ios') {
-      permission = PERMISSIONS.IOS.CAMERA;
-    } else if (Platform.OS === 'android') {
-      permission = PermissionsAndroid.PERMISSIONS.CAMERA;
-    }
-    const granted: any = await request(permission);
-    if (granted == 'granted') {
+    const granted = await PermissionsAndroid.request(
+      PermissionsAndroid.PERMISSIONS.CAMERA,
+    );
+
+    if (granted === PermissionsAndroid.RESULTS.GRANTED) {
       const options: any = {
         title: 'Select Picture',
         storageOptions: {
@@ -153,10 +162,21 @@ const Profile = ({ navigation }: any) => {
 
   let imageUrl;
   const updateTutorDetail = async () => {
+    // const expression: RegExp = /^[A -Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i;
+    // const userEmail: any = tutorDetail.email;
+    // const result: boolean = expression.test(userEmail); // true
+    // if (!result) {
+    //   ToastAndroid.show('Enter correct email', ToastAndroid.SHORT);
+    //   return;
+    // }
     let authData: any = await AsyncStorage.getItem('loginAuth');
     let tutorData: any = JSON.parse(authData);
     console.log('tutorData.tutorID', tutorData.tutorID);
     if (uri && name && type) {
+      console.log('uri', uri);
+      console.log('type', type);
+      console.log('name', uri);
+      console.log('If running', tutorDetail?.tutorId);
 
       setLoading(true);
 
@@ -181,6 +201,7 @@ const Profile = ({ navigation }: any) => {
       formData.append('nric', tutorDetail?.nric);
       formData.append('phone', tutorDetail?.phoneNumber);
       formData.append('age', tutorDetail?.age);
+      console.log('formData', formData);
 
       axios
         .post(`${Base_Uri}api/editTutorProfile`, formData, {
@@ -212,24 +233,33 @@ const Profile = ({ navigation }: any) => {
           }
           console.log('imageUrl', imageUrl);
           getTutorDetails()
+          // ToastAndroid.show(
+          //   'Successfully Update Tutor Details',
+          //   ToastAndroid.SHORT,
+          // );
           Toast.show({
-            type: 'success',
-            text1: 'Successs',
-            text2: 'Successfully Update Tutor Details',
-            position: 'bottom'
+            type: 'info',
+            // text1: 'Request timeout:',
+            text2:  `Successfully Update Tutor Details`,
+            position:'bottom'
           });
         })
         .catch(error => {
           setLoading(false);
           console.log(error);
+          // ToastAndroid.show(
+          //   'Tutor Details update unsuccessfull',
+          //   ToastAndroid.SHORT,
+          // );
           Toast.show({
-            type: 'error',
-            text1: 'Error',
-            text2: 'Tutor Details update unsuccessfull',
-            position: 'bottom'
+            type: 'info',
+            // text1: 'Request timeout:',
+            text2:  `Tutor Details update unsuccessfull`,
+            position:'bottom'
           });
         });
     } else {
+      console.log('Else running profile');
       setLoading(true);
       tutorDetail.displayName = dispalyName
         ? dispalyName
@@ -240,6 +270,7 @@ const Profile = ({ navigation }: any) => {
       console.log('tutorDetail?.tutorId', tutorDetail?.tutorId);
 
       let formData = new FormData();
+      // formData.append('tutorID', tutorDetail?.tutorId);
       formData.append('id', tutorData.tutorID);
       formData.append('name', tutorDetail?.full_name);
       formData.append('email', tutorDetail?.email);
@@ -264,20 +295,29 @@ const Profile = ({ navigation }: any) => {
             nric: tutorDetail.nric,
             age: tutorDetail.age,
           });
+          // ToastAndroid.show(
+          //   'Successfully Update Tutor Details',
+          //   ToastAndroid.SHORT,
+          // );
           Toast.show({
-            type: 'success',
-            text1: 'Successs',
-            text2: 'Successfully Update Tutor Details',
-            position: 'bottom'
+            type: 'info',
+            // text1: 'Request timeout:',
+            text2:  `Tutor Details update unsuccessfull`,
+            position:'bottom'
           });
         })
         .catch(error => {
           setLoading(false);
+          console.log(error);
+          // ToastAndroid.show(
+          //   `Tutor Details update unsuccessfull ${error}`,
+          //   ToastAndroid.SHORT,
+          // );
           Toast.show({
-            type: 'error',
-            text1: 'Error',
-            text2: 'Tutor Details update unsuccessfull',
-            position: 'bottom'
+            type: 'info',
+            // text1: 'Request timeout:',
+            text2:  `Tutor Details update unsuccessfull`,
+            position:'bottom'
           });
           if (error.response) {
             // The request was made and the server responded with a status code
@@ -295,14 +335,27 @@ const Profile = ({ navigation }: any) => {
     }
   };
 
+  // console.log(`file://${name}`)
+
+  // let imageUrl = image
+  //   ? image
+  //   : !tutorDetail.tutorImage
+  //     ? defaultAvatar
+  //     : tutorDetail.tutorImage.includes('https')
+  //       ? tutorDetail.tutorImage
+  //       : `${Base_Uri}public/tutorImage/${tutorDetail.tutorImage}`;
+
+  // console.log(imageUrl, "image")
   const [openPPModal, setOpenPPModal] = useState(false);
   const displayBanner = async () => {
     setOpenPPModal(true);
     axios
       .get(`${Base_Uri}api/bannerAds`)
       .then(({ data }) => {
+        // console.log('res', data.bannerAds);
       })
       .catch(error => {
+        // ToastAndroid.show('Internal Server Error', ToastAndroid.SHORT);
       });
   };
 
@@ -349,15 +402,33 @@ const Profile = ({ navigation }: any) => {
     }
   };
 
+  // if (image) {
+  //   imageUrl = image;
+  // } else if (tutorDetail?.tutorImage?.includes('https')) {
+  //   imageUrl = tutorDetail?.tutorImage;
+  // } else {
+  //   imageUrl = `${Base_Uri}public/tutorImage/${tutorDetail?.tutorImage}`;
+  // }
+
   if (image) {
     imageUrl = image;
   } else if (!tutorDetail?.tutorImage) {
     imageUrl = tutorDetails?.tutorDetailById?.tutorImage;
+    // imageUrl =  tutorDetails?.tutorDetailById[0]?.tutorImage
   } else if (tutorDetail?.tutorImage?.includes('https')) {
     imageUrl = tutorDetail?.tutorImage;
   } else {
     imageUrl = `${Base_Uri}public/tutorImage/${tutorDetail?.tutorImage}`;
   }
+
+  // console.log("tutorDetails?.tutorDetailById[0]?.tutorImage",tutorDetails?.tutorDetailById[0]?.tutorImage);
+
+  console.log('name', name);
+  console.log('uri', uri);
+  console.log('imageUrl', imageUrl);
+
+  const [tutorId, setTutorId] = useState<Number | null>(null);
+
   interface LoginAuth {
     status: Number;
     tutorID: Number;
@@ -381,12 +452,7 @@ const Profile = ({ navigation }: any) => {
         setLoading(false)
       })
       .catch(error => {
-        Toast.show({
-          type: 'error',
-          text1: 'Network Error',
-          text2: 'Check your internet connectivity',
-          position: 'bottom'
-        });
+        // ToastAndroid.show('Internal Server Error', ToastAndroid.SHORT);
         setLoading(false)
       });
   };
@@ -423,20 +489,21 @@ const Profile = ({ navigation }: any) => {
     }
   };
 
+
+
+
   return (
-    <View style={{ backgroundColor: Theme.white, height: '100%' }}>
-      <View style={{ margin: 20 }}></View>
+    <View style={{ backgroundColor: Theme.GhostWhite, height: '100%' }}>
       <Header title="Profile" navigation={navigation} backBtn />
       <ScrollView showsVerticalScrollIndicator={false} nestedScrollEnabled>
-        <View style={{ paddingHorizontal: 15, marginBottom: 20 }}>
-
+        <View style={{ paddingHorizontal: 25, marginBottom: 20 }}>
           <View style={{ paddingVertical: 15, alignItems: 'center' }}>
-
             <Image
               source={{ uri: name ? `file://${uri}` : `${tutorImage}` ? `${tutorImage}` : `${imageUrl}` }}
-              style={{ width: 90, height: 90, borderRadius: 50 }}
+              style={{ width: 90, height: 90, borderRadius: 50, borderWidth: 2, borderColor: Theme.darkGray }}
               resizeMode="contain"
             />
+
             <TouchableOpacity
               onPress={() => setOpenPhotoModal(true)}
               activeOpacity={0.8}>
@@ -474,17 +541,17 @@ const Profile = ({ navigation }: any) => {
             </Text>
             <View
               style={{
-                backgroundColor: Theme.liteBlue,
-                paddingHorizontal: 10,
-                paddingVertical: 12,
-                borderRadius: 5,
+                backgroundColor: Theme.white,
+                paddingHorizontal: 20,
+                paddingVertical: 15,
+                borderRadius: 12,
                 marginVertical: 5,
+                height: 60
               }}>
               <Text
                 style={{
                   color: Theme.black,
                   fontSize: 16,
-                  // fontWeight: '600',
                   marginTop: 5,
                   textTransform: 'capitalize'
                 }}>
@@ -504,11 +571,12 @@ const Profile = ({ navigation }: any) => {
             </Text>
             <View
               style={{
-                backgroundColor: Theme.liteBlue,
-                paddingHorizontal: 10,
-                paddingVertical: 15,
-                borderRadius: 5,
+                backgroundColor: Theme.white,
+                paddingHorizontal: 20,
+                paddingVertical: 10,
+                borderRadius: 12,
                 marginVertical: 5,
+                height: 60
               }}>
               <TextInput
                 editable
@@ -531,21 +599,14 @@ const Profile = ({ navigation }: any) => {
             </Text>
             <View
               style={{
-                backgroundColor: Theme.liteBlue,
-                paddingHorizontal: 10,
-                paddingVertical: 15,
-                borderRadius: 5,
+                backgroundColor: Theme.white,
+                paddingHorizontal: 20,
+                paddingVertical: 10,
+                borderRadius: 12,
                 marginVertical: 5,
+                height: 60
               }}>
-              {/* <Text
-                style={{
-                  color: Theme.black,
-                  fontSize: 14,
-                  // fontWeight: '600',
-                  marginTop: 5,
-                }}>
-                {tutorDetail?.full_name}
-              </Text> */}
+
               <TextInput
                 editable
                 onChangeText={text => setDispalyName(text)}
@@ -564,24 +625,25 @@ const Profile = ({ navigation }: any) => {
               style={{
                 color: Theme.black,
                 fontSize: 15,
-                // fontWeight: '600',
+                fontWeight: '600',
               }}>
               Mobile Number
             </Text>
             <View
               style={{
-                backgroundColor: Theme.liteBlue,
-                paddingHorizontal: 10,
-                paddingVertical: 13,
-                borderRadius: 5,
+                backgroundColor: Theme.white,
+                paddingHorizontal: 20,
+                paddingVertical: 10,
+                borderRadius: 12,
                 marginVertical: 5,
+                height: 60
               }}>
               <Text
                 style={{
                   color: Theme.black,
                   fontFamily: 'Circular Std Book',
                   fontSize: 16,
-                  marginTop: 5,
+                  marginTop: 8,
                 }}>
                 {tutorDetail?.phoneNumber}
               </Text>
@@ -599,21 +661,11 @@ const Profile = ({ navigation }: any) => {
             </Text>
             <View
               style={{
-                backgroundColor: Theme.liteBlue,
+                // backgroundColor: Theme.white,
                 // paddingHorizontal: 10,
                 paddingVertical: 0,
                 borderRadius: 5,
-                marginVertical: 5,
               }}>
-              {/* <Text
-                style={{
-                  color: Theme.black,
-                  fontSize: 14,
-                  fontWeight: '600',
-                  marginTop: 5,
-                }}>
-                {tutorDetail?.gender ? tutorDetail?.gender : 'not provided'}
-              </Text> */}
               <DropDownModalView
                 // title="Gender"
                 selectedValue={(e: any) =>
@@ -629,6 +681,7 @@ const Profile = ({ navigation }: any) => {
                   marginTop: 0,
                   fontSize: 18,
                   color: 'black',
+                  borderRadius: 12
                 }}
               />
             </View>
@@ -645,11 +698,12 @@ const Profile = ({ navigation }: any) => {
             </Text>
             <View
               style={{
-                backgroundColor: Theme.liteBlue,
-                paddingHorizontal: 10,
-                paddingVertical: 15,
-                borderRadius: 5,
+                backgroundColor: Theme.white,
+                paddingHorizontal: 20,
+                paddingVertical: 10,
+                borderRadius: 12,
                 marginVertical: 5,
+                height: 60
               }}>
               <TextInput
                 editable
@@ -680,11 +734,12 @@ const Profile = ({ navigation }: any) => {
             </Text>
             <View
               style={{
-                backgroundColor: Theme.liteBlue,
-                paddingHorizontal: 10,
-                paddingVertical: 15,
-                borderRadius: 5,
+                backgroundColor: Theme.white,
+                paddingHorizontal: 20,
+                paddingVertical: 10,
+                borderRadius: 12,
                 marginVertical: 5,
+                height: 60
               }}>
               <TextInput
                 editable
@@ -703,6 +758,9 @@ const Profile = ({ navigation }: any) => {
               />
             </View>
           </View>
+          <View style={{ margin: 10 }} />
+          <CustomButton btnTitle='Save' onPress={() => updateTutorDetail()} />
+          <View style={{ margin: 10 }} />
         </View>
       </ScrollView>
 
@@ -769,7 +827,8 @@ const Profile = ({ navigation }: any) => {
       )}
 
       {/* Submit Button */}
-      <View
+
+      {/* <View
         style={{
           backgroundColor: Theme.white,
           // position: 'absolute',
@@ -802,7 +861,7 @@ const Profile = ({ navigation }: any) => {
             </Text>
           </TouchableOpacity>
         </View>
-      </View>
+      </View> */}
 
       {/* <Modal visible={loading} animationType="fade" transparent={true}>
         <View

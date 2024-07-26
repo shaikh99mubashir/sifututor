@@ -1,186 +1,193 @@
 import {
   Dimensions,
+  SafeAreaView,
   StyleSheet,
   Text,
-  View,
   TouchableOpacity,
-  ToastAndroid,
-  ActivityIndicator,
+  View,
 } from 'react-native';
-import React, { useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
+import Toast from 'react-native-toast-message';
 import Header from '../../Component/Header';
-import AsyncStorage from '@react-native-async-storage/async-storage';
-import {
-  CodeField,
-  Cursor,
-  useBlurOnFulfill,
-  useClearByFocusCell,
-} from 'react-native-confirmation-code-field';
-
 import { Theme } from '../../constant/theme';
+import ConfirmationCodeField from '../../Component/ConfirmationCodeField';
 import { Base_Uri } from '../../constant/BaseUri';
 import axios from 'axios';
 import messaging from '@react-native-firebase/messaging';
 import CustomLoader from '../../Component/CustomLoader';
-import { getFcmToken } from '../../src/utils/fcmHelper';
-import Toast from 'react-native-toast-message';
+import CustomButton from '../../Component/CustomButton';
+import { CodeField, Cursor, useBlurOnFulfill, useClearByFocusCell } from 'react-native-confirmation-code-field';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+
 const Verification = ({ navigation, route }: any) => {
   let data = route.params;
-  const CELL_COUNT = 6;
+  const CELL_COUNT = 5;
   const [value, setValue] = useState('');
   const ref = useBlurOnFulfill({ value, cellCount: CELL_COUNT });
+  const [countdown, setCountdown] = useState(59);
   const [props, getCellOnLayoutHandler] = useClearByFocusCell({
     value,
     setValue,
   });
   const [loading, setLoading] = useState(false);
   const [resendLoading, setResendLoading] = useState(false);
+  const sendDeviceTokenToDatabase = (tutorId: any) => {
+    messaging()
+      .requestPermission()
+      .then(() => {
+        // Retrieve the FCM token
+        return messaging().getToken();
+      })
+      .then(token => {
+        messaging()
+          .subscribeToTopic('all_devices')
+          .then(() => {
 
-  const Verify = () => {
-    const sendDeviceTokenToDatabase = async (tutorId: any) => {
-      try {
-        let token = await messaging().getToken();
-        let formData = new FormData();
-        formData.append('tutor_id', tutorId);
-        formData.append('device_token', token);
+            let formData = new FormData();
 
-        axios
-          .post(`${Base_Uri}api/getTutorDeviceToken`, formData, {
-            headers: {
-              'Content-Type': 'multipart/form-data',
-            },
-          })
-          .then(res => {
-            let data = res.data;
-            console.log(data, 'tokenResponse');
+            formData.append('tutor_id', tutorId);
+            formData.append('device_token', token);
+
+            axios
+              .post(`${Base_Uri}api/getTutorDeviceToken`, formData, {
+                headers: {
+                  'Content-Type': 'multipart/form-data',
+                },
+              })
+              .then(res => {
+                let data = res.data;
+                // console.log(data, 'tokenResponse');
+              })
+              .catch(error => {
+                console.log(error, 'error');
+              });
           })
           .catch(error => {
-            console.log(error, 'error');
+            console.error('Failed to subscribe to topic: all_devices', error);
+          });
+      })
+      .catch(error => {
+        console.error(
+          'Error requesting permission or retrieving token:',
+          error,
+        );
+      });
+  };
+  const handleCodeCompleted = async (enteredCode: any) => {
+    if (enteredCode.length === CELL_COUNT) {
+      setLoading(true);
+      try {
+        let formData = new FormData();
+        formData.append("code", enteredCode);
+        formData.append("id", data?.tutorDetail?.id);
+        console.log("form DAtat", formData);
+        axios.post(`${Base_Uri}api/verificationCode`, formData, {
+          headers: {
+            'Content-Type': 'multipart/form-data',
+          },
+        })
+          .then(({ data }: any) => {
+            console.log('data.tutorID', data);
+
+            if (data?.status !== 200) {
+              console.log('Running');
+              setLoading(false);
+              Toast.show({
+                type: 'error',
+                text1: 'Error',
+                text2: `${data?.errorMessage}`,
+                position: 'bottom'
+              });
+              return;
+            }
+            if (data?.status == 200) {
+              console.log('data.tutorID Running', data.tutorID);
+
+              setLoading(false);
+
+              let mydata = JSON.stringify(data);
+              AsyncStorage.setItem('loginAuth', mydata);
+              console.log('mydata', mydata);
+
+              sendDeviceTokenToDatabase(data.tutorID)
+              console.log('data.tutorID', data.tutorID);
+
+              axios
+                .get(`${Base_Uri}getTutorDetailByID/${data?.tutorID}`)
+                .then((res) => {
+                  if (res.data.tutorDetailById == null) {
+                    AsyncStorage.removeItem('loginAuth');
+                    navigation.replace('Login');
+                    Toast.show({
+                      type: 'info',
+                      text1: 'Error',
+                      text2: 'Terminated',
+                      position: 'bottom'
+                    });
+
+
+                    return
+                  }
+                  let tutorData = res.data;
+
+                  if (
+                    tutorData?.tutorDetailById[0]?.full_name == null && tutorData?.tutorDetailById[0]?.email == null
+                  ) {
+                    navigation.replace('Signup', tutorData)
+                  }
+                  else if (tutorData?.tutorDetailById[0]?.status.toLowerCase() === 'unverified' || tutorData?.tutorDetailById[0]?.status.toLowerCase() === 'verified') {
+                    // navigation.replace('Main', {
+                    //   screen: 'Home',
+                    // });
+                    navigation.reset({
+                      index: 0,
+                      routes: [{ name: 'Main' }],
+                    });
+                    Toast.show({
+                      type: 'success',
+                      text1: 'Success',
+                      text2: 'Login Successfully',
+                      position: 'bottom'
+                    });
+                  }
+                });
+            }
+          })
+          .catch(error => {
+            console.log('reeoe', error.errorMessage);
+            Toast.show({
+              type: 'error',
+              text1: 'Error',
+              text2: 'Invalid Code',
+              position: 'bottom'
+            });
+            setLoading(false);
           });
       }
       catch (error) {
-        console.log("error in get token verification");
-
+        console.log('error', error);
       }
-    };
-
-    if (!value) {
-      Toast.show({
-        type: 'error',
-        text1: 'Error',
-        text2: 'Kindly Enter 6 Digut OTP Code',
-        position: 'bottom'
-      });
-      return;
     }
 
-    if (value.length < 6) {
-      Toast.show({
-        type: 'error',
-        text1: 'Error',
-        text2: 'Invalid Code',
-        position: 'bottom'
-      });
-      return;
-    }
-
-    setLoading(true);
-    let formData = new FormData();
-    formData.append("code", value);
-    formData.append("id", data?.tutorDetail?.id);
-    console.log("form DAtat", formData);
-    axios.post(`${Base_Uri}api/verificationCode`, formData, {
-      headers: {
-        'Content-Type': 'multipart/form-data',
-      },
-    })
-      .then(({ data }: any) => {
-        console.log('data.tutorID', data);
-
-        if (data?.status !== 200) {
-          setLoading(false);
-          Toast.show({
-            type: 'error',
-            text1: 'Error',
-            text2: `${data?.errorMessage}`,
-            position: 'bottom'
-          });
-          return;
-        }
-        if (data?.status == 200) {
-          setLoading(false);
-          let mydata = JSON.stringify(data);
-          AsyncStorage.setItem('loginAuth', mydata);
-          sendDeviceTokenToDatabase(data.tutorID)
-          axios
-            .get(`${Base_Uri}getTutorDetailByID/${data?.tutorID}`)
-            .then((res) => {
-              if (res.data.tutorDetailById == null) {
-                AsyncStorage.removeItem('loginAuth');
-                navigation.replace('Login');
-                Toast.show({
-                  type: 'info',
-                  text1: 'Terminated',
-                  position: 'bottom'
-                });
-                return
-              }
-              let tutorData = res.data;
-
-              if (
-                tutorData?.tutorDetailById[0]?.full_name == null && tutorData?.tutorDetailById[0]?.email == null
-              ) {
-                navigation.replace('Signup', tutorData)
-                Toast.show({
-                  type: 'success',
-                  text1: 'Verification Successfully',
-                  text2: "Let's Register Your Account",
-                  position: 'bottom'
-                });
-
-              }
-              else if (tutorData?.tutorDetailById[0]?.status.toLowerCase() === 'unverified' || tutorData?.tutorDetailById[0]?.status.toLowerCase() === 'verified') {
-
-                navigation.reset({
-                  index: 0,
-                  routes: [{ name: 'Main' }],
-                });
-                Toast.show({
-                  type: 'success',
-                  text1: 'Login Successfully',
-                  text2: "Let's Register Your Account",
-                  position: 'bottom'
-                });
-              }
-            });
-        }
-      })
-      .catch(error => {
-        Toast.show({
-          type: 'error',
-          text1: 'Error',
-          text2: 'Invalid Code',
-          position: 'bottom'
-        });
-        setLoading(false);
-      });
   };
 
   const handleResendPress = () => {
     let { UserDetail } = data;
-    setResendLoading(true);
+    setLoading(true);
 
     axios
       .get(`${Base_Uri}loginAPI/${data?.tutorDetail?.phoneNumber}`)
       .then(({ data }) => {
         if (data?.status == 200) {
-          setResendLoading(false);
+          setLoading(false);
+          setCountdown(59);
           Toast.show({
             type: 'success',
             text1: 'Success',
-            text2: "Resend Code Send Successfully",
+            text2: 'Verification Code Resend Successfully',
             position: 'bottom'
           });
+
           return;
         }
         if (data?.status !== 200) {
@@ -188,133 +195,184 @@ const Verification = ({ navigation, route }: any) => {
           Toast.show({
             type: 'error',
             text1: 'Error',
-            text2: `${data?.errorMessage}`,
+            text2: `${data.errorMessage}`,
             position: 'bottom'
           });
-          
         }
       })
       .catch(error => {
-        setResendLoading(false);
+        setLoading(false);
         Toast.show({
           type: 'error',
-          text1: 'Network Error',
-          text2: `Check Your Internet Connectivity`,
+          text1: 'Error',
+          text2: 'Network Error',
           position: 'bottom'
         });
+
       });
   };
 
-  return (
-    <View
-      style={{
-        backgroundColor: Theme.white,
-        height: '100%',
-      }}>
-      <View style={{ marginTop: 30 }}></View>
-      <Header
-        navigation={navigation}
-        backBtn
-        noSignUp
-        title="Verification"
-      />
-      <View style={{ marginVertical: 10, paddingHorizontal: 15, marginTop: 30 }}>
-        <Text
-          style={{
-            fontFamily: 'Circular Std Medium',
-            color: Theme.gray,
-            fontSize: 16,
-            textAlign: 'center',
-          }}>
-          Enter Verification Code
-        </Text>
-      </View>
-      <View style={{ paddingHorizontal: 15, borderRadius: 10, }}>
-        <CodeField
-          ref={ref}
-          {...props}
-          value={value}
-          onChangeText={setValue}
-          cellCount={CELL_COUNT}
-          rootStyle={styles.codeFieldRoot}
-          keyboardType="number-pad"
-          textContentType="oneTimeCode"
-          renderCell={({ index, symbol, isFocused }: any) => (
-            <Text
-              key={index}
-              style={[styles.cell, isFocused && styles.focusCell]}
-              onLayout={getCellOnLayoutHandler(index)}>
-              {symbol || (isFocused ? <Cursor /> : null)}
-            </Text>
-          )}
-        />
-      </View>
-      <View style={{ alignItems: 'center', marginVertical: 20 }}>
-        <TouchableOpacity
-          activeOpacity={0.8}
-          onPress={() => handleResendPress()}>
-          <Text
-            style={{
-              color: Theme.gray,
-              fontSize: 15,
-              fontFamily: 'Circular Std Medium',
-            }}>
-            If you didn,t receive a code!
+  useEffect(() => {
+    const timer = setInterval(() => {
+      setCountdown(prevCountdown => {
+        if (prevCountdown === 1) {
+          clearInterval(timer);
+          return prevCountdown;
+        }
+        return prevCountdown - 1;
+      });
+    }, 1000);
 
-            <Text
-              style={{
-                color: Theme.darkGray,
-                fontSize: 15,
-                fontFamily: 'Circular Std Medium',
-              }}>
-              {' '}
-              Resend{' '}
-            </Text>
+    return () => clearInterval(timer);
+  }, [countdown]);
+
+
+  return (
+    <SafeAreaView style={{ flex: 1, backgroundColor: Theme.GhostWhite }}>
+      <Header navigation={navigation} BackBtn noTop/>
+      <View style={{ paddingHorizontal: 25 }}>
+        <Text style={[styles.textType2]}>Verify Code</Text>
+        <View style={{ margin: 10 }}></View>
+        <Text
+          style={[
+            styles.textType1,
+            { lineHeight: 20, color: Theme.IronsideGrey },
+          ]}>
+          A Verification OTP has been sent {'\n'}to{' '}
+          <Text style={[styles.textType1, { lineHeight: 20 }]}>
+            {data?.tutorDetail?.phoneNumber}
           </Text>
-        </TouchableOpacity>
+        </Text>
+        <View style={{ margin: 25 }}></View>
+        {/* <View style={{ paddingHorizontal: 15, marginTop: 0 }}>
+          <CodeField
+            ref={ref}
+            {...props}
+            // Use `caretHidden={false}` when users can't paste a text value, because context menu doesn't appear
+            value={value}
+            onChangeText={setValue}
+            cellCount={CELL_COUNT}
+            rootStyle={styles.codeFieldRoot}
+            keyboardType="number-pad"
+            textContentType="oneTimeCode"
+            renderCell={({ index, symbol, isFocused }) => (
+              <Text
+                key={index}
+                style={[styles.cell, isFocused && styles.focusCell]}
+                onLayout={getCellOnLayoutHandler(index)}>
+                {symbol || (isFocused ? <Cursor /> : null)}
+              </Text>
+            )}
+          />
+        </View> */}
+        <ConfirmationCodeField onCodeChange={handleCodeCompleted} />
       </View>
-      <CustomLoader visible={resendLoading} />
-      {/* Verify Button */}
+      <View style={{ margin: 15 }}></View>
       <View
         style={{
-          borderRadius: 5,
-          marginHorizontal: 15,
-          marginVertical: 20,
+          alignItems: 'center',
+          justifyContent: 'center',
+          marginBottom: 10,
+          flexDirection: 'row',
+          marginTop: 0,
         }}>
-        <TouchableOpacity
-          activeOpacity={0.8}
-          onPress={() => !resendLoading && Verify()}
+        <Text
           style={{
-            alignItems: 'center',
-            padding: 10,
-            backgroundColor: Theme.darkGray,
-            borderRadius: 10,
+            color: Theme.IronsideGrey,
+            alignSelf: 'center',
+            fontWeight: '500',
+            fontSize: 16,
+            fontFamily: 'Circular Std Medium',
           }}>
-          {loading ? (
-            <ActivityIndicator color={Theme.white} size="small" />
-          ) : (
+          Didn’t Receive a Code?{' '}
+        </Text>
+        <TouchableOpacity onPress={handleResendPress} activeOpacity={0.8}>
+          <View style={{borderBottomWidth: 2,
+                borderBottomColor: Theme.darkGray,}}>
             <Text
               style={{
-                color: 'white',
-                fontSize: 18,
-                fontFamily: 'Circular Std Medium',
+                color: Theme.Dune,
+                fontWeight: '500',
+                fontSize: 16,
+                fontFamily: 'Circular Std Bold',
+                borderBottomWidth: 2,
+                borderBottomColor: Theme.darkGray,
               }}>
-              Verify
+              Resend Code
             </Text>
-          )}
+          </View>
         </TouchableOpacity>
       </View>
-    </View>
+      {countdown !== 1 ?
+        <View
+          style={{
+            alignItems: 'center',
+            justifyContent: 'center',
+            marginBottom: 15,
+            flexDirection: 'row',
+            marginTop: 0,
+          }}>
+          <Text
+            style={{
+              color: Theme.IronsideGrey,
+              alignSelf: 'center',
+              fontWeight: '500',
+              fontSize: 16,
+              fontFamily: 'Circular Std Medium',
+            }}>
+            End in{' '}
+          </Text>
+
+          <View style={{borderBottomWidth: 2,
+                borderBottomColor: Theme.darkGray,}}>
+            <Text
+              style={{
+                color: Theme.Dune,
+                fontWeight: '500',
+                fontSize: 16,
+                fontFamily: 'Circular Std Bold',
+              }}>
+              {countdown} Seconds
+            </Text>
+          </View>
+
+
+        </View>
+        : ''}
+      <CustomLoader visible={loading} />
+    </SafeAreaView>
   );
 };
 
 export default Verification;
 
 const styles = StyleSheet.create({
+  textType1: {
+    color: Theme.Black,
+    fontSize: 15,
+    fontFamily: 'Circular Std Medium',
+  },
+  textType2: {
+    color: Theme.Black,
+    fontSize: 26,
+    fontFamily: 'Circular Std Medium',
+  },
+  phoneNumberView: {
+    // height: 70,
+    width: '100%',
+    // backgroundColor: 'white',
+    borderColor: Theme.GhostWhite,
+    borderRadius: 10,
+    borderWidth: 1,
+    color: '#E5E5E5',
+    flexShrink: 22,
+    fontFamily: 'Circular Std Medium',
+  },
   digitbtn: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     paddingHorizontal: 20,
+    // justifyContent: 'center',
     alignItems: 'center',
   },
   btn: {
@@ -322,6 +380,7 @@ const styles = StyleSheet.create({
     height: 50,
     borderRadius: 4,
     backgroundColor: Theme.darkGray,
+    // borderWidth: 1,
     borderColor: Theme.darkGray,
     justifyContent: 'center',
     alignItems: 'center',
@@ -338,15 +397,29 @@ const styles = StyleSheet.create({
     padding: 10,
     alignItems: 'center',
     lineHeight: 38,
-    fontSize: 24,
+    fontFamily: 'Circular Std Bold',
+    fontSize: 33,
     marginHorizontal: 4,
-    borderWidth: 1,
-    borderRadius: 5,
-    backgroundColor: '#e6e9fa',
-    borderColor: Theme.darkGray,
+    // borderWidth: 1,
+    borderRadius: 12,
+    // backgroundColor: '#e6e9fa',
+    backgroundColor: Theme.liteBlue,
+    // borderColor: Theme.darkGray,
     textAlign: 'center',
   },
   focusCell: {
     borderColor: Theme.darkGray,
   },
+
+  //   phoneNumberView: {
+  //     // height: 70,
+  //     width: '100%',
+  //     // backgroundColor: 'white',
+  //     borderColor: Theme.GhostWhite,
+  //     borderRadius: 10,
+  //     borderWidth: 1,
+  //     color: '#E5E5E5',
+  //     flexShrink: 22,
+  //     fontFamily: 'Circular Std Medium',
+  //   },
 });

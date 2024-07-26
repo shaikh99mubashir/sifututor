@@ -13,9 +13,9 @@ import {
   RefreshControl,
   Modal,
   Linking,
-  StatusBar,
 } from 'react-native';
 import { Theme } from '../../constant/theme';
+import notifee, { AndroidImportance, EventType } from '@notifee/react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import axios from 'axios';
 import { Base_Uri } from '../../constant/BaseUri';
@@ -30,6 +30,7 @@ import reportSubmissionContext from '../../context/reportSubmissionContext';
 import AntDesign from 'react-native-vector-icons/AntDesign';
 import notificationContext from '../../context/notificationContext';
 import bannerContext from '../../context/bannerContext';
+import messaging from '@react-native-firebase/messaging';
 import scheduleNotificationContext from '../../context/scheduleNotificationContext';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 import CustomLoader from '../../Component/CustomLoader';
@@ -38,9 +39,12 @@ import Money from '../../SVGs/Money';
 import Student from '../../SVGs/Student';
 import Clock from '../../SVGs/Clock';
 import Schedule from '../../SVGs/Schedule';
+import UpCommingCarousel from '../../Component/UpCommingCarousel';
+import DiagArrow from '../../SVGs/DiagArrow/Index';
 import Toast from 'react-native-toast-message';
-import messaging from '@react-native-firebase/messaging';
 import { getFcmToken } from '../../src/utils/fcmHelper';
+import JobTicketCarousel from '../../Component/JobTicketCarousel';
+import LatestNews from '../../Component/LatestNews';
 function Home({ navigation, route }: any) {
   let key = route.key;
 
@@ -110,10 +114,12 @@ function Home({ navigation, route }: any) {
   });
 
   const [upCommingClasses, setUpCommingClasses] = useState([]);
+  const [jobTicketData, setJobTicketData] = useState([]);
+  const [latestNewsData, setLatestNewsData] = useState([]);
   const [notificationLenght, setNotificationLength] = useState(0);
   const [tutorId, setTutorId] = useState<Number | null>(null);
   const [classInProcess, setClassInProcess] = useState({});
-  
+
   const [tutorData, setTutorData] = useState({
     cummulativeCommission: '',
     attendedHours: '',
@@ -121,12 +127,6 @@ function Home({ navigation, route }: any) {
     cancelledHours: '',
     scheduledHours: '',
   });
-
-  useEffect(() => {
-    getFcmToken();
-    console.log("hello----> ");
-    
-  }, []);
 
   const [cummulativeCommission, setCumulativeCommission] = useState('');
   const [attendedHours, setAttendedHours] = useState('');
@@ -200,76 +200,78 @@ function Home({ navigation, route }: any) {
     setClassInProcess(data);
   };
 
-  // const sendDeviceTokenToDatabase = () => {
-  //   messaging()
-  //     .requestPermission()
-  //     .then(() => {
-  //       // Retrieve the FCM token
-  //       return messaging().getToken();
-  //     })
-  //     .then(token => {
-  //       messaging()
-  //         .subscribeToTopic('all_devices')
-  //         .then(() => {
-  //           console.log(token, 'token');
+  const sendDeviceTokenToDatabase = () => {
+    messaging()
+      .requestPermission()
+      .then(() => {
+        // Retrieve the FCM token
+        return messaging().getToken();
+      })
+      .then(token => {
+        messaging()
+          .subscribeToTopic('all_devices')
+          .then(() => {
+            console.log(token, 'token');
 
-  //           let formData = new FormData();
+            let formData = new FormData();
 
-  //           formData.append('tutor_id', tutorId);
-  //           formData.append('device_token', token);
+            formData.append('tutor_id', tutorId);
+            formData.append('device_token', token);
 
-  //           axios
-  //             .post(`${Base_Uri}api/getTutorDeviceToken`, formData, {
-  //               headers: {
-  //                 'Content-Type': 'multipart/form-data',
-  //               },
-  //             })
-  //             .then(res => {
-  //               let data = res.data;
-  //               console.log(data, 'tokenResponse');
-  //             })
-  //             .catch(error => {
-  //               console.log(error, 'error');
-  //             });
-  //         })
-  //         .catch(error => {
-  //           console.error('Failed to subscribe to topic: all_devices', error);
-  //         });
-  //     })
-  //     .catch(error => {
-  //       console.error(
-  //         'Error requesting permission or retrieving token:',
-  //         error,
-  //       );
-  //     });
-  // };
-  // const requestPermission = async () => {
-  //   const authStatus = await messaging().requestPermission();
-  // };
-  // async function DisplayNotification(remoteMessage: any) {
-  //   // Create a channel
-  //   const channelId = await notifee.createChannel({
-  //     id: 'default',
-  //     name: 'Default Channel',
-  //     importance: AndroidImportance.HIGH,
-  //   });
+            axios
+              .post(`${Base_Uri}api/getTutorDeviceToken`, formData, {
+                headers: {
+                  'Content-Type': 'multipart/form-data',
+                },
+              })
+              .then(res => {
+                let data = res.data;
+                console.log(data, 'tokenResponse');
+              })
+              .catch(error => {
+                console.log(error, 'error');
+              });
+          })
+          .catch(error => {
+            console.error('Failed to subscribe to topic: all_devices', error);
+          });
+      })
+      .catch(error => {
+        console.error(
+          'Error requesting permission or retrieving token:',
+          error,
+        );
+      });
+  };
+  const requestPermission = async () => {
+    const authStatus = await messaging().requestPermission();
+  };
 
-  //   // Display a notification
-  //   await notifee.displayNotification({
-  //     title: remoteMessage.notification.title,
-  //     body: remoteMessage.notification.body,
-  //     android: {
-  //       channelId,
-  //     },
-  //   });
-  // }
-  // useEffect(() => {
-  //   requestPermission();
-  //   const unsubscribe = messaging().onMessage(async remoteMessage => {
-  //     DisplayNotification(remoteMessage);
-  //   });
-  //   return unsubscribe;
-  // }, [focus]);
+  async function DisplayNotification(remoteMessage: any) {
+    // Create a channel
+    const channelId = await notifee.createChannel({
+      id: 'default',
+      name: 'Default Channel',
+      importance: AndroidImportance.HIGH,
+    });
+
+    // Display a notification
+    await notifee.displayNotification({
+      title: remoteMessage.notification.title,
+      body: remoteMessage.notification.body,
+      android: {
+        channelId,
+      },
+    });
+  }
+
+  useEffect(() => {
+    requestPermission();
+    const unsubscribe = messaging().onMessage(async remoteMessage => {
+      DisplayNotification(remoteMessage);
+    });
+    return unsubscribe;
+  }, [focus]);
 
   // useEffect(() => {
   //   if (tutorId) {
@@ -443,9 +445,10 @@ function Home({ navigation, route }: any) {
           AsyncStorage.removeItem('loginAuth');
           navigation.replace('Login');
           updateTutorDetails('');
+          // ToastAndroid.show('Terminated', ToastAndroid.SHORT);
           Toast.show({
             type: 'info',
-            text1: 'Error',
+            // text1: 'Request timeout:',
             text2: `Terminated`,
             position: 'bottom'
           });
@@ -469,7 +472,6 @@ function Home({ navigation, route }: any) {
         };
 
         updateTutorDetails(details);
-        getFcmToken()
       })
       .catch(error => {
         // ToastAndroid.show('Internal Server Error', ToastAndroid.SHORT);
@@ -597,6 +599,36 @@ function Home({ navigation, route }: any) {
         // ToastAndroid.show('Internal Server Error', ToastAndroid.SHORT);
       });
   };
+  const gettutorNewsStatusList = () => {
+    axios
+      .get(`${Base_Uri}api/news`)
+      .then(({ data }) => {
+        let { news } = data;
+        setLatestNewsData(news)
+
+      })
+      .catch(error => {
+        // ToastAndroid.show('Internal Server Error', ToastAndroid.SHORT);
+      });
+  };
+  const getTicketsData = () => {
+    axios
+      .get(`${Base_Uri}ticketsAPI/${tutorId}`)
+      .then(({ data }) => {
+
+        const { tickets } = data;
+        // Slice the array to get only the first 10 records
+        const limitedJobTicketData = tickets.slice(0, 10);
+        setJobTicketData(limitedJobTicketData);
+      })
+      .catch(error => {
+        // Optionally handle the error
+        // ToastAndroid.show('Internal Server Error', ToastAndroid.SHORT);
+        console.error('Error fetching tickets data:', error);
+      });
+  };
+
+
 
   useEffect(() => {
     if (tutorId) {
@@ -607,6 +639,8 @@ function Home({ navigation, route }: any) {
   useEffect(() => {
     if (tutorId) {
       getUpcomingClasses();
+      getTicketsData();
+      gettutorNewsStatusList();
     }
   }, [tutorId, refreshing, focus]);
 
@@ -625,9 +659,7 @@ function Home({ navigation, route }: any) {
       channelName: 'mobile-home-page-updated',
       eventName: 'App\\Events\\MobileHomePageUpdated',
       callback: (data: any) => {
-        console.log('Event received: home', data);
-        // getAttendedHours();
-        // getScheduledHours();
+        console.log('Event received:', data);
         if (tutorId && cummulativeCommission) {
           getCummulativeCommission()
           getAttendedHours();
@@ -641,7 +673,9 @@ function Home({ navigation, route }: any) {
     });
 
     return unsubscribe;
-  }, [focus,cummulativeCommission,refreshing,tutorId]);
+  }, [focus, cummulativeCommission, refreshing]);
+
+
 
   const routeToScheduleScreen = async (item: any) => {
     interface LoginAuth {
@@ -1003,7 +1037,7 @@ function Home({ navigation, route }: any) {
       .then(({ data }) => {
         let { tutorDetailById } = data;
         let tutorDetails = tutorDetailById[0];
-        console.log('tutorDetails', tutorDetails);
+        // console.log('tutorDetails', tutorDetails);
         setTutorImage(tutorDetails.tutorImage);
       })
       .catch(error => {
@@ -1014,429 +1048,402 @@ function Home({ navigation, route }: any) {
     getTutorDetailss();
   }, [focus, refreshing]);
 
+
+  const getNotificationScreenName = async () => {
+    try {
+      let notiRoute: any = await AsyncStorage.getItem('notiScreenRoute');
+      if (notiRoute) {
+        let notiScreenName = JSON.parse(notiRoute);
+        console.log("notiRoute====>", notiScreenName);
+      } else {
+        console.log("notiRoute is null");
+      }
+    } catch (error) {
+      console.error("Error retrieving notiRoute:", error);
+    }
+  };
+
+  // Call the function wherever you need it
+
+
+  useEffect(() => {
+    // getFcmToken();
+    getNotificationScreenName();
+  }, [focus]);
+
+  notifee.onForegroundEvent(({ type, detail }) => {
+    switch (type) {
+      case EventType.DISMISSED:
+        console.log('User dismissed notification', detail.notification);
+        break;
+      case EventType.PRESS:
+        console.log('User pressed notification', detail.notification);
+        let screenName = detail?.notification?.data?.sender
+        if (screenName == 'jobTicket')
+          navigation.replace('Main', {
+            screen: 'jobTicket',
+          });
+        break;
+    }
+  });
+
+
+  notifee.onBackgroundEvent(async ({ type, detail }) => {
+    const { notification, pressAction } = detail;
+
+    // Check if the user pressed the "Mark as read" action
+    if (type === EventType.ACTION_PRESS) {
+      // Update external API
+      let screenName = detail?.notification?.data?.sender
+      if (screenName == 'jobTicket')
+        navigation.replace('Main', {
+          screen: 'jobTicket',
+        });
+    }
+  });
+
   return (
-    <View style={{ height: '100%' }}>
+    <View style={{ flex: 1, backgroundColor: Theme.GhostWhite }}>
       <CustomLoader visible={!cancelledHours} />
       <CustomLoader visible={refreshing} />
-      <StatusBar />
+
+
+      <View style={{ margin: 30 }}></View>
+      <View
+        style={{
+          flexDirection: 'row',
+          alignItems: 'center',
+          justifyContent: 'space-between',
+          paddingHorizontal: 25,
+          paddingBottom: 10,
+        }}>
+        <View style={{ width: '60%' }}>
+          <Text style={styles.textType3}>Welcome Back!</Text>
+          <Text
+            style={[
+              styles.textType1,
+              { fontWeight: '700', lineHeight: 30 },
+            ]}>
+            {tutorDetails?.displayName ?? tutorDetails?.full_name}
+          </Text>
+        </View>
+        <View
+          style={{ flexDirection: 'row', alignItems: 'center', gap: 15 }}>
+          <TouchableOpacity
+            activeOpacity={0.8}
+            onPress={() => navigation.navigate('Notifications')}>
+            <MaterialCommunityIcons
+              name="bell-outline"
+              size={30}
+              color={'black'}
+            />
+            <View
+              style={{
+                borderRadius: 100,
+                backgroundColor: Theme.red,
+                width: 15,
+                height: 15,
+                alignItems: 'center',
+                justifyContent: 'center',
+                position: 'relative',
+                left: 15,
+                top: -28,
+              }}>
+              <Text
+                style={[styles.text, { fontSize: 10, color: Theme.white }]}>
+                {notification.length + scheduleNotification.length > 0
+                  ? notification.length + scheduleNotification.length
+                  : 0}
+              </Text>
+            </View>
+          </TouchableOpacity>
+          <TouchableOpacity
+            onPress={() => navigation.navigate('Profile')}
+            style={{
+              borderWidth: 2,
+              borderRadius: 50,
+              borderColor: Theme.Dune,
+            }}
+            activeOpacity={0.8}>
+            <Image
+              source={{ uri: tutorImage }}
+              style={{ height: 60, width: 60, borderRadius: 50 }}
+            />
+          </TouchableOpacity>
+        </View>
+      </View>
       <ScrollView
         refreshControl={
-          <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
+          <RefreshControl refreshing={refreshing} onRefresh={onRefresh} style={{ backgroundColor: Theme.GhostWhite }} />
         }
         style={[styles.container, {}]}
         showsVerticalScrollIndicator={false}>
-        <ScrollView showsVerticalScrollIndicator={false}>
 
-          <View style={{ paddingTop: 60 }}>
-            <View
+
+
+
+        {classInProcess && Object.keys(classInProcess).length > 0 ? (
+          <View style={{ backgroundColor: Theme.GhostWhite, paddingHorizontal: 25 }}>
+            <TouchableOpacity
+              onPress={() =>
+                navigation.navigate('ClassTimerCount', classInProcess)
+              }
+              activeOpacity={0.8}
               style={{
-                flexDirection: 'row',
-                alignItems: 'center',
-                justifyContent: 'space-between',
+                backgroundColor: Theme.black,
+                paddingVertical: 30,
+                paddingHorizontal: 20,
+                borderRadius: 30,
+                marginVertical: 30,
               }}>
-              <View style={{ width: '60%' }}>
-                <Text style={styles.textType3}>Welcome Back!</Text>
+              <View style={{ flexDirection: 'row', gap: 15 }}>
+                <Text style={[styles.textType1, { color: Theme.white }]}>
+                  Ongoing Classes
+                </Text>
                 <Text
-                  style={[
-                    styles.textType1,
-                    { fontWeight: '700', lineHeight: 30 },
-                  ]}>
-                  {tutorDetails?.displayName ?? tutorDetails?.full_name}
+                  style={[styles.text, { fontSize: 10, color: Theme.white }]}>
+                  <ActivityIndicator color={'white'} size="small" />
                 </Text>
               </View>
               <View
-                style={{ flexDirection: 'row', alignItems: 'center', gap: 15 }}>
-                <TouchableOpacity
-                  activeOpacity={0.8}
-                  onPress={() => navigation.navigate('Notifications')}>
-                  <MaterialCommunityIcons
-                    name="bell-outline"
-                    size={30}
-                    color={'black'}
-                  />
-                  <View
-                    style={{
-                      borderRadius: 100,
-                      backgroundColor: Theme.red,
-                      width: 15,
-                      height: 15,
-                      alignItems: 'center',
-                      justifyContent: 'center',
-                      position: 'relative',
-                      left: 15,
-                      top: -28,
-                    }}>
-                    <Text
-                      style={[styles.text, { fontSize: 10, color: Theme.white }]}>
-                      {notification.length + scheduleNotification.length > 0
-                        ? notification.length + scheduleNotification.length
-                        : 0}
-                    </Text>
-                  </View>
-                </TouchableOpacity>
-
-                {/* <Image
-                  source={require('../../Assets/Images/NotificationCopy.png')}
-                  resizeMode="contain"
-                  style={{ width: 25, height: 25, }}
-                /> */}
-                <TouchableOpacity
-                  onPress={() => navigation.navigate('Profile')}
-                  style={{
-                    borderWidth: 2,
-                    borderRadius: 50,
-                    borderColor: Theme.Dune,
-                  }}
-                  activeOpacity={0.8}>
-                  {/* <Image
-                    source={
-                      tutorDetails.tutorImage
-                        ? { uri: imageUrl }
-                        : require('../../Assets/Images/avatar.png')
-                    }
-                    resizeMode="contain"
-                    style={{ width: 60, height: 60, borderRadius: 50 }}
-                  /> */}
-                  <Image
-                    source={{ uri: tutorImage }}
-                    style={{ height: 60, width: 60, borderRadius: 50 }}
-                  />
-                </TouchableOpacity>
-              </View>
-            </View>
-          </View>
-
-          {/* <View style={styles.firstBox}>
-            <Text style={[styles.text, { color: Theme.white, fontSize: 12 }]}>
-              {currentDate}
-            </Text>
-            <Text
-              style={[styles.heading, { color: Theme.white, fontWeight: '400' }]}>
-              RM {cummulativeCommission}
-            </Text>
-            <Text style={[styles.text, { color: Theme.white, fontSize: 12 }]}>
-              CUMMULATIVE COMMISSION
-            </Text>
-          </View> */}
-
-          {classInProcess && Object.keys(classInProcess).length > 0 ? (
-            <>
-              <TouchableOpacity
-                onPress={() =>
-                  navigation.navigate('ClassTimerCount', classInProcess)
-                }
-                activeOpacity={0.8}
                 style={{
-                  backgroundColor: Theme.black,
-                  paddingVertical: 30,
-                  paddingHorizontal: 20,
-                  borderRadius: 30,
-                  marginVertical: 30,
+                  flexDirection: 'row',
+                  alignItems: 'center',
+                  justifyContent: 'space-between',
+                  marginTop: 25,
                 }}>
-                <View style={{ flexDirection: 'row', gap: 15 }}>
-                  <Text style={[styles.textType1, { color: Theme.white }]}>
-                    Ongoing Classes
-                  </Text>
-                  <Text
-                    style={[styles.text, { fontSize: 10, color: Theme.white }]}>
-                    <ActivityIndicator color={'white'} size="small" />
-                  </Text>
-                </View>
                 <View
                   style={{
                     flexDirection: 'row',
                     alignItems: 'center',
-                    justifyContent: 'space-between',
-                    marginTop: 25,
+                    gap: 10,
                   }}>
-                  <View
-                    style={{
-                      flexDirection: 'row',
-                      alignItems: 'center',
-                      gap: 10,
-                    }}>
-                    <Image
-                      source={require('../../Assets/Images/woman.png')}
-                      resizeMode="contain"
-                      style={{ width: 60, height: 60 }}
-                    />
-                    <View style={{ gap: 5 }}>
-                      {/* <Text style={[styles.textType3, { color: Theme.white, }]}>J9003560</Text> */}
-                      <Text style={[styles.textType1, { color: Theme.white }]}>
-                        {classInProcess?.item?.studentName}
-                      </Text>
-                      <Text style={[styles.textType3, { color: Theme.white }]}>
-                        {classInProcess?.item?.subjectName}
-                      </Text>
-                    </View>
-                  </View>
+                  {classInProcess?.item?.studentGender?.toLowerCase() == 'male' ?
+                    <Image source={require('../../Assets/Images/StudentMale.png')} />
+                    :
+                    <Image source={require('../../Assets/Images/StudentFemale.png')} />
 
-                  <View>
-                    <Image
-                      source={require('../../Assets/Images/RightArrow.png')}
-                      resizeMode="contain"
-                      style={{ width: 25, height: 25 }}
-                    />
-                  </View>
-                </View>
-              </TouchableOpacity>
-            </>
-          ) : (
-            ''
-          )}
-
-          <View style={{ marginVertical: 15 }}>
-            <Text style={styles.textType1}>Monthly Summary</Text>
-            <View
-              style={{
-                flexDirection: 'row',
-                justifyContent: 'space-between',
-                marginTop: 10,
-              }}>
-              <View style={{ width: '49%' }}>
-                <View
-                  style={{
-                    backgroundColor: Theme.darkGray,
-                    paddingHorizontal: 15,
-                    borderTopStartRadius: 15,
-                    borderTopEndRadius: 15,
-                    borderBottomStartRadius: 15,
-                    borderBottomEndRadius: 45,
-                  }}>
-                  <View
-                    style={{
-                      flexDirection: 'row',
-                      justifyContent: 'space-between',
-                      marginVertical: 15,
-                    }}>
-                    {/* <Image
-                      source={require('../../Assets/Images/money.png')}
-                      resizeMode="contain"
-                      style={{marginTop: 5}}
-                    /> */}
-                    <Money />
-                    <Image
-                      source={require('../../Assets/Images/DiagonalRightUparrow.png')}
-                      resizeMode="contain"
-                    />
-                  </View>
-                  <View style={{ paddingBottom: 15 }}>
-                    <Text style={[styles.textType3, { color: 'white' }]}>
-                      Earnings
+                  }
+                  <View style={{ gap: 5 }}>
+                    {/* <Text style={[styles.textType3, { color: Theme.white, }]}>J9003560</Text> */}
+                    <Text style={[styles.textType1, { color: Theme.white }]}>
+                      {classInProcess?.item?.studentName}
                     </Text>
-                    <Text
-                      style={[
-                        styles.textType1,
-                        { color: 'white', fontSize: 30, lineHeight: 40 },
-                      ]}>
-                      RM {cummulativeCommission && cummulativeCommission}
-                    </Text>
-                    <Text
-                      style={[
-                        styles.textType3,
-                        { color: Theme.white, fontSize: 12 },
-                      ]}>
-                      {currentDate}
+                    <Text style={[styles.textType3, { color: Theme.white }]}>
+                      {classInProcess?.item?.subjectName}
                     </Text>
                   </View>
                 </View>
-                <View
-                  style={{
-                    backgroundColor: Theme.liteBlue,
-                    paddingHorizontal: 15,
-                    marginTop: 10,
-                    borderTopStartRadius: 15,
-                    borderTopEndRadius: 15,
-                    borderBottomStartRadius: 30,
-                    borderBottomEndRadius: 15,
-                  }}>
-                  <View
-                    style={{
-                      flexDirection: 'row',
-                      justifyContent: 'space-between',
-                      marginBottom: 5,
-                      marginTop: 15,
-                    }}>
-                    <Text style={styles.textType3}>Active Student</Text>
-                    <Image
-                      source={require('../../Assets/Images/DiagonalRightUparrowblack.png')}
-                      resizeMode="contain"
-                    />
-                  </View>
-                  <View style={{ margin: 10 }}></View>
-                  <View
-                    style={{
-                      paddingBottom: 20,
-                      flexDirection: 'row',
-                      justifyContent: 'space-between',
-                      alignItems: 'center',
-                    }}>
-                    <Text
-                      style={[
-                        styles.textType1,
-                        { fontSize: 30, lineHeight: 38 },
-                      ]}>
-                      {students?.length ? students?.length : '0'}
-                    </Text>
-                    <Student />
-                  </View>
+
+                <View>
+                  <Image
+                    source={require('../../Assets/Images/RightArrow.png')}
+                    resizeMode="contain"
+                    style={{ width: 25, height: 25 }}
+                  />
                 </View>
               </View>
-              <View style={{ width: '49%' }}>
+            </TouchableOpacity>
+          </View>
+        ) : (
+          null
+        )}
+
+        <View style={{ marginVertical: 25, backgroundColor: Theme.GhostWhite }}>
+          <Text style={styles.textType1}>Monthly Summary</Text>
+          <View style={{ margin: 6 }}></View>
+          <View
+            style={{
+              flexDirection: 'row',
+              justifyContent: 'space-between',
+            }}>
+            <View style={{ width: '49%' }}>
+              <View
+                style={{
+                  backgroundColor: Theme.darkGray,
+                  paddingHorizontal: 15,
+                  borderTopStartRadius: 15,
+                  borderTopEndRadius: 15,
+                  borderBottomStartRadius: 15,
+                  borderBottomEndRadius: 45,
+                }}>
                 <View
                   style={{
-                    backgroundColor: Theme.liteBlue,
-                    paddingHorizontal: 15,
-                    borderTopStartRadius: 15,
-                    borderTopEndRadius: 15,
-                    borderBottomStartRadius: 45,
-                    borderBottomEndRadius: 15,
+                    flexDirection: 'row',
+                    justifyContent: 'space-between',
+                    marginVertical: 15,
                   }}>
-                  <View
-                    style={{
-                      flexDirection: 'row',
-                      justifyContent: 'space-between',
-                      marginVertical: 20,
-                    }}>
-                    {/* <Image
-                      source={require('../../Assets/Images/ClockiconCopy.png')}
-                      resizeMode="contain"
-                    /> */}
-                    <Clock />
-                    <Image
-                      source={require('../../Assets/Images/DiagonalRightUparrowblack.png')}
-                      resizeMode="contain"
-                    />
-                  </View>
-                  <View style={{ paddingBottom: 20 }}>
-                    <Text style={[styles.textType3]}>Attended Hours</Text>
-                    <Text
-                      style={[
-                        styles.textType1,
-                        { fontSize: 30, lineHeight: 40 },
-                      ]}>
-                      {attendedHours && attendedHours}
-                    </Text>
-                  </View>
+                  <Money />
+                  <DiagArrow color={Theme.white} />
                 </View>
+                <View style={{ paddingBottom: 15 }}>
+                  <Text style={[styles.textType3, { color: 'white' }]}>
+                    Earnings
+                  </Text>
+                  <Text
+                    style={[
+                      styles.textType1,
+                      { color: 'white', fontSize: 30, lineHeight: 40 },
+                    ]}>
+                    RM {cummulativeCommission && cummulativeCommission}
+                  </Text>
+                  <Text
+                    style={[
+                      styles.textType3,
+                      { color: Theme.white, fontSize: 12 },
+                    ]}>
+                    {currentDate}
+                  </Text>
+                </View>
+              </View>
+              <View
+                style={{
+                  backgroundColor: Theme.white,
+                  paddingHorizontal: 15,
+                  marginTop: 10,
+                  borderTopStartRadius: 15,
+                  borderTopEndRadius: 15,
+                  borderBottomStartRadius: 30,
+                  borderBottomEndRadius: 15,
+                }}>
                 <View
                   style={{
-                    backgroundColor: Theme.liteBlue,
-                    paddingHorizontal: 15,
-                    marginTop: 10,
-                    borderTopStartRadius: 15,
-                    borderTopEndRadius: 15,
-                    borderBottomStartRadius: 30,
-                    borderBottomEndRadius: 15,
+                    flexDirection: 'row',
+                    justifyContent: 'space-between',
+                    marginBottom: 5,
+                    marginTop: 15,
                   }}>
-                  <View
-                    style={{
-                      flexDirection: 'row',
-                      justifyContent: 'space-between',
-                      marginVertical: 16,
-                    }}>
-                    <Schedule />
-                    <Image
-                      source={require('../../Assets/Images/DiagonalRightUparrowblack.png')}
-                      resizeMode="contain"
-                    />
-                  </View>
-                  <View style={{ paddingBottom: 20 }}>
-                    <Text style={[styles.textType3]}>Scheduled Hours</Text>
-                    <Text
-                      style={[
-                        styles.textType1,
-                        { fontSize: 30, lineHeight: 40 },
-                      ]}>
-                      {schedulesHours && schedulesHours}
-                    </Text>
-                  </View>
+                  <Text style={styles.textType3}>Active Student</Text>
+                  <DiagArrow />
+                </View>
+                <View style={{ margin: 10 }}></View>
+                <View
+                  style={{
+                    paddingBottom: 20,
+                    flexDirection: 'row',
+                    justifyContent: 'space-between',
+                    alignItems: 'center',
+                  }}>
+                  <Text
+                    style={[
+                      styles.textType1,
+                      { fontSize: 30, lineHeight: 38 },
+                    ]}>
+                    {students?.length ? students?.length : '0'}
+                  </Text>
+                  <Student />
+                </View>
+              </View>
+            </View>
+            <View style={{ width: '49%' }}>
+              <View
+                style={{
+                  backgroundColor: Theme.white,
+                  paddingHorizontal: 15,
+                  borderTopStartRadius: 15,
+                  borderTopEndRadius: 15,
+                  borderBottomStartRadius: 45,
+                  borderBottomEndRadius: 15,
+                }}>
+                <View
+                  style={{
+                    flexDirection: 'row',
+                    justifyContent: 'space-between',
+                    marginVertical: 20,
+                  }}>
+                  <Clock />
+                  <DiagArrow />
+                </View>
+                <View style={{ paddingBottom: 20 }}>
+                  <Text style={[styles.textType3]}>Attended Hours</Text>
+                  <Text
+                    style={[
+                      styles.textType1,
+                      { fontSize: 30, lineHeight: 40 },
+                    ]}>
+                    {attendedHours && attendedHours}
+                  </Text>
+                </View>
+              </View>
+              <View
+                style={{
+                  backgroundColor: Theme.white,
+                  paddingHorizontal: 15,
+                  marginTop: 10,
+                  borderTopStartRadius: 15,
+                  borderTopEndRadius: 15,
+                  borderBottomStartRadius: 30,
+                  borderBottomEndRadius: 15,
+                }}>
+                <View
+                  style={{
+                    flexDirection: 'row',
+                    justifyContent: 'space-between',
+                    marginVertical: 16,
+                  }}>
+                  <Schedule />
+                  <DiagArrow />
+                </View>
+                <View style={{ paddingBottom: 20 }}>
+                  <Text style={[styles.textType3]}>Scheduled Hours</Text>
+                  <Text
+                    style={[
+                      styles.textType1,
+                      { fontSize: 30, lineHeight: 40 },
+                    ]}>
+                    {schedulesHours && schedulesHours}
+                  </Text>
                 </View>
               </View>
             </View>
           </View>
+        </View>
 
-          <Text
-            style={[
-              styles.textType3,
-              { marginTop: 20, fontWeight: '500', fontSize: 16 },
-            ]}>
-            Upcoming Classes
-          </Text>
+        <View style={{ margin: 0 }}></View>
+        <View>
+          {jobTicketData &&
+            <View
+              style={{
+                justifyContent: 'space-between',
+                flexDirection: 'row',
+                marginHorizontal: 10,
+              }}>
+              <Text style={[styles.textType1, { fontFamily: 'Circular Std Bold' }]}>
+                Job Tickets
+              </Text>
+              <TouchableOpacity onPress={() => navigation.replace('Main', {
+                screen: 'jobTicket',
+              })}>
+                <Text
+                  style={[
+                    styles.textType3,
+                    { color: Theme.BrightBlue, fontFamily: 'Circular Std Book' },
+                  ]}>
+                  See All
+                </Text>
+              </TouchableOpacity>
+            </View>
+          }
+          <View style={{ margin: 3 }}></View>
+          <JobTicketCarousel jobTicketData={jobTicketData} />
+        </View>
+        <View style={{ margin: 8 }}></View>
+        <View>
+          <View
+            style={{
+              justifyContent: 'space-between',
+              flexDirection: 'row',
+              marginTop: 20,
+              marginBottom: 10,
+            }}>
+            <Text style={[styles.textType1, { fontFamily: 'Circular Std Bold' }]}>
+              Upcoming Classes
+            </Text>
+          </View>
+          <View style={{ margin: 3 }}></View>
           {upCommingClasses && upCommingClasses.length > 0 ? (
             <View>
-              <FlatList
-                data={upCommingClasses}
-                horizontal
-                nestedScrollEnabled
-                showsHorizontalScrollIndicator={false}
-                renderItem={({ item, index }: any) => {
-                  const startTime12Hour = convertTo12HourFormat(item.startTime);
-                  const endTime12Hour = convertTo12HourFormat(item.endTime);
-                  // const formattedDate = convertDateFormat(item.date);
-                  return (
-                    <TouchableOpacity
-                      activeOpacity={0.8}
-                      style={{
-                        borderWidth: 1,
-                        paddingHorizontal: 15,
-                        width: 280,
-                        height: 150,
-                        marginTop: 15,
-                        paddingVertical: 15,
-                        borderRadius: 10,
-                        gap: 10,
-                        marginRight: 10,
-                        borderColor: '#eee',
-                        marginBottom: 40,
-                      }}
-                    // onPress={() => routeToScheduleScreen(item)}
-                    >
-                      <View
-                        style={{
-                          display: 'flex',
-                          flexDirection: 'row',
-                          gap: 12,
-                          alignItems: 'center',
-                        }}>
-                        <Image
-                          source={require('../../Assets/Images/woman.png')}
-                          style={{
-                            width: 35,
-                            height: 35,
-                            borderRadius: 50,
-                          }}
-                        />
-                        <Text style={{ color: Theme.black, fontSize: 16 }}>
-                          {item?.studentName}
-                        </Text>
-                      </View>
-                      <Text
-                        style={{
-                          color: Theme.black,
-                          fontSize: 16,
-                          fontWeight: '600',
-                        }}>
-                        {item?.subject_name}
-                      </Text>
-                      <View>
-                        <Text style={{ color: Theme.gray, fontSize: 14 }}>
-                          Time - {startTime12Hour} to {endTime12Hour}{' '}
-                        </Text>
-                        <Text
-                          style={{
-                            color: Theme.gray,
-                            fontSize: 14,
-                            marginTop: 10,
-                          }}>
-                          {/* Date - {item?.date?.slice(0, 11)} */}
-                          Date - {convertDateFormat(item.date)}
-                        </Text>
-                      </View>
-                    </TouchableOpacity>
-                  );
-                }}
-              />
+              <UpCommingCarousel upCommingClassesdata={upCommingClasses} />
             </View>
           ) : (
             <View style={{ marginTop: 35 }}>
@@ -1445,7 +1452,33 @@ function Home({ navigation, route }: any) {
               </Text>
             </View>
           )}
-        </ScrollView>
+        </View>
+        <View style={{ margin: 8 }}></View>
+        <View
+          style={{
+            justifyContent: 'space-between',
+            flexDirection: 'row',
+            marginHorizontal: 10,
+            marginTop: 15,
+          }}>
+          <Text style={[styles.textType1]}>Latest News</Text>
+          <TouchableOpacity 
+          onPress={() => navigation.navigate('Main',{
+              screen: 'inbox',
+            })}
+          >
+            <Text
+              style={[
+                styles.textType3,
+                { color: Theme.BrightBlue, fontFamily: 'Circular Std Book' },
+              ]}>
+              View All
+            </Text>
+          </TouchableOpacity>
+        </View>
+        <View style={{ margin: 2 }}></View>
+        <LatestNews latestNewsData={latestNewsData} navigation={navigation} />
+
       </ScrollView>
       {openPPModal &&
         Object.keys(homePageBanner).length > 0 &&
@@ -1509,10 +1542,10 @@ export default Home;
 
 const styles = StyleSheet.create({
   container: {
-    // flex: 1,
-    height: '100%',
-    backgroundColor: Theme.white,
-    padding: 15,
+    flex: 1,
+    backgroundColor: Theme.GhostWhite,
+    paddingHorizontal: 25
+
   },
   text: {
     color: Theme.black,
@@ -1553,7 +1586,7 @@ const styles = StyleSheet.create({
 //   style={[
 //     styles.firstBox,
 //     {
-//       backgroundColor: Theme.liteBlue,
+//       backgroundColor: Theme.white,
 //       justifyContent: 'space-between',
 //       paddingHorizontal: 20,
 //       flexDirection: 'row',
@@ -1588,7 +1621,7 @@ const styles = StyleSheet.create({
               style={[
                 styles.firstBox,
                 {
-                  backgroundColor: Theme.liteBlue,
+                  backgroundColor: Theme.white,
                   justifyContent: 'space-between',
                   paddingHorizontal: 15,
                   flexDirection: 'row',

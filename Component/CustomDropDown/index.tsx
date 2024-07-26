@@ -38,14 +38,16 @@ const CustomDropDown = (props: any) => {
 
   return (
     <View>
-      <View style={{ borderRadius: 10, overflow: 'hidden', marginHorizontal: 0, marginVertical: 5, }}>
+      <View style={{ borderRadius: 12,
+         overflow: 'hidden',
+          marginVertical: 5,
+           }}>
         {ddTitle &&
           <Text
             style={{
               fontFamily: 'Circular Std Medium',
               color: Theme.gray,
               fontSize: 16,
-              // fontWeight: 'bold',
               marginVertical: 5,
               textTransform:'capitalize',
               marginHorizontal: 5,
@@ -64,8 +66,9 @@ const CustomDropDown = (props: any) => {
             paddingVertical: 10,
             paddingHorizontal: 20,
             borderWidth: 0,
-            backgroundColor: Theme.liteBlue,
+            backgroundColor: Theme.white,
             borderRadius:15,
+            height:60,
             // borderTopLeftRadius: 10,
             // borderTopRightRadius: 10,
             // borderBottomWidth: serviceDD ? 0 : 1,
@@ -116,7 +119,8 @@ const CustomDropDown = (props: any) => {
                   fontSize: 16,
                   textTransform:'capitalize',
                 }}>
-                {selectedSubject ? selectedSubject?.subject : dropdownPlace ?? ddTitle}
+                {selectedSubject ? selectedSubject?.subject?.length > 25 ?
+                  `${selectedSubject?.subject?.slice(0, 25)}...` : selectedSubject?.subject : dropdownPlace ?? ddTitle}
               </Text>
               {serviceDD ? (
                 // <Image source={require('../../Assets/Images/up.png')} style={{ width: 15, height: 20 }} resizeMode='contain' />
@@ -187,7 +191,7 @@ const CustomDropDown = (props: any) => {
             borderColor: Theme.gray,
             // top: 10,
             marginVertical:5,
-            backgroundColor:Theme.liteBlue,
+            backgroundColor:Theme.white,
             paddingVertical:!serviceDD ? 0 : 15,
             paddingHorizontal:10,
             // elevation:3
@@ -200,7 +204,7 @@ const CustomDropDown = (props: any) => {
                   paddingHorizontal: 10,
                   marginVertical: 0,
                   color: 'black',
-                  backgroundColor: Theme.liteBlue,
+                  backgroundColor: Theme.white,
                   // backgroundColor: "white",
                   borderBottomWidth: 1,
                   borderBottomColor:'lightgrey',

@@ -5,62 +5,86 @@ import {
   View,
   Dimensions,
   ToastAndroid,
+  ImageBackground,
 } from 'react-native';
-import React, {useContext, useEffect, useState} from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import axios from 'axios';
-import {Base_Uri} from '../../constant/BaseUri';
+import { Base_Uri } from '../../constant/BaseUri';
 import TutorDetailsContext from '../../context/tutorDetailsContext';
-import Toast from 'react-native-toast-message';
-const Splash = ({navigation}: any) => {
+import messaging from '@react-native-firebase/messaging';
+const Splash = ({ navigation }: any) => {
   const tutorDetailsCont = useContext(TutorDetailsContext);
-  const {tutorDetails, setTutorDetail} = tutorDetailsCont;
+  const { tutorDetails, setTutorDetail } = tutorDetailsCont;
 
   const navigateToHomeScreen = () => {
     setTimeout(async () => {
+      let juid:any
+      let screenName:any
       let data = await AsyncStorage.getItem('login');
       let authData = await AsyncStorage.getItem('loginAuth');
+      let routeToNotiScreen = await AsyncStorage.getItem('notiScreenRoute');
+      if (routeToNotiScreen) {
+       // Parse the string data back into an object
+       const parsedData = JSON.parse(routeToNotiScreen);
+       juid = parsedData.id;
+       screenName = parsedData.screen
+       console.log("parsedData screen",parsedData.screen);
+       
+       // Check if parsedData is an object and has the id property
+       console.log("routeToNotiScreen id:", parsedData.id);
+     
+     } else {
+       console.log("No data found in AsyncStorage for 'notiScreenRoute'");
+     }
+
+
 
       if (authData) {
-        let tutorData:any = JSON.parse(authData);
+        let tutorData: any = JSON.parse(authData);
         console.log("tutorData :>> ", tutorData.contact);
-        
+
         axios
           .get(`${Base_Uri}getTutorDetailByID/${tutorData?.tutorID}`)
-          .then((res:any) => {
-            if(res.data.tutorDetailById== null){
+          .then((res: any) => {
+            if (res.data.tutorDetailById == null) {
               AsyncStorage.removeItem('loginAuth');
               navigation.replace('Login');
               setTutorDetail('')
-              Toast.show({
-                type: 'info',
-                text2: `Terminated`,
-                position: 'bottom'
-              });
+              ToastAndroid.show('Terminated', ToastAndroid.SHORT);
               return;
             }
 
             let tutorData = res.data;
             setTutorDetail(tutorData?.tutorDetailById[0]);
-            console.log('tutorData?.tutorDetailById[0]',tutorData?.tutorDetailById[0].phoneNumber);
-            
-            if (
-                !tutorData.tutorDetailById[0]?.full_name &&
-                !tutorData.tutorDetailById[0]?.email
-              ) {
-                AsyncStorage.removeItem('loginAuth');
-                navigation.replace('Login');
-                setTutorDetail('')
-                return
-              }
+            console.log('tutorData?.tutorDetailById[0]fullname ', tutorData?.tutorDetailById[0].full_name);
+            console.log('tutorData?.tutorDetailById[0]email ', tutorData?.tutorDetailById[0].email);
 
-            if (tutorData?.tutorDetailById[0].phoneNumber != tutorData.contact && tutorData?.tutorDetailById[0]?.status.toLowerCase() === 'unverified' || 
-            tutorData?.tutorDetailById[0]?.status.toLowerCase() === 'verified') {
-              navigation.replace('Main', {
-                screen: 'Home',
-              });
+            if (
+              !tutorData.tutorDetailById[0]?.full_name &&
+              !tutorData.tutorDetailById[0]?.email
+            ) {
+              AsyncStorage.removeItem('loginAuth');
+              navigation.replace('Login');
+              setTutorDetail('')
+              return
             }
-            else{
+
+            if (tutorData?.tutorDetailById[0].phoneNumber != tutorData.contact && tutorData?.tutorDetailById[0]?.status.toLowerCase() === 'unverified' ||
+              tutorData?.tutorDetailById[0]?.status.toLowerCase() === 'verified') {
+                console.log("routeToNotiScreen",routeToNotiScreen);
+                
+              if (screenName == 'jobTicket') {
+               navigation.navigate('JobTicketDetailOnly', juid)
+                // AsyncStorage.removeItem('notiScreenRoute')
+              }
+              else {
+                navigation.replace('Main', {
+                  screen: 'Home',
+                });
+              }
+            }
+            else {
               AsyncStorage.removeItem('loginAuth');
               navigation.replace('Login');
               setTutorDetail('')
@@ -69,6 +93,50 @@ const Splash = ({navigation}: any) => {
                 'terminated or block',
               );
             }
+            // if (
+            //   tutorData?.tutorDetailById[0]?.status.toLowerCase() === 'terminated' ||
+            //   tutorData?.tutorDetailById[0]?.status.toLowerCase() === 'resigned' ||
+            //   tutorData?.tutorDetailById[0]?.status.toLowerCase() === 'inactive' ||
+            //   tutorData?.tutorDetailById[0]?.status.toLowerCase() === 'new' ||
+            //   tutorDetails == undefined
+            // ) {
+            //   AsyncStorage.removeItem('loginAuth');
+            //   navigation.replace('Login');
+            //   setTutorDetail('')
+            //   console.log(
+            //     tutorData?.tutorDetailById[0]?.status,
+            //     'terminated or block',
+            //   );
+            //   return;
+            // }
+            // if (
+            //   !tutorData.tutorDetailById[0]?.full_name &&
+            //   !tutorData.tutorDetailById[0]?.displayName
+            // ) {
+            //   navigation.reset({
+            //     index: 0,
+            //     routes: [
+            //       {
+            //         name: 'TutorDetails',
+            //         params: {
+            //           tutorData,
+            //         },
+            //       },
+            //     ],
+            //   });
+            // } else {
+            //   navigation.reset({
+            //     index: 0,
+            //     routes: [
+            //       {
+            //         name: 'Main',
+            //         params: {
+            //           data,
+            //         },
+            //       },
+            //     ],
+            //   });
+            // }
           })
           .catch(error => {
             console.log('error', error);
@@ -87,16 +155,16 @@ const Splash = ({navigation}: any) => {
             AsyncStorage.removeItem('loginAuth');
             navigation.replace('Login');
             setTutorDetail('')
-            // ToastAndroid.show('Session Expire', ToastAndroid.SHORT);
+            ToastAndroid.show('Session Expire', ToastAndroid.SHORT);
             // ToastAndroid.show('Internal Server Error', ToastAndroid.SHORT);
           });
         return;
       }
 
-      if (data) {
-        navigation.replace('Login');
-        return;
-      }
+      // if (data) {
+      //   navigation.replace('Login');
+      //   return;
+      // }
       navigation.replace('OnBoarding');
     }, 3000);
   };
@@ -104,25 +172,41 @@ const Splash = ({navigation}: any) => {
     navigateToHomeScreen();
   }, []);
   return (
-    <View
-      style={{
-        backgroundColor: 'white',
-        height: '100%',
-        paddingHorizontal: 15,
-        alignItems: 'center',
-      }}>
+    // <View
+    //   style={{
+    //     backgroundColor: 'white',
+    //     height: '100%',
+    //     paddingHorizontal: 15,
+    //     alignItems: 'center',
+    //   }}>
+    //   <Image
+    //     source={require('../../Assets/Images/logo.png')}
+    //     resizeMode="contain"
+    //     style={styles.logo}
+    //   />
+    // </View>
+    <ImageBackground
+      source={require('../../Assets/Images/SplashScreen.png')}
+      style={styles.background}
+    >
       <Image
-        source={require('../../Assets/Images/logo.png')}
+        source={require('../../Assets/Images/sifuwhite.png')}
         resizeMode="contain"
         style={styles.logo}
       />
-    </View>
+    </ImageBackground>
   );
 };
 
 export default Splash;
 
 const styles = StyleSheet.create({
+  background: {
+    flex: 1,
+    resizeMode: 'cover', // or 'stretch'
+    justifyContent: 'center',
+    alignItems: 'center'
+  },
   gradient: {
     flex: 1,
     justifyContent: 'center',
@@ -130,6 +214,6 @@ const styles = StyleSheet.create({
   },
   logo: {
     height: Dimensions.get('window').height,
-    width: Dimensions.get('window').width / 1.1,
+    width: Dimensions.get('window').width / 1.7,
   },
 });

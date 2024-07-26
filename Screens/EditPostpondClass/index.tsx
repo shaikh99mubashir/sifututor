@@ -22,6 +22,7 @@ import axios from 'axios';
 import {Base_Uri} from '../../constant/BaseUri';
 import CustomLoader from '../../Component/CustomLoader';
 import Toast from 'react-native-toast-message';
+import CustomButton from '../../Component/CustomButton';
 
 function EditPostpondClass({navigation, route}: any) {
   let data = route.params?.data;
@@ -241,19 +242,18 @@ function EditPostpondClass({navigation, route}: any) {
     setClickedStartTime(false);
   };
   return (
-    <KeyboardAvoidingView style={{flex: 1, backgroundColor: Theme.white}}>
-      <View style={{margin:20}}></View>
+    <KeyboardAvoidingView style={{flex: 1, backgroundColor: Theme.GhostWhite}}>
       <View>
         <CustomHeader title="Edit Class" backBtn navigation={navigation} />
       </View>
 
-      <View style={{flex: 1, padding: 20, paddingVertical: 10}}>
+      <View style={{padding: 20, paddingVertical: 25}}>
         <ScrollView
           nestedScrollEnabled={true}
           showsVerticalScrollIndicator={false}>
           <View
             style={{
-              backgroundColor: Theme.liteBlue,
+              backgroundColor: Theme.white,
               padding: 20,
               borderRadius: 10,
               marginTop: 10,
@@ -357,7 +357,7 @@ function EditPostpondClass({navigation, route}: any) {
           </Text>
           <View
             style={{
-              backgroundColor: Theme.liteBlue,
+              backgroundColor: Theme.white,
               padding: 20,
               borderRadius: 10,
               marginTop: 10,
@@ -402,7 +402,7 @@ function EditPostpondClass({navigation, route}: any) {
                 style={{
                   height: 100,
                   padding: 10,
-                  backgroundColor: Theme.liteBlue,
+                  backgroundColor: Theme.white,
                   borderRadius: 5,
                   marginTop: 5,
                 }}>
@@ -448,7 +448,7 @@ function EditPostpondClass({navigation, route}: any) {
                     flexDirection: 'row',
                     justifyContent: 'space-between',
                     alignItems: 'center',
-                    backgroundColor: Theme.liteBlue,
+                    backgroundColor: Theme.white,
                     padding: 20,
                     marginTop: 5,
                     borderRadius: 15,
@@ -488,7 +488,7 @@ function EditPostpondClass({navigation, route}: any) {
                       justifyContent: 'space-between',
                       alignItems: 'center',
                       // backgroundColor: '#E6F2FF',
-                      backgroundColor: Theme.liteBlue,
+                      backgroundColor: Theme.white,
                       padding: 20,
                       marginTop: 5,
                       borderRadius: 15,
@@ -534,7 +534,7 @@ function EditPostpondClass({navigation, route}: any) {
                       flexDirection: 'row',
                       justifyContent: 'space-between',
                       alignItems: 'center',
-                      backgroundColor: Theme.liteBlue,
+                      backgroundColor: Theme.white,
                       padding: 20,
                       marginTop: 5,
                       borderRadius: 15,
@@ -560,6 +560,8 @@ function EditPostpondClass({navigation, route}: any) {
                 </View>
               </View>
             </View>
+            <View style={{margin: 10}}></View>
+            <CustomButton btnTitle='Confirm Class'  onPress={() => editTutorPostPonedClass()}/> 
           </View>
           <View style={{marginBottom: 10}}></View>
           {show && (
@@ -581,7 +583,7 @@ function EditPostpondClass({navigation, route}: any) {
             />
         </ScrollView>
       </View>
-      <View
+      {/* <View
         style={{
           width: '92%',
           alignItems: 'center',
@@ -589,7 +591,7 @@ function EditPostpondClass({navigation, route}: any) {
           alignSelf: 'center',
         }}>
         <TouchableOpacity
-          onPress={() => editTutorPostPonedClass()}
+         
           style={{
             backgroundColor: Theme.darkGray,
             padding: 15,
@@ -597,10 +599,11 @@ function EditPostpondClass({navigation, route}: any) {
             width: '95%',
           }}>
           <Text style={{textAlign: 'center', fontSize: 16, color: Theme.white}}>
-            Confirm Class
+            
           </Text>
         </TouchableOpacity>
-      </View>
+      </View> */}
+         
       <CustomLoader visible={loading} />
     </KeyboardAvoidingView>
   );
@@ -661,87 +664,3 @@ const styles = StyleSheet.create({
     paddingHorizontal: 10,
   },
 });
-
-{
-  /* <View
-              style={{
-                backgroundColor: Theme.lightGray,
-                padding: 20,
-                borderRadius: 10,
-                marginVertical: 10,
-              }}>
-              <View
-                style={{
-                  flexDirection: 'row',
-                  justifyContent: 'space-between',
-                  alignItems: 'center',
-                }}>
-                <Text
-                  style={{color: Theme.gray, fontSize: 16, fontWeight: '500'}}>
-                  Date
-                </Text>
-                <TouchableOpacity onPress={() => setClassDate('date')}>
-                  <Text
-                    style={{
-                      color: Theme.black,
-                      fontSize: 14,
-                      fontWeight: '500',
-                    }}>
-                    {nextClass?.date.toString().slice(0, 15)}
-                  </Text>
-                </TouchableOpacity>
-              </View>
-              <View
-                style={{
-                  flexDirection: 'row',
-                  justifyContent: 'space-between',
-                  alignItems: 'center',
-                  marginTop: 10,
-                }}>
-                <Text
-                  style={{color: Theme.gray, fontSize: 16, fontWeight: '500'}}>
-                  Start Time
-                </Text>
-                <TouchableOpacity
-                  onPress={() => setClassDate('time', true)}
-                  style={{minWidth: 60, alignItems: 'flex-end'}}>
-                  <Text
-                    style={{
-                      color: Theme.black,
-                      fontSize: 14,
-                      fontWeight: '500',
-                    }}>
-                    {nextClass.startTime !== '-'
-                      ? nextClass?.startTime.toLocaleString().slice(10)
-                      : '-'}{' '}
-                  </Text>
-                </TouchableOpacity>
-              </View>
-              <View
-                style={{
-                  flexDirection: 'row',
-                  justifyContent: 'space-between',
-                  alignItems: 'center',
-                  marginTop: 10,
-                }}>
-                <Text
-                  style={{color: Theme.gray, fontSize: 16, fontWeight: '500'}}>
-                  End Time
-                </Text>
-                <TouchableOpacity
-                  onPress={() => setClassDate('time')}
-                  style={{minWidth: 60, alignItems: 'flex-end'}}>
-                  <Text
-                    style={{
-                      color: Theme.black,
-                      fontSize: 14,
-                      fontWeight: '500',
-                    }}>
-                    {nextClass.endTime !== '-'
-                      ? nextClass?.endTime.toLocaleString().slice(10)
-                      : '-'}
-                  </Text>
-                </TouchableOpacity>
-              </View>
-            </View> */
-}

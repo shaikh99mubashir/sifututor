@@ -26,6 +26,8 @@ import LogoutIcon from '../../SVGs/LogoutIcon';
 import CustomButton from '../../Component/CustomButton';
 import StudentOverviewIcon from '../../SVGs/StudentOverviewIcon';
 import Toast from 'react-native-toast-message';
+import ScheduleOverViewIcon from '../../SVGs/ScheduleOverviewIcon';
+import ScheduleOverviewIcon from '../../SVGs/ScheduleOverviewIcon';
 
 function More({ navigation }: any) {
   const context = useContext(TutorDetailsContext);
@@ -281,6 +283,19 @@ function More({ navigation }: any) {
               ]}>
               Students
             </Text>
+
+            <TouchableOpacity
+              onPress={() => navigation.navigate('ScheduleOverview')}
+              activeOpacity={0.8}
+              style={{
+                flexDirection: 'row',
+                gap: 10,
+                paddingVertical: 10,
+                alignItems: 'center',
+              }}>
+              <ScheduleOverviewIcon/>
+              <Text style={[styles.textType3]}>Schedule Overview</Text>
+            </TouchableOpacity>
 
             <TouchableOpacity
               onPress={() => navigation.navigate('Students')}

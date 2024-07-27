@@ -53,6 +53,7 @@ import ChatIcon from '../SVGs/ChatIcon';
 import GetStarted from '../Screens/GetStarted';
 import Toast from 'react-native-toast-message';
 import JobTicketDetailOnly from '../Screens/JobTicketDetailOnly/index.tsx';
+import ScheduleOverview from '../Screens/ScheduleOverview/index.tsx';
 
 
 const Stack = createNativeStackNavigator();
@@ -450,6 +451,11 @@ function AppNavigation() {
           options={{ headerShown: false }}
           name="Schedule"
           component={BottomNavigation}
+        />
+        <Stack.Screen
+          options={{ headerShown: false }}
+          name="ScheduleOverview"
+          component={ScheduleOverview}
         />
         <Stack.Screen
           options={{ headerShown: false }}

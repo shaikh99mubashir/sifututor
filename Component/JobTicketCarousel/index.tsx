@@ -217,18 +217,21 @@
 //     }
 // })
 
-import { Dimensions, FlatList, Image, StyleSheet, Text, View } from 'react-native';
+import { Dimensions, FlatList, Image, StyleSheet, Text, TouchableOpacity, View, } from 'react-native';
 import React, { useEffect, useRef, useState } from 'react';
 import AntDesign from 'react-native-vector-icons/AntDesign';
 import { Theme } from '../../constant/theme';
 
-const JobTicketCarousel = ({ jobTicketData }: any) => {
+const JobTicketCarousel = ({ jobTicketData,navigation }: any) => {
     const [currentIndexJT, setCurrentIndexJT] = useState<number>(0);
     const flatListRefJT = useRef<FlatList<any> | null>(null);
     const { width } = Dimensions.get('screen');
 
     const renderJobTicketItem = ({ item }: any) => {
         return (
+            <TouchableOpacity
+            onPress={() => navigation.navigate('OpenDetails', item)}
+            activeOpacity={0.8}>
             <View
                 style={{
                     backgroundColor: Theme.white,
@@ -306,6 +309,7 @@ const JobTicketCarousel = ({ jobTicketData }: any) => {
                     </View>
                 </View>
             </View>
+            </TouchableOpacity>
         );
     };
 

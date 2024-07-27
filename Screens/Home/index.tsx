@@ -1425,7 +1425,7 @@ function Home({ navigation, route }: any) {
             </View>
           }
           <View style={{ margin: 3 }}></View>
-          <JobTicketCarousel jobTicketData={jobTicketData} />
+          <JobTicketCarousel jobTicketData={jobTicketData} navigation={navigation} />
         </View>
         <View style={{ margin: 8 }}></View>
         <View>

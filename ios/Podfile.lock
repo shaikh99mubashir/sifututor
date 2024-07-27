@@ -1047,6 +1047,8 @@ PODS:
     - Yoga
   - react-native-maps (1.15.6):
     - React-Core
+  - react-native-month-year-picker (1.9.0):
+    - React
   - react-native-netinfo (11.3.2):
     - React-Core
   - react-native-pdf (6.7.5):
@@ -1392,6 +1394,7 @@ DEPENDENCIES:
   - react-native-idle-timer (from `../node_modules/react-native-idle-timer`)
   - react-native-image-picker (from `../node_modules/react-native-image-picker`)
   - react-native-maps (from `../node_modules/react-native-maps`)
+  - react-native-month-year-picker (from `../node_modules/react-native-month-year-picker`)
   - "react-native-netinfo (from `../node_modules/@react-native-community/netinfo`)"
   - react-native-pdf (from `../node_modules/react-native-pdf`)
   - react-native-render-html (from `../node_modules/react-native-render-html`)
@@ -1519,6 +1522,8 @@ EXTERNAL SOURCES:
     :path: "../node_modules/react-native-image-picker"
   react-native-maps:
     :path: "../node_modules/react-native-maps"
+  react-native-month-year-picker:
+    :path: "../node_modules/react-native-month-year-picker"
   react-native-netinfo:
     :path: "../node_modules/@react-native-community/netinfo"
   react-native-pdf:
@@ -1643,6 +1648,7 @@ SPEC CHECKSUMS:
   react-native-idle-timer: b4e9ff189950bcd3ba03257d9f033f3432341db8
   react-native-image-picker: 8b791a2bec6da84ca7d8cbcad30da159d6dd6da4
   react-native-maps: 7b2c2cee95271592a92ba485eea1dec66a363a6e
+  react-native-month-year-picker: 948797e981ca502427024a34b17f545eb321bbff
   react-native-netinfo: 076df4f9b07f6670acf4ce9a75aac8d34c2e2ccc
   react-native-pdf: 103940c90d62adfd259f63cca99c7c0c306b514c
   react-native-render-html: 984dfe2294163d04bf5fe25d7c9f122e60e05ebe

@@ -11,10 +11,10 @@ const CustomLoader = ({ visible}:any) => {
         alignItems: 'center',
         backgroundColor: 'rgba(0,0,0,0.9)',
       }}>
-      <Image
+      {/* <Image
         source={require('../../Assets/Images/SIFU.gif')}
         style={{ width: 150, height: 150 }}
-      />
+      /> */}
     </View>
   </Modal>
   )

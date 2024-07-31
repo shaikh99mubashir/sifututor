@@ -16,7 +16,6 @@ import { Callout } from 'react-native-maps';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import JobTicket from '../JobTicket';
 import filterContext from '../../context/filterContext';
-import { stat } from 'react-native-fs';
 import DropDownModalView from '../../Component/DropDownModalView';
 import CustomButton from '../../Component/CustomButton';
 import CustomDropDown2 from '../../Component/CustomDropDown2';
@@ -475,7 +474,7 @@ console.log('selectedStatus',selectedStatus);
         justifyContent: "center",
         gap: 10, alignSelf: 'center',
         bottom: 0, marginBottom: 30,
-        paddingHorizontal: 15,
+        paddingHorizontal: 25,
         backgroundColor: Theme.GhostWhite
       }}>
         <View style={{ width: '48%' }}>

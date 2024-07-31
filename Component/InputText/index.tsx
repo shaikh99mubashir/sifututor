@@ -45,8 +45,8 @@ const styles = StyleSheet.create({
       flex: 1,
       padding: 20,
       fontFamily: 'Circular Std Medium',
-      color: 'black',
-      fontSize: 17,
+      color: Theme.gray,
+      fontSize: 16,
     },
     label: {
       color: Theme.Dune,

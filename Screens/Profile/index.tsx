@@ -24,7 +24,6 @@ import { Base_Uri } from '../../constant/BaseUri';
 import TutorDetailsContext from '../../context/tutorDetailsContext';
 import RNHTMLtoPDF from 'react-native-html-to-pdf';
 import Share from 'react-native-share';
-import { touch } from 'react-native-fs';
 import AntDesign from 'react-native-vector-icons/AntDesign';
 import DropDownModalView from '../../Component/DropDownModalView';
 import bannerContext from '../../context/bannerContext';
@@ -33,6 +32,7 @@ import CustomLoader from '../../Component/CustomLoader';
 import { useIsFocused } from '@react-navigation/native';
 import CustomButton from '../../Component/CustomButton';
 import Toast from 'react-native-toast-message';
+import { PERMISSIONS, request } from 'react-native-permissions';
 
 const Profile = ({ navigation }: any) => {
   interface ITutorDetails {
@@ -78,12 +78,14 @@ const Profile = ({ navigation }: any) => {
 
   const openPhoto = async () => {
     setOpenPhotoModal(false);
-
-    const granted = await PermissionsAndroid.request(
-      PermissionsAndroid.PERMISSIONS.CAMERA,
-    );
-
-    if (granted === PermissionsAndroid.RESULTS.GRANTED) {
+    let permission: any;
+    if (Platform.OS === 'ios') {
+      permission = PERMISSIONS.IOS.CAMERA;
+    } else if (Platform.OS === 'android') {
+      permission = PermissionsAndroid.PERMISSIONS.CAMERA;
+    }
+    const granted: any = await request(permission);
+    if (granted === 'granted') {
       const options: any = {
         title: 'Select Picture',
         storageOptions: {
@@ -117,11 +119,14 @@ const Profile = ({ navigation }: any) => {
   const uploadProfilePicture = async () => {
     setOpenPhotoModal(false);
 
-    const granted = await PermissionsAndroid.request(
-      PermissionsAndroid.PERMISSIONS.CAMERA,
-    );
-
-    if (granted === PermissionsAndroid.RESULTS.GRANTED) {
+    let permission: any;
+    if (Platform.OS === 'ios') {
+      permission = PERMISSIONS.IOS.CAMERA;
+    } else if (Platform.OS === 'android') {
+      permission = PermissionsAndroid.PERMISSIONS.CAMERA;
+    }
+    const granted: any = await request(permission);
+    if (granted == 'granted') {
       const options: any = {
         title: 'Select Picture',
         storageOptions: {

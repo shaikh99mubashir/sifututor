@@ -35,15 +35,15 @@ const Notifications = ({ navigation }: any) => {
 
   const context = useContext(notificationContext);
   const scheduleNotCont = useContext(scheduleNotificationContext)
-  
+
   let tutotContext = useContext(TutorDetailsContext)
   let { tutorDetails } = tutotContext
-  let { scheduleNotification = [] , setScheduleNotification } = scheduleNotCont
-  let { notification = [] , setNotification } = context
+  let { scheduleNotification = [], setScheduleNotification } = scheduleNotCont
+  let { notification = [], setNotification } = context
   const notificationArray = Array.isArray(notification) ? notification : [];
   const scheduleNotificationArray = Array.isArray(scheduleNotification) ? scheduleNotification : [];
-  
-  
+
+
   let totalNotifications = [...notificationArray, ...scheduleNotificationArray]
   // let totalNotifications = [...notification, ...scheduleNotification]
 
@@ -116,7 +116,7 @@ const Notifications = ({ navigation }: any) => {
 
 
   const navigateToOtherScreen = (item: any) => {
-    
+
     if (item?.notificationType == "Submit Evaluation Report" || item?.notificationType == "Submit Progress Report") {
       navigation.navigate("ReportSubmission", item)
       axios.get(`${Base_Uri}api/updateNotificationStatus/${item.notificationID}/old`).then((res) => {
@@ -146,7 +146,7 @@ const Notifications = ({ navigation }: any) => {
         // ToastAndroid.show("Nework Error", ToastAndroid.SHORT)
       })
     }
-    else if(item?.notificationType == "Schedule Class"){
+    else if (item?.notificationType == "Schedule Class") {
       navigation.navigate('AddClass')
       axios.get(`${Base_Uri}api/updateNotificationStatus/${item.notificationID}/old`).then((res) => {
 
@@ -158,7 +158,7 @@ const Notifications = ({ navigation }: any) => {
       }).catch((error) => {
         // ToastAndroid.show("Nework Error", ToastAndroid.SHORT)
       })
-    } 
+    }
     else {
       item.status = "attended"
       item.id = item?.class_schedule_id
@@ -179,113 +179,110 @@ const Notifications = ({ navigation }: any) => {
   return (
     <View style={{ backgroundColor: Theme.GhostWhite, height: '100%' }}>
       <Header title="Notifications" backBtn navigation={navigation} />
-      <View style={{paddingHorizontal:25}}>
-      <ScrollView
-        refreshControl={
-          <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
-        }
-        showsVerticalScrollIndicator={false} nestedScrollEnabled>
-        {notification && scheduleNotification && totalNotifications?.length > 0 ? (
-          <View>
-          <FlatList
-            data={totalNotifications || []}
-            nestedScrollEnabled={true}
-            renderItem={({ item, index }: any) => {
-              console.log("item=======>",item);
-              
-              return (
-                <TouchableOpacity
-                  onPress={() => navigateToOtherScreen(item)}
-                  activeOpacity={0.8}
-                  key={index}
-                  style={{ paddingHorizontal: 0 }}>
-                  <View
-                    style={{
-                      backgroundColor: Theme.white,
-                      paddingHorizontal: 10,
-                      paddingVertical: 12,
-                      borderRadius: 10,
-                      marginVertical: 5,
-                      borderWidth: 1,
-                      borderColor: '#eee',
-                      flexDirection: 'row',
-                    }}>
-                    <View style={{ width: '95%' }}>
+      <View style={{ paddingHorizontal: 25 }}>
+        <ScrollView
+          refreshControl={
+            <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
+          }
+          showsVerticalScrollIndicator={false} nestedScrollEnabled>
+          {notification && scheduleNotification && totalNotifications?.length > 0 ? (
+            <View>
+              <FlatList
+                data={totalNotifications || []}
+                nestedScrollEnabled={true}
+                renderItem={({ item, index }: any) => {
+                  console.log("item=======>", item);
+
+                  return (
+                    <TouchableOpacity
+                      onPress={() => navigateToOtherScreen(item)}
+                      activeOpacity={0.8}
+                      key={index}
+                      style={{ paddingHorizontal: 0 }}>
                       <View
                         style={{
+                          backgroundColor: Theme.white,
+                          paddingHorizontal: 10,
+                          paddingVertical: 12,
+                          borderRadius: 10,
+                          marginVertical: 5,
+                          borderWidth: 1,
+                          borderColor: '#eee',
                           flexDirection: 'row',
-                          width: '100%',
-                          justifyContent: 'space-between',
                         }}>
-                        <Text
-                          style={{
-                            color: Theme.gray,
-                            fontSize: 14,
-                            fontWeight: '600',
-                            marginTop: 5,
-                            width: '75%',
-                            fontFamily: 'Circular Std Medium'
-                          }}>
-                          {item.notificationType ?? "Update Schedule Classs"}
-                        </Text>
+                        <View style={{ width: '95%' }}>
+                          <View
+                            style={{
+                              flexDirection: 'row',
+                              width: '100%',
+                              justifyContent: 'space-between',
+                            }}>
+                            <Text
+                              style={{
+                                color: Theme.gray,
+                                fontSize: 14,
+                                fontWeight: '600',
+                                marginTop: 5,
+                                width: '75%',
+                                fontFamily: 'Circular Std Medium'
+                              }}>
+                              {item.notificationType ?? "Update Schedule Classs"}
+                            </Text>
+                          </View>
+                          <Text
+                            style={{
+                              color: Theme.black,
+                              fontSize: 14,
+                              fontWeight: '600',
+                              marginTop: 10,
+                              fontFamily: 'Circular Std Medium'
+                            }}>
+                            {`Student Name: ${item?.studentName} `}
+                          </Text>
+                          <Text
+                            style={{
+                              color: Theme.black,
+                              fontSize: 14,
+                              fontWeight: '600',
+                              fontFamily: 'Circular Std Medium'
+                            }}>
+                            {`Subject Name: ${item?.subjectName} `}
+                          </Text>
+                          <Text
+                            style={{
+                              color: Theme.gray,
+                              fontSize: 12,
+                              fontWeight: '600',
+                              marginTop: 5,
+                              fontFamily: 'Circular Std Medium'
+                            }}>
+                            {item.notificationProgressReportMonth}
+                          </Text>
+                        </View>
+                        <View style={{ justifyContent: 'center' }}>
+                          <Image
+                            source={require('../../Assets/Images/right.png')}
+                            resizeMode="contain"
+                            style={{ height: 18, width: 18 }}
+                          />
+                        </View>
                       </View>
-                      <Text
-                        style={{
-                          color: Theme.black,
-                          fontSize: 14,
-                          fontWeight: '600',
-                          marginTop: 10,
-                          fontFamily: 'Circular Std Medium'
-                        }}>
-                        {`Student Name: ${item?.studentName} `}
-                      </Text>
-                      <Text
-                        style={{
-                          color: Theme.black,
-                          fontSize: 14,
-                          fontWeight: '600',
-                          fontFamily: 'Circular Std Medium'
-                        }}>
-                        {`Subject Name: ${item?.subjectName} `}
-                      </Text>
-                      <Text
-                        style={{
-                          color: Theme.gray,
-                          fontSize: 12,
-                          fontWeight: '600',
-                          marginTop: 5,
-                          fontFamily: 'Circular Std Medium'
-                        }}>
-                        {item.notificationProgressReportMonth}
-                      </Text>
-                    </View>
-                    <View style={{ justifyContent: 'center' }}>
-                      <Image
-                        source={require('../../Assets/Images/right.png')}
-                        resizeMode="contain"
-                        style={{ height: 18, width: 18 }}
-                      />
-                    </View>
-                  </View>
-                </TouchableOpacity>
-              );
-            }}
-          />
-          </View>
-        ) : (
-          <View
-            style={{
-              flexDirection: 'row',
-              gap: 5,
-              justifyContent: 'center',
-              alignItems: 'center',
-              height: height / 1.5,
-            }}>
-            <AntDesign name="copy1" size={20} color={Theme.gray} />
-            <Text style={{ color: Theme.gray,fontFamily: 'Circular Std Medium' }}>There are no Notifications</Text>
-          </View>
-        )}
-      </ScrollView>
+                    </TouchableOpacity>
+                  );
+                }}
+              />
+            </View>
+          ) : (
+            <View
+              style={{
+                height: Dimensions.get('window').height - 250,
+                justifyContent: 'center',
+                alignItems: 'center',
+              }}>
+              <Image source={require('../../Assets/Images/notinone.png')} resizeMode='contain' style={{ width: 350, height: 350 }} />
+            </View>
+          )}
+        </ScrollView>
       </View>
       <CustomLoader visible={loading} />
     </View>

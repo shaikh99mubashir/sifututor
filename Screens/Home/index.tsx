@@ -45,6 +45,7 @@ import Toast from 'react-native-toast-message';
 import { getFcmToken } from '../../src/utils/fcmHelper';
 import JobTicketCarousel from '../../Component/JobTicketCarousel';
 import LatestNews from '../../Component/LatestNews';
+import CustomButton from '../../Component/CustomButton';
 function Home({ navigation, route }: any) {
   let key = route.key;
 
@@ -618,7 +619,7 @@ function Home({ navigation, route }: any) {
 
         const { tickets } = data;
         // Slice the array to get only the first 10 records
-        const limitedJobTicketData = tickets.slice(0, 10);
+        const limitedJobTicketData = tickets.slice(0, 5);
         setJobTicketData(limitedJobTicketData);
       })
       .catch(error => {
@@ -993,9 +994,9 @@ function Home({ navigation, route }: any) {
     return `${twelveHour}:${minuteStr} ${period}`;
   }
 
-  let imageUrl = tutorDetails?.tutorImage?.includes('https')
-    ? tutorDetails.tutorImage
-    : `${Base_Uri}public/tutorImage/${tutorDetails.tutorImage}`;
+  // let imageUrl = tutorDetails?.tutorImage?.includes('https')
+  //   ? tutorDetails.tutorImage
+  //   : `${Base_Uri}public/tutorImage/${tutorDetails.tutorImage}`;
 
   function convertDateFormat(date: string): string {
     const dateObj = new Date(date);
@@ -1131,6 +1132,7 @@ function Home({ navigation, route }: any) {
           style={{ flexDirection: 'row', alignItems: 'center', gap: 15 }}>
           <TouchableOpacity
             activeOpacity={0.8}
+            style={{top:7}}
             onPress={() => navigation.navigate('Notifications')}>
             <MaterialCommunityIcons
               name="bell-outline"
@@ -1180,7 +1182,21 @@ function Home({ navigation, route }: any) {
         showsVerticalScrollIndicator={false}>
 
 
-
+        {/* unverified banner */}
+        
+        {tutorDetails?.status?.toLowerCase() == 'verified' ? null :
+        <TouchableOpacity
+          activeOpacity={0.8}
+          onPress={() => navigation.navigate('TutorVerificationProcess')}
+          style={{alignItems: 'center',paddingHorizontal: 25}}>
+            <View style={{ margin: 6 }}></View>
+          <Image
+            source={require('../../Assets/Images/Banner.png')}
+            resizeMode="contain"
+            style={{width: Dimensions.get('screen').width / 1.17}}
+          />
+        </TouchableOpacity>
+        }
 
         {classInProcess && Object.keys(classInProcess).length > 0 ? (
           <View style={{ backgroundColor: Theme.GhostWhite, paddingHorizontal: 25 }}>
@@ -1248,8 +1264,8 @@ function Home({ navigation, route }: any) {
         ) : (
           null
         )}
-
-        <View style={{ marginVertical: 25, backgroundColor: Theme.GhostWhite }}>
+        {tutorDetails?.status?.toLowerCase() == 'verified' ?
+        <View style={{ marginVertical: 25, backgroundColor: Theme.GhostWhite,paddingHorizontal: 25 }}>
           <Text style={styles.textType1}>Monthly Summary</Text>
           <View style={{ margin: 6 }}></View>
           <View
@@ -1398,15 +1414,18 @@ function Home({ navigation, route }: any) {
             </View>
           </View>
         </View>
+        : null
+        }
+        <View style={{ margin: tutorDetails?.status?.toLowerCase() == 'verified' ? 0 : 16 }}></View>
 
-        <View style={{ margin: 0 }}></View>
         <View>
           {jobTicketData &&
             <View
               style={{
                 justifyContent: 'space-between',
                 flexDirection: 'row',
-                marginHorizontal: 10,
+                // marginHorizontal: 10,
+                paddingHorizontal: 25
               }}>
               <Text style={[styles.textType1, { fontFamily: 'Circular Std Bold' }]}>
                 Job Tickets
@@ -1425,8 +1444,26 @@ function Home({ navigation, route }: any) {
             </View>
           }
           <View style={{ margin: 3 }}></View>
+          <View style={{paddingHorizontal:22}}>
           <JobTicketCarousel jobTicketData={jobTicketData} navigation={navigation} />
+          </View>
         </View>
+        <View style={{ margin: 8 }}></View>
+        {tutorDetails?.status?.toLowerCase() == 'verified' ? null :
+        <View style={{marginTop: 30, marginBottom: 0,paddingHorizontal: 25}}>
+          <Text
+            style={[
+              styles.textType3,
+              {textAlign: 'center', lineHeight: 20, marginBottom: 15},
+            ]}>
+            Your profile is being reviewed,{'\n'} Please complete your tutor
+            profile
+          </Text>
+          <CustomButton btnTitle="Verify Now" onPress={()=> navigation.navigate('TutorVerificationProcess')} />
+        </View>
+        } 
+        {tutorDetails?.status?.toLowerCase() == 'verified' &&
+        <View style={{paddingHorizontal: 25}}>
         <View style={{ margin: 8 }}></View>
         <View>
           <View
@@ -1448,11 +1485,13 @@ function Home({ navigation, route }: any) {
           ) : (
             <View style={{ marginTop: 35 }}>
               <Text style={[styles.textType3, { textAlign: 'center' }]}>
-                No UpComming Classes...
+                No Upcoming Classes
               </Text>
             </View>
           )}
         </View>
+        </View>
+        }
         <View style={{ margin: 8 }}></View>
         <View
           style={{
@@ -1460,6 +1499,7 @@ function Home({ navigation, route }: any) {
             flexDirection: 'row',
             marginHorizontal: 10,
             marginTop: 15,
+            paddingHorizontal:25
           }}>
           <Text style={[styles.textType1]}>Latest News</Text>
           <TouchableOpacity 
@@ -1477,7 +1517,9 @@ function Home({ navigation, route }: any) {
           </TouchableOpacity>
         </View>
         <View style={{ margin: 2 }}></View>
+        <View style={{paddingHorizontal:25}}>
         <LatestNews latestNewsData={latestNewsData} navigation={navigation} />
+        </View>
 
       </ScrollView>
       {openPPModal &&
@@ -1544,7 +1586,7 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: Theme.GhostWhite,
-    paddingHorizontal: 25
+    
 
   },
   text: {

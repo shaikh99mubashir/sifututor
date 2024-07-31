@@ -3,7 +3,7 @@ import Svg, { Path } from 'react-native-svg';
 import { Theme } from '../../constant/theme';
 
 const SubjectIcon = () => (
-  <Svg width="17" height="19" viewBox="0 0 17 19" fill="none">
+  <Svg width="18" height="18" viewBox="0 0 17 19" fill="none">
     <Path 
       fillRule="evenodd" 
       clipRule="evenodd" 

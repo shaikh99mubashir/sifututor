@@ -30,6 +30,7 @@ import DateTimePickerModal from 'react-native-modal-datetime-picker';
 import { useIsFocused } from '@react-navigation/native';
 import MonthPicker from 'react-native-month-year-picker';
 import UpCommingCarousel from '../../Component/UpCommingCarousel';
+import CustomLoader from '../../Component/CustomLoader';
 
 const ScheduleOverview = ({ navigation }: any) => {
   const [loading, setLoading] = useState(false);
@@ -37,6 +38,7 @@ const ScheduleOverview = ({ navigation }: any) => {
   let context = useContext(scheduleContext);
   let { scheduleData, setScheduleData } = context;
   const [scheduleOverView, setScheduleOverView] = useState<any>([])
+  const [selectedDate, setSelectedDate] = useState(new Date());
   // console.log("scheduleOverView",scheduleOverView);
 
   const currentDate = new Date(); // Get the current date
@@ -58,6 +60,7 @@ const ScheduleOverview = ({ navigation }: any) => {
   }, [refresh]);
   // const dates = getCurrentMonthDates();
   const flatListRef = useRef<FlatList>(null);
+  
   // useEffect(() => {
   //   // Find the index of the current date
   //   const currentIndex = dates.findIndex(date => date.isCurrentDate);
@@ -67,7 +70,7 @@ const ScheduleOverview = ({ navigation }: any) => {
   //   }
   // }, []);
   const getItemLayout = (data: any, index: number): any => ({
-    length: 90, // Adjust the height of each item as per your design
+    length: 130, // Adjust the height of each item as per your design
     offset: 70 * index,
     index,
   });
@@ -97,8 +100,8 @@ const ScheduleOverview = ({ navigation }: any) => {
   };
 
   useEffect(() => {
-   
-      getUpcomingClasses();
+
+    getUpcomingClasses();
 
   }, []);
   const [selectedItem, setSelectedItem] = useState(null);
@@ -111,8 +114,7 @@ const ScheduleOverview = ({ navigation }: any) => {
   const getScheduledData = async (item: any) => {
     setLoading(true);
     console.log("item", item);
-
-
+    setSelectedDate(new Date(item.isoDate)); 
     interface LoginAuth {
       status: Number;
       tutorID: Number;
@@ -173,6 +175,15 @@ const ScheduleOverview = ({ navigation }: any) => {
 
       });
   };
+
+  useEffect(() => {
+    const currentDateItem = selectedDates.find(item => item.isCurrentDate);
+    if (currentDateItem) {
+      getScheduledData(currentDateItem);
+      const currentIndex = selectedDates.indexOf(currentDateItem);
+      flatListRef?.current?.scrollToIndex({ index: currentIndex, animated: true });
+    }
+  }, []);
 
   // useEffect(() => {
   //   if (refresh || selectedDate || data || scheduleData.length == 0) {
@@ -420,7 +431,6 @@ const ScheduleOverview = ({ navigation }: any) => {
 
 
   const getCurrentMonthDates = (monthYear: any) => {
-    console.log("monthYear", monthYear);
 
     const currentDate = new Date(monthYear);
     const currentMonth = currentDate.getMonth();
@@ -525,8 +535,10 @@ const ScheduleOverview = ({ navigation }: any) => {
   //     </TouchableOpacity>
   //   );
   // };
-
-  const renderItem = ({ item }: any) => {
+  const renderItem = ({ item }:any) => {
+    
+    const isSelectedDate = moment(item.selectedDate).isSame(selectedDate, 'day');
+    
     return (
       <TouchableOpacity onPress={() => getScheduledData(item)}>
         <View
@@ -534,7 +546,8 @@ const ScheduleOverview = ({ navigation }: any) => {
             alignItems: 'center',
             paddingVertical: 15,
             width: 68,
-            backgroundColor: item.isCurrentDate ? 'black' : Theme.white,
+            backgroundColor: isSelectedDate ? 'black'  : Theme.white,
+
             marginRight: 5,
             borderRadius: 16,
             gap: 10,
@@ -543,23 +556,22 @@ const ScheduleOverview = ({ navigation }: any) => {
             style={[
               styles.textType3,
               {
-                color: item.isCurrentDate ? Theme.white : Theme.IronsideGrey,
+                color: isSelectedDate ? Theme.white : Theme.IronsideGrey,
                 fontSize: 14,
               },
             ]}>
             {item.day}
           </Text>
           <View style={{
-            backgroundColor: item.isCurrentDate ? Theme.darkGray : Theme.white,
+            backgroundColor: isSelectedDate ? Theme.darkGray : Theme.white,
             borderRadius: 10,
           }}>
-
             <Text
               style={[
                 styles.textType1,
                 {
                   fontSize: 28,
-                  color: item.isCurrentDate ? Theme.white : Theme.Black,
+                  color: isSelectedDate ? Theme.white : Theme.Black,
                   paddingHorizontal: 6,
                   paddingVertical: 7,
                   textAlign: 'center',
@@ -573,6 +585,54 @@ const ScheduleOverview = ({ navigation }: any) => {
       </TouchableOpacity>
     );
   };
+
+  // const renderItem = ({ item }: any) => {
+  //   return (
+  //     <TouchableOpacity onPress={() => getScheduledData(item)}>
+  //       <View
+  //         style={{
+  //           alignItems: 'center',
+  //           paddingVertical: 15,
+  //           width: 68,
+  //           backgroundColor: item.isCurrentDate ? 'black' : Theme.white,
+  //           marginRight: 5,
+  //           borderRadius: 16,
+  //           gap: 10,
+  //         }}>
+  //         <Text
+  //           style={[
+  //             styles.textType3,
+  //             {
+  //               color: item.isCurrentDate ? Theme.white : Theme.IronsideGrey,
+  //               fontSize: 14,
+  //             },
+  //           ]}>
+  //           {item.day}
+  //         </Text>
+  //         <View style={{
+  //           backgroundColor: item.isCurrentDate ? Theme.darkGray : Theme.white,
+  //           borderRadius: 10,
+  //         }}>
+
+  //           <Text
+  //             style={[
+  //               styles.textType1,
+  //               {
+  //                 fontSize: 28,
+  //                 color: item.isCurrentDate ? Theme.white : Theme.Black,
+  //                 paddingHorizontal: 6,
+  //                 paddingVertical: 7,
+  //                 textAlign: 'center',
+  //                 top: 5
+  //               },
+  //             ]}>
+  //             {item.date}
+  //           </Text>
+  //         </View>
+  //       </View>
+  //     </TouchableOpacity>
+  //   );
+  // };
 
 
   return (
@@ -692,54 +752,57 @@ const ScheduleOverview = ({ navigation }: any) => {
           />
         )}
         <Modal
-        transparent={true}
-        animationType="slide"
-        visible={showMonthPicker}
-        onRequestClose={() => showPickerMonthAndYear(false)}
-      >
-        <View style={styles.modalContainer}>
-          <View style={{ position:'relative',
-    left:-170,}} >
-            <MonthPicker
-              onChange={onValueChangeMonthPicker}
-              value={monthYear}
-              locale="en"
-            />
-            <Button title="Done" onPress={() => showPickerMonthAndYear(false)} />
+          transparent={true}
+          animationType="slide"
+          visible={showMonthPicker}
+          onRequestClose={() => showPickerMonthAndYear(false)}
+        >
+          <View style={styles.modalContainer}>
+            <View style={{
+              position: 'relative',
+              left: -170,
+            }} >
+              <MonthPicker
+                onChange={onValueChangeMonthPicker}
+                value={monthYear}
+                locale="en"
+              />
+              <Button title="Done" onPress={() => showPickerMonthAndYear(false)} />
+            </View>
           </View>
-        </View>
-      </Modal>
+        </Modal>
 
         <View style={{ margin: 10 }}></View>
         {upCommingClasses &&
-        <View>
-          <View
-            style={{
-              justifyContent: 'space-between',
-              flexDirection: 'row',
-              marginTop: 20,
-              paddingHorizontal: 22,
-            }}>
-            <Text style={[styles.textType1, { fontFamily: 'Circular Std Medium' }]}>
-              Upcoming Classes
-            </Text>
-          </View>
-          <View style={{ padding: 15, paddingHorizontal: 25 }}>
-          {upCommingClasses && upCommingClasses.length > 0 ? (
-            <View>
-              <UpCommingCarousel upCommingClassesdata={upCommingClasses} />
-            </View>
-          ) : (
-            <View style={{ marginTop: 35 }}>
-              <Text style={[styles.textType3, { textAlign: 'center' }]}>
-                No UpComming Classes...
+          <View>
+            <View
+              style={{
+                justifyContent: 'space-between',
+                flexDirection: 'row',
+                marginTop: 20,
+                paddingHorizontal: 22,
+              }}>
+              <Text style={[styles.textType1, { fontFamily: 'Circular Std Medium' }]}>
+                Upcoming Classes
               </Text>
             </View>
-          )}
+            <View style={{ padding: 15, paddingHorizontal: 25 }}>
+              {upCommingClasses && upCommingClasses.length > 0 ? (
+                <View>
+                  <UpCommingCarousel upCommingClassesdata={upCommingClasses} />
+                </View>
+              ) : (
+                <View style={{ marginTop: 35 }}>
+                  <Text style={[styles.textType3, { textAlign: 'center' }]}>
+                   No Upcoming Classes
+                  </Text>
+                </View>
+              )}
+            </View>
+            <View style={{ margin: 0 }}></View>
           </View>
-          <View style={{ margin: 0 }}></View>
-        </View>
         }
+        <CustomLoader visible={loading}/>
         <View style={{ margin: 20 }}></View>
       </ScrollView>
     </View>

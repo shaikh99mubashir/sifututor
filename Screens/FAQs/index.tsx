@@ -1,298 +1,206 @@
 import {
+  FlatList,
+  ScrollView,
   StyleSheet,
   Text,
-  View,
   TouchableOpacity,
+  View,
   Image,
-  ScrollView,
-  FlatList,
-  ToastAndroid,
-  Modal,
-  Linking,
-  Dimensions
 } from 'react-native';
-import React, { useEffect, useState, useContext } from 'react';
+import React, {useState} from 'react';
+import Entypo from 'react-native-vector-icons/Entypo';
 import { Theme } from '../../constant/theme';
 import Header from '../../Component/Header';
-import axios from 'axios';
-import { Base_Uri } from '../../constant/BaseUri';
-import AntDesign from 'react-native-vector-icons/AntDesign';
-import bannerContext from '../../context/bannerContext';
-import TutorDetailsContext from '../../context/tutorDetailsContext';
-import AsyncStorage from '@react-native-async-storage/async-storage';
-import HTML from 'react-native-render-html';
-import CustomLoader from '../../Component/CustomLoader';
-const FAQs = ({ navigation }: any) => {
 
+const FAQs = ({navigation}: any) => {
+  const [faqsData, setFaqsData]: any = useState<any>([
+    {
+      id: '1',
+      question:
+        'What are the Criteria needed to be selected when applying for job tickets?',
+      description:
+        'First and foremost, you must meet the eligibility criteria specified by the job provider.',
+      open: false,
+    },
+    {
+      id: '2',
+      question: 'What are the Requirements to become a tutor-Partner?',
+      description:
+        'First and foremost, you must meet the eligibility criteria specified by the job provider.',
+      open: false,
+    },
+    {
+      id: '3',
+      question:
+        'I have applied for a few job tickets, but they are still pending. May l know why?',
+      description:
+        'First and foremost, you must meet the eligibility criteria specified by the job provider.',
+      open: false,
+    },
+    {
+      id: '4',
+      question:
+        'Who may l refer to regarding my application’s status as a Tutor-Partner?',
+      description:
+        'First and foremost, you must meet the eligibility criteria specified by the job provider.',
+      open: false,
+    },
+    {
+      id: '5',
+      question: 'Can l apply for more than one job ticket?',
+      description:
+        'First and foremost, you must meet the eligibility criteria specified by the job provider.',
+      open: false,
+    },
+    {
+      id: '6',
+      question:
+        'What’s next if my Tutorla application is accepted? Do l need to fill out forms or prepare any documentation?',
+      description:
+        'First and foremost, you must meet the eligibility criteria specified by the job provider.',
+      open: false,
+    },
+  ]);
 
-  let bannerCont = useContext(bannerContext)
-
-  let { faqBanner, setFaqBanner } = bannerCont
-  const tutorDetailsContext = useContext(TutorDetailsContext)
-  let { tutorDetails } = tutorDetailsContext
-
-
-  const [faqsData, setFaqsData]: any = useState<any>([]);
-  const [loading, setLoading] = useState(false)
-  
-  const getFaqs = () => {
-    setLoading(true)
-    axios
-      .get(`${Base_Uri}api/faqs`)
-      .then(async ({ data }) => {
-        let { faqs } = data;
-        faqs = faqs.map((faq:any) => ({ ...faq, open: false }));
-        setFaqsData(faqs)
-        setLoading(false)
-      })
-      .catch(error => {
-        setLoading(false)
-        // ToastAndroid.show('Internal Server Error', ToastAndroid.SHORT);
-      });
-  }
- 
   const handleQuestionPress = (index: number) => {
     setFaqsData((prevData: any) =>
       prevData.map((faq: any, i: number) => ({
         ...faq,
-        open: i == index ? !faq.open : false,
-      }))
+        open: i === index ? !faq.open : false,
+      })),
     );
   };
-  useEffect(() => {
-    getFaqs()
-  }, [])
-  const [openPPModal, setOpenPPModal] = useState(false);
-  const displayBanner = async () => {
-    setOpenPPModal(true)
-    axios
-      .get(`${Base_Uri}api/bannerAds`)
-      .then(({ data }) => {
-      })
-      .catch(error => {
-        // ToastAndroid.show('Internal Server Error', ToastAndroid.SHORT);
-      });
-  };
 
-  useEffect(() => {
-    displayBanner();
-  }, []);
-
-
-  const linkToOtherPage = () => {
-
-    if (faqBanner.callToActionType == "Open URL") {
-      Linking.openURL(faqBanner.urlToOpen);
-    }
-    else if (faqBanner.callToActionType == "Open Page")
-
-      if (faqBanner.pageToOpen == "Dashboard") {
-
-        navigation.navigate("Home")
-      }
-      else if (faqBanner.pageToOpen == "Faq") {
-
-        navigation.navigate("FAQs")
-
-      }
-      else if (faqBanner.pageToOpen == ("Class Schedule List")) {
-
-        navigation.navigate("Schedule")
-
-      }
-
-      else if (faqBanner.pageToOpen == "Student List") {
-
-        navigation.navigate("Students")
-
-      }
-      else if (faqBanner.pageToOpen == "Inbox") {
-
-        navigation.navigate("inbox")
-
-      }
-      else if (faqBanner.pageToOpen == "Profile") {
-        navigation.navigate("Profile")
-      }
-      else if (faqBanner.pageToOpen == ("Payment History")) {
-
-        navigation.navigate("PaymentHistory")
-
-
-      }
-      else if (faqBanner.pageToOpen == ("Job Ticket List")) {
-
-        navigation.navigate("Job Ticket")
-
-      }
-      else if (faqBanner.pageToOpen == ("Submission History")) {
-        navigation.navigate("ReportSubmissionHistory")
-      }
-  }
-
-
-  const closeBannerModal = async () => {
-
-    if (faqBanner.displayOnce == "on") {
-
-      let bannerData = { ...faqBanner }
-
-      let stringData = JSON.stringify(bannerData)
-
-      let data = await AsyncStorage.setItem("faqBanner", stringData)
-      setFaqBanner([])
-      setOpenPPModal(false)
-    } else {
-      setOpenPPModal(false)
-    }
-  }
-
-  
+  const renderFAQItem = ({item, index}: any) => (
+    <View style={{marginBottom: 20}}>
+      <TouchableOpacity
+        onPress={() => handleQuestionPress(index)}
+        activeOpacity={0.8}
+        style={{
+          backgroundColor: Theme.white,
+          padding: 20,
+          borderRadius: 10,
+          flexDirection: 'row',
+          alignItems: 'center',
+        }}>
+        <View style={{width: '90%'}}>
+          <Text style={[styles.textType3, {fontSize: 14}]}>
+            {item.question}
+          </Text>
+        </View>
+        <View style={{marginLeft: 10}}>
+          <Entypo
+            name={item.open ? 'minus' : 'plus'}
+            size={18}
+            color={Theme.Black}
+          />
+        </View>
+      </TouchableOpacity>
+      {item.open && (
+        <Text
+          style={[
+            styles.textType3,
+            {
+              fontSize: 14,
+              fontFamily: 'Circular Std Book',
+              color: Theme.IronsideGrey,
+              paddingHorizontal: 20,
+              paddingVertical: 10,
+            },
+          ]}>
+          {item.description}
+        </Text>
+      )}
+    </View>
+  );
 
   return (
-    <View style={{ backgroundColor: Theme.GhostWhite, height: '100%' }}>
-      <Header title="FAQs" backBtn navigation={navigation} />
-     
-      <ScrollView showsVerticalScrollIndicator={false} nestedScrollEnabled>
-        <View style={{ paddingHorizontal: 25, marginVertical: 15 }}>
-
-          <FlatList
-            data={faqsData ?? []}
-            showsHorizontalScrollIndicator={false}
-            nestedScrollEnabled
-            renderItem={({ item, index }: any) => {
-              return (
-                <>
-                  <View
-                    key={index}
-                    style={{
-                      borderWidth: 1,
-                      paddingHorizontal: 10,
-                      flexDirection: 'row',
-                      width: '100%',
-                      borderRadius: 5,
-                      borderColor: Theme.shinyGrey,
-                      borderBottomWidth: item.open ? 0 : 1,
-                      borderBottomLeftRadius: item.open ? 1 : 5,
-                      borderBottomRightRadius: item.open ? 1 : 5,
-                      marginBottom: item.open ? 0 : 15,
-                      backgroundColor:Theme.white
-                    }}>
-                    <View style={{ width: '93%' }}>
-                      <HTML
-                        source={{ html: item?.question }}
-                        ignoredDomTags={['o:p']}
-                        contentWidth={300}
-                        baseStyle={{
-                          fontFamily: 'Circular Std Medium',
-                          color: 'black',
-                          fontWeight: '600',
-                          fontSize: 14,
-                          justifyContent:'flex-start'
-                        }}
-                      />
-                    </View>
-                    <TouchableOpacity onPress={() => handleQuestionPress(index)}>
-                      {item?.open ? (
-                        <Image
-                          source={require('../../Assets/Images/minus.png')}
-                          style={{ width: 20, height: 20 ,marginTop:10}}
-                          resizeMode="contain"
-                        />
-                      ) : (
-                        <Image
-                          source={require('../../Assets/Images/plus.png')}
-                          style={{ width: 20, height: 20,marginTop:10 }}
-                          resizeMode="contain"
-                        />
-                      )}
-                    </TouchableOpacity>
-                  </View>
-                  {item.open ? (
-                    <View
-                      style={{
-                        borderWidth: 1,
-                        paddingHorizontal: 10,
-                        paddingVertical: 5,
-                        paddingBottom: 10,
-                        flexDirection: 'row',
-                        width: '100%',
-                        borderRadius: 5,
-                        borderColor: Theme.shinyGrey,
-                        borderTopWidth: 0,
-                        borderTopLeftRadius: 0,
-                        borderTopRightRadius: 0,
-                        marginBottom: 15,
-                        backgroundColor:Theme.white
-
-                      }}>
-                         <HTML
-                        source={{ html: item.answer }}
-                        ignoredDomTags={['o:p']}
-                        contentWidth={300}
-                        baseStyle={{
-                          fontFamily: 'Circular Std Medium',
-                          color: 'black',
-                          fontWeight: '600',
-                          fontSize: 14,
-                        }}/>
-                    </View>
-                  ) : (
-                    ''
-                  )}
-                </>
-              );
-            }}
-          />
-           <CustomLoader visible={loading} />
+    <View
+      style={{
+        backgroundColor: Theme.GhostWhite,
+        height: '100%',
+        
+      }}>
+      <Header backBtn title="FAQs" navigation={navigation} />
+      <ScrollView showsVerticalScrollIndicator={false} nestedScrollEnabled style={{paddingHorizontal: 25,}}>
+        <View style={{margin: 10}}></View>
+        <Text style={[styles.textType3, {textAlign: 'center'}]}>
+          What do you want to know?
+        </Text>
+        <View style={{margin: 8}}></View>
+        <Text
+          style={[
+            styles.textType1,
+            {textAlign: 'center', fontFamily: 'Circular Std Bold',lineHeight:26},
+          ]}>
+          Some of the most Frequently Asked Questions
+        </Text>
+        <View style={{margin: 15}}></View>
+        <View style={{flexDirection:'row', alignItems:'center'}}>
+          <Text style={[styles.textType1,{lineHeight:26}]}>Application & {'\n'}Registration</Text>
+          <Image source={require('../../Assets/Images/faq1.png')} style={{right:25}}/>
         </View>
+        <View style={{margin: 15}}></View>
+
+        <View>
+          <FlatList
+            data={faqsData}
+            renderItem={renderFAQItem}
+            keyExtractor={item => item.id}
+          />
+        </View>
+
+        <View style={{margin: 15}}></View>
+        <View style={{flexDirection:'row', alignItems:'flex-end'}}>
+          <Image source={require('../../Assets/Images/FaqPayment.png')} />
+          <Text style={[styles.textType1,{lineHeight:26,paddingBottom:25}]}>Payments</Text>
+        </View>
+
+        <View style={{margin: 15}}></View>
+
+        <View>
+          <FlatList
+            data={faqsData}
+            renderItem={renderFAQItem}
+            keyExtractor={item => item.id}
+          />
+        </View>
+
+        <View style={{margin: 15}}></View>
+        <View style={{flexDirection:'row', alignItems:'flex-end',justifyContent:'space-between'}}>
+          <Text style={[styles.textType1,{lineHeight:26,paddingBottom:15,left:30}]}>Others</Text>
+          <Image source={require('../../Assets/Images/Other.png')} />
+        </View>
+        <View style={{margin: 15}}></View>
+        <View>
+          <FlatList
+            data={faqsData}
+            renderItem={renderFAQItem}
+            keyExtractor={item => item.id}
+          />
+        </View>
+        <View style={{margin:20}}></View>
       </ScrollView>
-
-
-
-      {Object.keys(faqBanner).length > 0 && (faqBanner.tutorStatusCriteria == "All" || tutorDetails.status == "verified") && <View style={{ flex: 1 }}>
-        <Modal
-          visible={openPPModal}
-          animationType="fade"
-          transparent={true}
-          onRequestClose={() => closeBannerModal()}>
-          <TouchableOpacity
-            onPress={linkToOtherPage}
-            style={{
-              flex: 1,
-              backgroundColor: 'rgba(0,0,0,0.5)',
-              justifyContent: 'center',
-              alignItems: 'center',
-            }}>
-
-            <View
-              style={{
-                backgroundColor: 'white',
-                // padding: 15,
-                borderRadius: 5,
-                marginHorizontal: 20,
-              }}>
-              <TouchableOpacity onPress={() => closeBannerModal()}>
-                <View style={{ alignItems: 'flex-end', paddingVertical: 10, paddingRight: 15 }}>
-                  <AntDesign
-                    name="closecircleo"
-                    size={20}
-                    color={'black'}
-                  />
-                </View>
-              </TouchableOpacity>
-              {/* <Image source={{uri:}} style={{width:Dimensions.get('screen').width/1.1,height:'80%',}} resizeMode='contain'/> */}
-              <Image source={{ uri: faqBanner.bannerImage }} style={{ width: Dimensions.get('screen').width / 1.05, height: '90%', }} resizeMode='contain' />
-            </View>
-
-          </TouchableOpacity>
-        </Modal>
-      </View>}
-
     </View>
   );
 };
 
 export default FAQs;
 
-const styles = StyleSheet.create({});
+const styles = StyleSheet.create({
+  textType3: {
+    color: Theme.Dune,
+    // fontWeight: '500',
+    fontSize: 16,
+    fontFamily: 'Circular Std Medium',
+    fontStyle: 'normal',
+  },
+  textType1: {
+    fontWeight: '500',
+    fontSize: 26,
+    color: Theme.Black,
+    fontFamily: 'Circular Std Medium',
+    lineHeight: 24,
+    fontStyle: 'normal',
+  },
+});

@@ -332,19 +332,27 @@ const PaymentHistory = ({ navigation }: any) => {
         </View>
       ) : (
         <View
-          style={{
-            flexDirection: 'row',
-            gap: 5,
-            justifyContent: 'center',
-            alignItems: 'center',
-            height: height / 1.5,
-          }}>
-          <Image
-            source={require('../../Assets/Images/payment.png')}
-            style={{ height: 25, width: 25 }}
-          />
-          <Text style={{ color: 'black', fontSize: 14,fontFamily: 'Circular Std Black' }}>No payment history at this moment...</Text>
-        </View>
+        style={{
+          height: Dimensions.get('window').height - 250,
+          justifyContent: 'center',
+          alignItems: 'center',
+        }}>
+        <Image source={require('../../Assets/Images/nopayment.png')} resizeMode='contain' style={{width:350, height:350}}/>   
+      </View>
+        // <View
+        //   style={{
+        //     flexDirection: 'row',
+        //     gap: 5,
+        //     justifyContent: 'center',
+        //     alignItems: 'center',
+        //     height: height / 1.5,
+        //   }}>
+        //   <Image
+        //     source={require('../../Assets/Images/payment.png')}
+        //     style={{ height: 25, width: 25 }}
+        //   />
+        //   <Text style={{ color: 'black', fontSize: 14,fontFamily: 'Circular Std Black' }}>No payment history at this moment...</Text>
+        // </View>
       )}
       {Object.keys(paymentHistoryBanner).length > 0 && (paymentHistoryBanner.tutorStatusCriteria == "All" || tutorDetails.status == "verified") && <View style={{ flex: 1 }}>
         <Modal

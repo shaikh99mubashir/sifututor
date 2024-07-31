@@ -12,6 +12,7 @@ import Icon from 'react-native-vector-icons/AntDesign';
 import { getFocusedRouteNameFromRoute } from '@react-navigation/native';
 import Entypo from 'react-native-vector-icons/Entypo';
 import AntDesign from 'react-native-vector-icons/AntDesign';
+import NeedHelp from '../../SVGs/NeedHelp';
 export type Props = {
   navigation: any;
 };
@@ -33,7 +34,8 @@ const Header = (Props: any) => {
     containerStyle,
     recordsFilter,
     BackBtn,
-    noTop
+    noTop,
+    needHelp
   } = Props;
 
   const routeToFilter = () => {
@@ -180,7 +182,13 @@ const Header = (Props: any) => {
                   onPress={() => navigation.navigate('AddClass')}>
                   <Icon name={"plus"} size={24} color={Theme.white} />
                 </TouchableOpacity>
-              </View> : (
+              </View> : needHelp ?
+              <View style={{flexDirection:'row', alignItems:'center', gap:4}}>
+                <Text style={{fontSize:14,fontFamily: 'Circular Std Book',}}>Need Help</Text>
+                <NeedHelp/>
+              </View>
+              :
+              (
                 <View style={{  }}>
                   <Text></Text>
                 </View>

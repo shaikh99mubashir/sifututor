@@ -17,6 +17,7 @@ import axios from 'axios';
 import { Base_Uri } from '../../constant/BaseUri';
 import AntDesign from 'react-native-vector-icons/AntDesign';
 import Entypo from 'react-native-vector-icons/Entypo';
+import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 import Feather from 'react-native-vector-icons/Feather';
 import FontAwesome from 'react-native-vector-icons/FontAwesome';
 import TutorDetailsContext from '../../context/tutorDetailsContext';
@@ -25,6 +26,10 @@ import CustomButton from '../../Component/CustomButton';
 import Toast from 'react-native-toast-message';
 import SubjectIcon from '../../SVGs/SubjectIcon';
 import LevelIcon from '../../SVGs/LevelIcon';
+import StudentDetail from '../../SVGs/StudentDetail';
+import PrefTutor from '../../SVGs/PrefTutor';
+import StudentIcon from '../../SVGs/StudentIcon';
+import BeforeTime from '../../SVGs/BeforeTime';
 
 const OpenDetails = ({ route, navigation }: any) => {
   const data = route.params;
@@ -73,8 +78,8 @@ const OpenDetails = ({ route, navigation }: any) => {
           Toast.show({
             type: 'info',
             // text1: 'Request timeout:',
-            text2:  `You have successfully applied for this ticket`,
-            position:'bottom'
+            text2: `You have successfully applied for this ticket`,
+            position: 'bottom'
           });
           navigation.navigate('Job Ticket', ticketID);
         } else {
@@ -83,8 +88,8 @@ const OpenDetails = ({ route, navigation }: any) => {
           Toast.show({
             type: 'info',
             // text1: 'Request timeout:',
-            text2:  `${data?.result}`,
-            position:'bottom'
+            text2: `${data?.result}`,
+            position: 'bottom'
           });
           setLoading(false);
         }
@@ -104,34 +109,40 @@ const OpenDetails = ({ route, navigation }: any) => {
           <View
             style={{
               backgroundColor: Theme.darkGray,
-              padding: 15,
-              marginTop: 10,
+              paddingHorizontal: 25,
+              paddingTop: 20,
+              paddingBottom:12,
+              marginTop: 20,
               borderRadius: 12,
               flexDirection: 'row',
               justifyContent: 'space-between',
             }}>
             <View>
-              <Text style={[styles.textType3, { color: 'white' }]}>
+              <Text style={[styles.textType3, { color: 'white', fontFamily: 'Circular Std Bold', fontWeight: 700, lineHeight: 20 }]}>
                 {data?.jtuid}
               </Text>
               <Text
-                style={[styles.textType1, { lineHeight: 30, color: 'white' }]}>
+                style={[styles.textType1, { lineHeight: 30, color: 'white', }]}>
                 RM {data?.price}
               </Text>
+              <View style={{ margin: 1 }} />
               <View
                 style={{ flexDirection: 'row', gap: 5, alignItems: 'center' }}>
-                <Feather name="map-pin" size={18} color={'#fff'} />
+                <Feather name="map-pin" size={16} color={'#fff'} />
                 <Text style={[styles.textType3, { color: 'white' }]}>
                   {data?.city}
                 </Text>
               </View>
             </View>
             <View style={{ alignItems: 'center', justifyContent: 'center', }}>
-            <View style={{
+              <View style={{
                 backgroundColor: '#000',
-                paddingVertical: 5,
-                paddingHorizontal: 30,
+                // paddingVertical: 5,
+                // paddingHorizontal: 30,
                 borderRadius: 30,
+                height: 36,
+                width: 110,
+                justifyContent: 'center',
               }}>
                 <Text
                   style={[
@@ -139,6 +150,9 @@ const OpenDetails = ({ route, navigation }: any) => {
                     {
                       color: '#fff',
                       textTransform: 'capitalize',
+                      textAlign: 'center',
+                      fontFamily: 'Circular Std Bold',
+                      fontWeight: 500
                     },
                   ]}>
                   {data?.mode}
@@ -147,9 +161,9 @@ const OpenDetails = ({ route, navigation }: any) => {
 
             </View>
           </View>
-          <View style={{ marginVertical: 20 }}>
-            <Text style={styles.textType1}>Details</Text>
-
+          <View style={{ marginVertical: 0 }}>
+            <View style={{ margin: 15 }}></View>
+            <Text style={[styles.textType1, { lineHeight: 24 }]}>Details</Text>
             <View
               style={{
                 backgroundColor: Theme.white,
@@ -163,7 +177,6 @@ const OpenDetails = ({ route, navigation }: any) => {
                   justifyContent: 'space-between',
                   flexDirection: 'row',
                   alignItems: 'center',
-                  paddingBottom: 15,
                   width: '100%'
                 }}>
                 <View
@@ -171,10 +184,13 @@ const OpenDetails = ({ route, navigation }: any) => {
                     alignItems: 'center',
                     justifyContent: 'center',
                     flexDirection: 'row',
-                    gap: 10,
+                    gap: 8,
                   }}>
-                  <FontAwesome name="user-o" size={18} color={Theme.darkGray} />
-                  <Text style={styles.textType3}>Student Name</Text>
+                  {/* <FontAwesome name="user-o" size={18} color={Theme.darkGray} /> */}
+                  <View style={{right:2}}>
+                  <StudentIcon/>
+                  </View>
+                  <Text style={[styles.textType3, { color: Theme.IronsideGrey, fontFamily: 'Circular Std Book' }]}>Student Name</Text>
                 </View>
                 <Text
                   style={[
@@ -184,6 +200,120 @@ const OpenDetails = ({ route, navigation }: any) => {
                   {data?.studentName.length > 14 ? `${data?.studentName.slice(0, 14)}..` : data?.studentName}
                 </Text>
               </View>
+              <View style={{ margin: 7 }}></View>
+              <View
+                style={{
+                  justifyContent: 'space-between',
+                  flexDirection: 'row',
+                  alignItems: 'center',
+                }}>
+                <View
+                  style={{
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    flexDirection: 'row',
+                    gap: 4,
+                  }}>
+                  <View style={{ right: 3 }}>
+                    <StudentDetail />
+                  </View>
+                  <Text style={[styles.textType3, { color: Theme.IronsideGrey, }]}>Student Detail</Text>
+                </View>
+                <Text style={[styles.textType1, { fontSize: 18, }]}>
+                  {data?.studentGender} ({data?.student_age} y/o)
+                </Text>
+              </View>
+              <View style={{ margin: 7 }}></View>
+              <View
+                style={{
+                  justifyContent: 'space-between',
+                  flexDirection: 'row',
+                  alignItems: 'center',
+                }}>
+                <View
+                  style={{
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    flexDirection: 'row',
+                    gap: 9,
+                  }}>
+                  <Feather name="hash" size={18} color={Theme.darkGray} />
+                  <Text style={styles.textType3}>No. of Sessions</Text>
+                </View>
+
+                <View
+                  style={{
+                    width: 30,
+                    height: 30,
+                    backgroundColor: '#298CFF33',
+                    borderRadius: 50,
+                  }}>
+                  <Text
+                    style={[
+                      styles.textType1,
+                      {
+                        color: '#003E9C',
+                        textAlign: 'center',
+                        fontSize: 18,
+                        paddingTop: 5
+                      },
+                    ]}>
+                    {data?.classFrequency}
+                  </Text>
+                </View>
+              </View>
+              <View style={{ margin: 4 }}></View>
+              <View
+                style={{
+                  justifyContent: 'space-between',
+                  flexDirection: 'row',
+                  alignItems: 'center',
+                }}>
+                <View
+                  style={{
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    flexDirection: 'row',
+                    gap: 9,
+                  }}>
+                  <Entypo name="time-slot" size={18} color={Theme.darkGray} />
+                  <Text style={styles.textType3}>Class Duration hour(s)</Text>
+                </View>
+
+                <View
+                  style={{
+                    width: 30,
+                    height: 30,
+                    backgroundColor: '#298CFF33',
+                    paddingVertical: 2,
+                    borderRadius: 50,
+                  }}>
+                  <Text
+                    style={[
+                      styles.textType1,
+                      styles.textType1,
+                      {
+                        color: '#003E9C',
+                        textAlign: 'center',
+                        fontSize: 18,
+                        paddingTop: 4
+                      },
+                    ]}>
+                    {data?.quantity}
+                  </Text>
+                </View>
+              </View>
+            </View>
+            <View style={{ margin: 3 }}></View>
+            <View
+              style={{
+                backgroundColor: Theme.white,
+                paddingHorizontal: 25,
+                paddingVertical: 20,
+                marginTop: 10,
+                borderRadius: 20,
+              }}>
+                
               <View
                 style={{
                   justifyContent: 'space-between',
@@ -197,129 +327,37 @@ const OpenDetails = ({ route, navigation }: any) => {
                     flexDirection: 'row',
                     gap: 8,
                   }}>
-                  <FontAwesome
-                    name="graduation-cap"
-                    size={18}
-                    color={Theme.darkGray}
-                  />
-                  <Text style={styles.textType3}>Student Detail</Text>
-                </View>
-                <Text style={[styles.textType1, { fontSize: 18 }]}>
-                  {data?.studentGender} ({data?.student_age} y/o)
-                </Text>
-              </View>
-              <View
-                style={{
-                  justifyContent: 'space-between',
-                  flexDirection: 'row',
-                  alignItems: 'center',
-                  marginTop: 10,
-                }}>
-                <View
-                  style={{
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                    flexDirection: 'row',
-                    gap: 10,
-                  }}>
-                  <Feather name="hash" size={18} color={Theme.darkGray} />
-                  <Text style={styles.textType3}>No. of Sessions</Text>
-                </View>
-
-                <View
-                  style={{
-                    width: 30,
-                    height: 30,
-                    backgroundColor: '#298CFF33',
-                    paddingVertical: 2,
-                    borderRadius: 50,
-                  }}>
-                  <Text
-                    style={[
-                      styles.textType1,
-                      styles.textType1,
-                      {
-                        color: '#003E9C',
-                        textAlign: 'center',
-                        fontSize: 18,
-                      },
-                    ]}>
-                    {data?.classFrequency}
-                  </Text>
-                </View>
-              </View>
-              <View
-                style={{
-                  justifyContent: 'space-between',
-                  flexDirection: 'row',
-                  alignItems: 'center',
-                  marginTop: 10,
-                }}>
-                <View
-                  style={{
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                    flexDirection: 'row',
-                    gap: 10,
-                  }}>
-                  <Entypo name="time-slot" size={18} color={Theme.darkGray} />
-                  <Text style={styles.textType3}>Class Duration(Hrs)</Text>
-                </View>
-
-                <View
-                  style={{
-                    width: 30,
-                    height: 30,
-                    backgroundColor: '#298CFF33',
-                    paddingVertical: 2,
-                    borderRadius: 50,
-                  }}>
-                  <Text
-                    style={[
-                      styles.textType1,
-                      styles.textType1,
-                      {
-                        color: '#003E9C',
-                        textAlign: 'center',
-                        fontSize: 18,
-                      },
-                    ]}>
-                    {data?.quantity}
-                  </Text>
-                </View>
-              </View>
-            </View>
-
-            <View
-              style={{
-                backgroundColor: Theme.white,
-                paddingHorizontal: 25,
-                paddingVertical: 15,
-                marginTop: 10,
-                borderRadius: 20,
-              }}>
-              <View
-                style={{
-                  justifyContent: 'space-between',
-                  flexDirection: 'row',
-                  alignItems: 'center',
-                }}>
-                <View
-                  style={{
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                    flexDirection: 'row',
-                    gap: 12,
-                    paddingBottom: 15,
-                  }}>
-                  {/* <FontAwesome name="level-up" size={22} color={Theme.darkGray} /> */}
-                  <LevelIcon/>
+                  <LevelIcon />
                   <Text style={styles.textType3}>Level</Text>
                 </View>
                 <Text style={[styles.textType1, { fontSize: 18 }]}>
                   {data?.categoryName}
                 </Text>
               </View>
+              <View style={{ margin: 5 }}></View>
+
+              <View
+                style={{
+                  justifyContent: 'space-between',
+                  flexDirection: 'row',
+                  alignItems: 'center',
+                }}>
+                <View
+                  style={{
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    flexDirection: 'row',
+                    gap: 9,
+                  }}>
+                  <SubjectIcon />
+                  <Text style={styles.textType3}>Subject</Text>
+                </View>
+                <Text style={[styles.textType1, { fontSize: 18 }]}>
+                  {data?.subject_name}
+                </Text>
+              </View>
+              <View style={{ margin: 5 }}></View>
+              
               <View
                 style={{
                   justifyContent: 'space-between',
@@ -332,53 +370,11 @@ const OpenDetails = ({ route, navigation }: any) => {
                     justifyContent: 'center',
                     flexDirection: 'row',
                     gap: 12,
-                    paddingBottom: 15,
                   }}>
-                  <Ionicons name="recording-sharp" size={18} color={Theme.darkGray} />
-                  <Text style={styles.textType3}>Subscription</Text>
-                </View>
-                <Text style={[styles.textType1, { fontSize: 18 }]}>
-                  {data?.subscription}
-                </Text>
-              </View>
-
-              <View
-                style={{
-                  justifyContent: 'space-between',
-                  flexDirection: 'row',
-                  alignItems: 'center',
-                }}>
-                <View
-                  style={{
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                    flexDirection: 'row',
-                    gap: 10,
-                  }}>
-                  <SubjectIcon/>
-                  <Text style={styles.textType3}>Subject</Text>
-                </View>
-                <Text style={[styles.textType1, { fontSize: 18 }]}>
-                  {data?.subject_name}
-                </Text>
-              </View>
-
-              <View
-                style={{
-                  justifyContent: 'space-between',
-                  flexDirection: 'row',
-                  alignItems: 'center',
-                  marginTop: 10,
-                  paddingBottom: 15,
-                }}>
-                <View
-                  style={{
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                    flexDirection: 'row',
-                    gap: 10,
-                  }}>
-                  <FontAwesome name="user-o" size={18} color={Theme.darkGray} />
+                  {/* <FontAwesome name="user-o" size={18} color={Theme.darkGray} /> */}
+                  <View style={{left:2}}>
+                  <PrefTutor/>
+                  </View>
                   <Text style={styles.textType3}>Pref. Tutor</Text>
                 </View>
                 <Text
@@ -389,14 +385,15 @@ const OpenDetails = ({ route, navigation }: any) => {
                   {data?.tutorPereference}
                 </Text>
               </View>
-
+              <View style={{ margin: 10 }}></View>
               <View
                 style={{
                   flexDirection: 'row',
                   gap: 10,
-                  paddingTop: 15,
+                  paddingTop: 18,
                   borderTopWidth: 1,
                   borderTopColor: '#eee',
+                  flexWrap: 'wrap'
                 }}>
                 <View
                   style={{
@@ -442,132 +439,250 @@ const OpenDetails = ({ route, navigation }: any) => {
                     </Text>
                   </View>
                 </View>
+                <View
+                  style={{
+                    backgroundColor: '#E6F2FF',
+                    paddingVertical: 10,
+                    borderRadius: 10,
+                    paddingHorizontal: 10,
+                  }}>
+                  <View
+                    style={{
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      flexDirection: 'row',
+                      gap: 10,
+                    }}>
+                    <Ionicons name="recording-sharp" size={20} color={Theme.darkGray} />
+                    <Text style={[styles.textType3, { color: Theme.darkGray }]}>
+                      {data?.subscription?.toLowerCase() == 'longterm' ? "Long-Term" : 'Short-Term'}
+                    </Text>
+                  </View>
+                </View>
+              </View>
+            </View>
+            <View style={{ margin: 10 }}></View>
+            <Text style={[styles.textType1, { lineHeight: 24 }]}>Payment Breakdown</Text>
+            <View
+              style={{
+                backgroundColor: Theme.white,
+                paddingHorizontal: 25,
+                paddingVertical: 15,
+                marginTop: 12,
+                borderRadius: 20,
+              }}>
+              <View
+                style={{
+                  justifyContent: 'space-between',
+                  flexDirection: 'row',
+                  alignItems: 'center',
+                }}>
+                <View
+                  style={{
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    flexDirection: 'row',
+                    gap: 7,
+
+                  }}>
+                  <MaterialCommunityIcons name="clock-time-eight-outline" size={20} color={Theme.darkGray} />
+                  {/* <BeforeTime/> */}
+                  <Text style={styles.textType3}>Before 9 Hours</Text>
+                </View>
+                <Text style={[styles.textType1, { fontSize: 18 }]}>
+                  RM {data?.per_class_commission_before_eight_hours}
+                </Text>
+              </View>
+              <View style={{ margin: 5 }}></View>
+              <View
+                style={{
+                  justifyContent: 'space-between',
+                  flexDirection: 'row',
+                  alignItems: 'center',
+                }}>
+                <View
+                  style={{
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    flexDirection: 'row',
+                    gap: 6,
+                  }}>
+                  <MaterialCommunityIcons name="av-timer" size={22} color={Theme.darkGray} />
+                  <Text style={styles.textType3}>After 9 Hours</Text>
+                </View>
+                <Text style={[styles.textType1, { fontSize: 18 }]}>
+                  RM {data?.per_class_commission_after_eight_hours}
+                </Text>
               </View>
             </View>
 
             {/*Adress */}
 
             {data.specialRequest && (
-              <View style={{ marginVertical: 20 }}>
-                <Text style={styles.textType1}>Special Need</Text>
-                <View
-                  style={{
-                    backgroundColor: Theme.white,
-                    paddingHorizontal: 25,
-                    paddingVertical: 20,
-                    borderRadius: 20,
-                    marginVertical: 5,
-                  }}>
-                  <Text
-                    style={[
-                      styles.textType3,
-                      { fontFamily: 'Circular Std Book' },
-                    ]}>
-                    {data.specialRequest}
-                  </Text>
+              <>
+                <View style={{ margin: 12 }}></View>
+                <View style={{ marginVertical: 0 }}>
+                  <Text style={[styles.textType1, { lineHeight: 24 }]}>Special Need</Text>
+                  <View
+                    style={{
+                      backgroundColor: Theme.white,
+                      paddingHorizontal: 25,
+                      paddingVertical: 20,
+                      borderRadius: 20,
+                      marginVertical: 5,
+                      marginTop: 12,
+                    }}>
+                    <Text
+                      style={[
+                        styles.textType3,
+                        { fontFamily: 'Circular Std Book', lineHeight: 23 },
+                      ]}>
+                      {data.specialRequest}
+                    </Text>
+                  </View>
                 </View>
-              </View>
+              </>
             )}
             {/* Special Need */}
 
             {tutorDetails?.status?.toLowerCase() == 'verified' &&
               data?.mode?.toLowerCase() == 'physical' &&
               data?.studentAddress && (
-                <View style={{ marginVertical: 5 }}>
-                  <Text style={styles.textType1}>Student Address</Text>
-                  <View
-                    style={{
-                      backgroundColor: Theme.white,
-                      paddingHorizontal: 25,
-                      paddingVertical: 20,
-                      borderRadius: 20,
-                      marginVertical: 5,
-                    }}>
-                    <Text
-                      style={[
-                        styles.textType3,
-                        { fontFamily: 'Circular Std Book' },
-                      ]}>
-                      {data.studentAddress}
-                    </Text>
+                <>
+                  <View style={{ margin: 10 }}></View>
+                  <View style={{ marginVertical: 0 }}>
+                    <Text style={[styles.textType1, { lineHeight: 24 }]}>Student Address</Text>
+                    <View
+                      style={{
+                        backgroundColor: Theme.white,
+                        paddingHorizontal: 25,
+                        paddingVertical: 20,
+                        borderRadius: 20,
+                        marginVertical: 5,
+                        marginTop: 12,
+                      }}>
+                      <Text
+                        style={[
+                          styles.textType3,
+                          { fontFamily: 'Circular Std Book' },
+                        ]}>
+                        {data.studentAddress}
+                      </Text>
+                    </View>
                   </View>
-                </View>
+                </>
               )}
             {/* Avaiable student */}
             {data?.jobTicketExtraStudents.length > 0 && (
-              <View style={{ marginVertical: 15 }}>
-                <Text style={styles.textType1}>Extra Students</Text>
+              <>
+                <View style={{ margin: 10 }}></View>
+                <View style={{ marginVertical: 0 }}>
+                  <Text style={[styles.textType1, { lineHeight: 24 }]}>Extra Students</Text>
 
-                {data?.jobTicketExtraStudents?.map((e: any, i: number) => (
-                  <View
-                    key={i}
-                    style={{
-                      backgroundColor: Theme.white,
-                      paddingHorizontal: 25,
-                      paddingVertical: 20,
-                      borderRadius: 20,
-                      marginVertical: 5,
-                    }}>
-                    <Text style={styles.textType3}>
-                      Student Name : {e?.student_name}
-                    </Text>
-                    <Text
-                      // style={{
-                      //   color: Theme.black,
-                      //   fontSize: 14,
-                      //   fontWeight: '400',
-                      //   marginTop: 5,
-                      //   fontFamily: 'Circular Std Book',
-                      // }}
-                      style={styles.textType3}>
-                      Age : {e?.student_age}
-                    </Text>
-                    <Text
-                      // style={{
-                      //   color: Theme.black,
-                      //   fontSize: 14,
-                      //   fontWeight: '400',
-                      //   marginTop: 5,
-                      //   fontFamily: 'Circular Std Book',
-                      // }}
-                      style={styles.textType3}>
-                      Gender : {e?.student_gender}
-                    </Text>
-                    <Text
-                      // style={{
-                      //   color: Theme.black,
-                      //   fontSize: 14,
-                      //   fontWeight: '400',
-                      //   marginTop: 5,
-                      //   fontFamily: 'Circular Std Book',
-                      // }}
-                      style={styles.textType3}>
-                      Birth Year : {e?.year_of_birth}
-                    </Text>
-                    <Text
-                      // style={{
-                      //   color: Theme.black,
-                      //   fontSize: 14,
-                      //   fontWeight: '400',
-                      //   marginTop: 5,
-                      //   fontFamily: 'Circular Std Book',
-                      // }}
-                      style={styles.textType3}>
-                      Special Need : {e?.special_need}
-                    </Text>
-                  </View>
-                ))}
-              </View>
+                  {data?.jobTicketExtraStudents?.map((e: any, i: number) => {
+
+                    return (
+                      <View
+                        key={i}
+                        style={{
+                          backgroundColor: Theme.white,
+                          paddingHorizontal: 25,
+                          paddingVertical: 20,
+                          borderRadius: 20,
+                          marginVertical: 5,
+                          marginTop: 12,
+                        }}>
+
+                        <View
+                          style={{
+                            justifyContent: 'space-between',
+                            flexDirection: 'row',
+                            alignItems: 'center',
+                            width: '100%'
+                          }}>
+                          <View
+                            style={{
+                              alignItems: 'center',
+                              justifyContent: 'center',
+                              flexDirection: 'row',
+                              gap: 10,
+                            }}>
+                            <FontAwesome name="user-o" size={18} color={Theme.darkGray} />
+                            <Text style={[styles.textType3, { color: Theme.IronsideGrey, fontFamily: 'Circular Std Book' }]}>Student Name</Text>
+                          </View>
+                          <Text
+                            style={[
+                              styles.textType1,
+                              { fontSize: 18, textTransform: 'capitalize', },
+                            ]}>
+                            {e?.student_name.length > 14 ? `${e?.student_name.slice(0, 14)}..` : e?.student_name}
+                          </Text>
+                        </View>
+                        <View style={{ margin: 7 }}></View>
+                        <View
+                          style={{
+                            justifyContent: 'space-between',
+                            flexDirection: 'row',
+                            alignItems: 'center',
+                          }}>
+                          <View
+                            style={{
+                              alignItems: 'center',
+                              justifyContent: 'center',
+                              flexDirection: 'row',
+                              gap: 4,
+                            }}>
+                            <View style={{ right: 3 }}>
+                              <StudentDetail />
+                            </View>
+                            <Text style={[styles.textType3, { color: Theme.IronsideGrey, }]}>Student Detail</Text>
+                          </View>
+                          <Text style={[styles.textType1, { fontSize: 18, }]}>
+                            {e?.student_gender} ({e?.student_age} y/o)
+                          </Text>
+                        </View>
+                        <View style={{ margin: 7 }}></View>
+                        <View
+                          style={{
+                            justifyContent: 'space-between',
+                            flexDirection: 'row',
+                            alignItems: 'center',
+                          }}>
+                          <View
+                            style={{
+                              alignItems: 'center',
+                              justifyContent: 'center',
+                              flexDirection: 'row',
+                              gap: 10,
+                            }}>
+                            <Feather name="hash" size={18} color={Theme.darkGray} />
+                            <Text style={styles.textType3}>Special Need</Text>
+                          </View>
+                          <Text style={[styles.textType1, { fontSize: 18, }]}>
+                            {e?.special_need}
+                          </Text>
+
+                        </View>
+
+                      </View>
+                    )
+                  }
+                  )}
+                </View>
+              </>
             )}
+
+
             {/* Comment */}
-            <View style={{ marginBottom: 20, marginTop: 10 }}>
-              <Text style={styles.textType1}>Comment</Text>
+            <View style={{ margin: 10 }}></View>
+            <View style={{ marginBottom: 23, marginTop: 0 }}>
+              <Text style={[styles.textType1, { lineHeight: 24 }]}>Comment</Text>
               <View
                 style={[
                   styles.textAreaContainer,
                   {
                     // borderWidth: 1,
-                    marginTop: 5,
+                    marginTop: 12,
                     borderRadius: 20,
                     marginHorizontal: 2,
 
@@ -599,49 +714,10 @@ const OpenDetails = ({ route, navigation }: any) => {
 
             {/* Submit Button */}
             <CustomButton btnTitle={'Apply'} onPress={sendOpenDetailData} />
+            <View style={{ margin: 10 }}></View>
           </View>
         </View>
       </ScrollView>
-
-      {/* <View
-        style={{
-          backgroundColor: Theme.white,
-          position: 'absolute',
-          bottom: 0,
-          width: '100%',
-          alignItems: 'center',
-        }}>
-        <View
-          style={{
-            borderWidth: 1,
-            borderColor: Theme.white,
-
-            marginVertical: 20,
-            width: '94%',
-          }}>
-          <TouchableOpacity
-            onPress={sendOpenDetailData}
-            style={{
-              alignItems: 'center',
-              padding: 10,
-              backgroundColor: Theme.darkGray,
-              borderRadius: 10,
-            }}>
-            {loading ? (
-              <ActivityIndicator size={'small'} color={'white'} />
-            ) : (
-              <Text
-                style={{
-                  color: 'white',
-                  fontSize: 18,
-                  fontFamily: 'Poppins-Regular',
-                }}>
-                Send
-              </Text>
-            )}
-          </TouchableOpacity>
-        </View>
-      </View> */}
     </View>
   );
 };
@@ -665,16 +741,18 @@ const styles = StyleSheet.create({
   },
 
   textType1: {
-    fontWeight: '500',
+    fontWeight: 500,
     fontSize: 24,
     color: Theme.Dune,
     fontFamily: 'Circular Std Medium',
-    lineHeight: 24,
+    lineHeight: 20,
     fontStyle: 'normal',
   },
   textType3: {
-    color: Theme.Dune,
+    color: Theme.IronsideGrey,
     fontSize: 16,
-    fontFamily: 'Circular Std Medium',
+    fontFamily: 'Circular Std Book',
+    lineHeight: 22,
+    fontWeight: 400,
   },
 });

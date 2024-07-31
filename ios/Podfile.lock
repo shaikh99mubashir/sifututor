@@ -999,6 +999,8 @@ PODS:
     - React-debug
   - react-native-blob-util (0.19.9):
     - React-Core
+  - react-native-document-picker (9.3.0):
+    - React-Core
   - react-native-geolocation (3.2.1):
     - DoubleConversion
     - glog
@@ -1389,6 +1391,7 @@ DEPENDENCIES:
   - React-logger (from `../node_modules/react-native/ReactCommon/logger`)
   - React-Mapbuffer (from `../node_modules/react-native/ReactCommon`)
   - react-native-blob-util (from `../node_modules/react-native-blob-util`)
+  - react-native-document-picker (from `../node_modules/react-native-document-picker`)
   - "react-native-geolocation (from `../node_modules/@react-native-community/geolocation`)"
   - react-native-html-to-pdf (from `../node_modules/react-native-html-to-pdf`)
   - react-native-idle-timer (from `../node_modules/react-native-idle-timer`)
@@ -1512,6 +1515,8 @@ EXTERNAL SOURCES:
     :path: "../node_modules/react-native/ReactCommon"
   react-native-blob-util:
     :path: "../node_modules/react-native-blob-util"
+  react-native-document-picker:
+    :path: "../node_modules/react-native-document-picker"
   react-native-geolocation:
     :path: "../node_modules/@react-native-community/geolocation"
   react-native-html-to-pdf:
@@ -1643,6 +1648,7 @@ SPEC CHECKSUMS:
   React-logger: 29fa3e048f5f67fe396bc08af7606426d9bd7b5d
   React-Mapbuffer: 86703e9e4f6522053568300827b436ccc01e1101
   react-native-blob-util: 18b510205c080a453574a7d2344d64673d0ad9af
+  react-native-document-picker: 5b97e24a7f1a1e4a50a72c540a043f32d29a70a2
   react-native-geolocation: 26d62314499618e6a810ed4a9a6121542c76df04
   react-native-html-to-pdf: 4c5c6e26819fe202971061594058877aa9b25265
   react-native-idle-timer: b4e9ff189950bcd3ba03257d9f033f3432341db8

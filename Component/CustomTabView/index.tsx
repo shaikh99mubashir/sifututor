@@ -53,7 +53,7 @@ const CustomTabView = (Props: any): any => {
             currentTab &&
                 currentTab.some((e: any, i: any) => e.index == 0 && e.selected)
                 ? '55%'
-                : '40%'
+                : '43%'
             ,
             borderRadius: 50,
 
@@ -111,7 +111,7 @@ const CustomTabView = (Props: any): any => {
             width: 
             currentTab &&
                 currentTab.some((e: any, i: any) => e.index == 0 && e.selected)
-                ? '40%'
+                ? '43%'
                 : '55%'
             ,
             borderRadius: 50,

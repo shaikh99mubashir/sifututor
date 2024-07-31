@@ -395,7 +395,7 @@ const AttendedClassRecords = ({ navigation, route }: any) => {
   return (
     <View style={{ backgroundColor: Theme.GhostWhite, height: '100%' }}>
       <Header
-        title="Records"
+        title="Class Record"
         recordsFilter
         backBtn
         navigation={navigation}

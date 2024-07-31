@@ -241,7 +241,7 @@ function Inbox({ navigation }: any) {
       refreshControl={
         <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
       }
-      style={{ flex: 1, backgroundColor: Theme.white }}>
+      style={{ flex: 1, backgroundColor: Theme.GhostWhite,paddingHorizontal:15 }}>
       <View>
         <CustomHeader title="Inbox" />
       </View>

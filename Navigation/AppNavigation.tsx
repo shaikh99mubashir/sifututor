@@ -54,6 +54,16 @@ import GetStarted from '../Screens/GetStarted';
 import Toast from 'react-native-toast-message';
 import JobTicketDetailOnly from '../Screens/JobTicketDetailOnly/index.tsx';
 import ScheduleOverview from '../Screens/ScheduleOverview/index.tsx';
+import TutorVerificationProcess from '../Screens/TutorVerificationProcess/index.tsx';
+import ServicePreference from '../Screens/ServicePreference/index.tsx';
+import EmergencyContact from '../Screens/EmergencyContact/index.tsx';
+import BioDetails from '../Screens/BioDetails/index.tsx';
+import VerificationDocumentsUpload from '../Screens/VerificationDocumentsUpload/index.tsx';
+import TutorVerificationDeclaration from '../Screens/TutorVerificationDeclaration/index.tsx';
+import VerificationSubmittedSuccess from '../Screens/VerificationSubmittedSuccess/index.tsx';
+import EducationDetails from '../Screens/EducationDetails/index.tsx';
+import TutorlaPrivacyStatement from '../Screens/TutorlaPrivacyStatement/index.tsx';
+import TutorlaTermOfServices from '../Screens/TutorlaTermOfServices/index.tsx';
 
 
 const Stack = createNativeStackNavigator();
@@ -168,8 +178,8 @@ function BottomNavigation({ navigation, route }: any) {
             ),
           }}
         />
-        {hideTabs?.includes('Schedule') ||
-          tutorDetails?.status?.toLowerCase() != 'verified' && tutorDetails?.open_dashboard != 'yes' ? null : (
+        {/* {hideTabs?.includes('Schedule') ||
+          tutorDetails?.status?.toLowerCase() != 'verified' && tutorDetails?.open_dashboard != 'yes' ? null : ()} */}
           <Tab.Screen
             name="Schedule"
             component={Schedule}
@@ -223,9 +233,9 @@ function BottomNavigation({ navigation, route }: any) {
               ),
             }}
           />
-        )}
-        {hideTabs?.includes('Home') ||
-          tutorDetails?.status?.toLowerCase() != 'verified' && tutorDetails?.open_dashboard != 'yes' ? null : (
+        
+        {/* {hideTabs?.includes('Home') ||
+          tutorDetails?.status?.toLowerCase() != 'verified' && tutorDetails?.open_dashboard != 'yes' ? null : ( )} */}
           <Tab.Screen
             name="Home"
             component={Home}
@@ -264,9 +274,9 @@ function BottomNavigation({ navigation, route }: any) {
               ),
             }}
           />
-        )}
-        {hideTabs?.includes('inbox') ||
-          tutorDetails?.status?.toLowerCase() != 'verified' && tutorDetails?.open_dashboard != 'yes' ? null : (
+       
+        {/* {hideTabs?.includes('inbox') ||
+          tutorDetails?.status?.toLowerCase() != 'verified' && tutorDetails?.open_dashboard != 'yes' ? null : ()} */}
           <Tab.Screen
             name="inbox"
             component={Inbox}
@@ -293,7 +303,7 @@ function BottomNavigation({ navigation, route }: any) {
                           fontStyle: 'normal',
                         }}
                       >
-                        Inbox
+                        News
                       </Text>
                     </View>
                   ) : (
@@ -322,7 +332,7 @@ function BottomNavigation({ navigation, route }: any) {
               ),
             }}
           />
-        )}
+        
         <Tab.Screen
           name="More"
           component={More}
@@ -578,6 +588,56 @@ function AppNavigation() {
           name="JobTicketDetailOnly"
           component={JobTicketDetailOnly}
         />
+        <Stack.Screen
+          options={{ headerShown: false }}
+          name="TutorVerificationProcess"
+          component={TutorVerificationProcess}
+        />
+        <Stack.Screen
+          options={{ headerShown: false }}
+          name="ServicePreference"
+          component={ServicePreference}
+        />
+        <Stack.Screen
+          options={{ headerShown: false }}
+          name="EmergencyContact"
+          component={EmergencyContact}
+        />
+        <Stack.Screen
+          options={{ headerShown: false }}
+          name="BioDetails"
+          component={BioDetails}
+        />
+        <Stack.Screen
+          options={{ headerShown: false }}
+          name="EducationDetails"
+          component={EducationDetails}
+        />
+        <Stack.Screen
+          options={{ headerShown: false }}
+          name="VerificationDocumentsUpload"
+          component={VerificationDocumentsUpload}
+        />
+        <Stack.Screen
+          options={{ headerShown: false }}
+          name="TutorVerificationDeclaration"
+          component={TutorVerificationDeclaration}
+        />
+        <Stack.Screen
+          options={{ headerShown: false }}
+          name="VerificationSubmittedSuccess"
+          component={VerificationSubmittedSuccess}
+        />
+        <Stack.Screen
+          options={{ headerShown: false }}
+          name="TutorlaPrivacyStatement"
+          component={TutorlaPrivacyStatement}
+        />
+        <Stack.Screen
+          options={{ headerShown: false }}
+          name="TutorlaTermOfServices"
+          component={TutorlaTermOfServices}
+        />
       </Stack.Navigator>
       <Toast />
     </NavigationContainer>
@@ -596,7 +656,7 @@ const styles = StyleSheet.create({
     backgroundColor: Theme.white,
     paddingTop:Dimensions.get('screen').width/25,
     paddingHorizontal:25,
-    borderTopLeftRadius: 30,
-    borderTopRightRadius: 30
+    borderTopLeftRadius: 0,
+    borderTopRightRadius: 0
   },
 });

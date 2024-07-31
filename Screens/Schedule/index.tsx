@@ -1141,6 +1141,33 @@ function Schedule({ navigation, route }: any) {
               <View style={{ width: '100%', marginTop: 40 }}>
                 <CustomButton btnTitle='Add Class' onPress={() => navigation.navigate('AddClass')} />
               </View>
+              {/* <View
+                style={{
+                  borderWidth: 1,
+                  borderColor: Theme.white,
+                  marginVertical: 20,
+                  width: '94%',
+                  marginTop: 40,
+                }}>
+                <TouchableOpacity
+                  activeOpacity={0.8}
+                  
+                  style={{
+                    alignItems: 'center',
+                    padding: 10,
+                    backgroundColor: Theme.darkGray,
+                    borderRadius: 10,
+                  }}>
+                  <Text
+                    style={{
+                      color: 'white',
+                      fontSize: 18,
+                      fontFamily: 'Circular Std Black',
+                    }}>
+                    Add Class
+                  </Text>
+                </TouchableOpacity>
+              </View> */}
             </View>
           ) : (
             <View>

@@ -13,9 +13,7 @@ import React, { useState, useEffect } from 'react';
 import { Theme } from '../../constant/theme';
 import AntDesign from 'react-native-vector-icons/AntDesign';
 const CustomDropDown = (props: any) => {
-  let { ddTitle, categoryData, dataShow, searchData, searchFunc, subject, search, headingStyle, categoryShow, dropdownPlace, dropdownContainerStyle, setSelectedSubject, selectedSubject,ddTextStyle } = props
-
-
+  let { ddTitle, categoryData, dataShow, searchData, searchFunc, subject, search, headingStyle, categoryShow, dropdownPlace, dropdownContainerStyle, setSelectedSubject, selectedSubject,ddTextStyle,searchCategoryData } = props
 
 
   const [selectedServicedata, setSelectedServicedata]: any = useState({});
@@ -214,8 +212,8 @@ const CustomDropDown = (props: any) => {
                   borderTopRightRadius:10,
                   borderTopLeftRadius:10,
                 }}
-                  placeholder={"Search"}
-                  placeholderTextColor={"black"}
+                  placeholder={'Search'}
+                  placeholderTextColor={Theme.IronsideGrey}
 
                 />}
                 {searchData && searchData.length > 0 ? Array.from(
@@ -237,8 +235,6 @@ const CustomDropDown = (props: any) => {
                         paddingHorizontal: 10,
                         marginVertical: 5,
                         gap: 10,
-                        borderBottomWidth: 1,
-                        borderBottomColor:'lightgrey'
                       }}>
                       <Text
                         style={{
@@ -269,19 +265,16 @@ const CustomDropDown = (props: any) => {
                           key={i}
                           style={{
                             flexDirection: 'row',
-                            marginHorizontal: 10,
-                            marginVertical: 10,
+                            paddingHorizontal: 10,
+                            marginVertical: 5,
                             gap: 10,
-                            // paddingBottom:15,
-                            // borderBottomWidth: 1,
-                            borderBottomColor:'lightgrey'
                           }}>
                           <Text
                             style={{
                               color: Theme.black,
                               fontFamily: 'Circular Std Medium',
                               fontSize: 16,
-                              textTransform:ddTextStyle ?ddTextStyle :'capitalize'
+                              textTransform:ddTextStyle ? ddTextStyle : 'capitalize'
                             }}>
                             {e ?? selectedSubject}
                           </Text>

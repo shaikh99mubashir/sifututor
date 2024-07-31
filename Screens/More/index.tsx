@@ -8,6 +8,7 @@ import {
   Modal,
   StyleSheet,
   ToastAndroid,
+  Dimensions,
 } from 'react-native';
 import Header from '../../Component/Header';
 import { Theme } from '../../constant/theme';
@@ -28,6 +29,8 @@ import StudentOverviewIcon from '../../SVGs/StudentOverviewIcon';
 import Toast from 'react-native-toast-message';
 import ScheduleOverViewIcon from '../../SVGs/ScheduleOverviewIcon';
 import ScheduleOverviewIcon from '../../SVGs/ScheduleOverviewIcon';
+import TermServices from '../../SVGs/TermServices';
+import Privacy from '../../SVGs/Privacy';
 
 function More({ navigation }: any) {
   const context = useContext(TutorDetailsContext);
@@ -67,8 +70,8 @@ function More({ navigation }: any) {
           Toast.show({
             type: 'info',
             // text1: 'Request timeout:',
-            text2:  `Terminated`,
-            position:'bottom'
+            text2: `Terminated`,
+            position: 'bottom'
           });
           return;
         }
@@ -139,24 +142,24 @@ function More({ navigation }: any) {
   }
 
   const [tutorImage, setTutorImage] = useState('')
-  let juid:any
+  let juid: any
   const getTutorDetailss = async () => {
     const data: any = await AsyncStorage.getItem('loginAuth');
     let loginData: LoginAuth = JSON.parse(data);
     let routeToNotiScreen = await AsyncStorage.getItem('notiScreenRoute');
-     if (routeToNotiScreen) {
+    if (routeToNotiScreen) {
       // Parse the string data back into an object
       const parsedData = JSON.parse(routeToNotiScreen);
       juid = parsedData.id;
       // Check if parsedData is an object and has the id property
       console.log("routeToNotiScreen id:", parsedData.id);
-    
+
     } else {
       console.log("No data found in AsyncStorage for 'notiScreenRoute'");
     }
-    console.log("juid",juid);
-    
-    
+    console.log("juid", juid);
+
+
     let { tutorID } = loginData;
     axios
       .get(`${Base_Uri}getTutorDetailByID/${tutorID}`)
@@ -176,12 +179,12 @@ function More({ navigation }: any) {
 
 
 
- 
-  
+
+
 
   return (
     <View style={{ backgroundColor: Theme.GhostWhite, height: '100%' }}>
-      <Header title="Profile" navigation={navigation} containerStyle={{paddingHorizontal: 25,}}/>
+      <Header title="Profile" navigation={navigation} containerStyle={{ paddingHorizontal: 25, }} />
       <ScrollView showsVerticalScrollIndicator={false} nestedScrollEnabled>
         <View style={{ paddingHorizontal: 25 }}>
           {/* Profile */}
@@ -200,21 +203,32 @@ function More({ navigation }: any) {
               />
             </View>
             <View>
-              {tutorDetails?.status?.toLowerCase() == 'verified' &&
-                <View
-                  style={{ flexDirection: 'row', gap: 5, alignItems: 'center' }}>
-                  <Text style={[styles.textType3,]}>Verified Tutor</Text>
-                  <Image source={require('../../Assets/Images/verified.png')} />
-                </View>
-              }
+              {/* {tutorDetails?.status?.toLowerCase() == 'verified' &&} */}
+              <View
+                style={{ flexDirection: 'row', gap: 5, alignItems: 'center' }}>
+                <Text style={[styles.textType3,]}>Verified Tutor</Text>
+                <Image source={require('../../Assets/Images/verified.png')} />
+              </View>
+
               <Text style={[styles.textType1, { lineHeight: 35, fontSize: 24 }]}>
                 {tutorDetails?.displayName ?? tutorDetails?.full_name}
               </Text>
               <Text style={[styles.textType3, { fontFamily: 'Circular Std Book' }]}>{tutorDetails?.email}</Text>
             </View>
           </View>
-
-          <View style={{ margin: 20 }}></View>
+          <View style={{ margin: 10 }}></View>
+          <TouchableOpacity
+              onPress={() => navigation.navigate('FAQs')}
+              activeOpacity={0.8}>
+          <View style={{ paddingHorizontal: 25, justifyContent: 'center', alignItems: 'center', }}>
+            <Image
+              source={require('../../Assets/Images/FAQBanner.png')}
+              resizeMode="contain"
+              style={{ width: Dimensions.get('screen').width / 1.04 }}
+            />
+          </View>
+          </TouchableOpacity>
+          {/*  */}
           {/* dashboard */}
           <View style={{ marginBottom: 30 }}>
             <Text
@@ -224,7 +238,7 @@ function More({ navigation }: any) {
               ]}>
               Dashboard
             </Text>
-         
+
 
             <TouchableOpacity
               activeOpacity={0.8}
@@ -239,34 +253,34 @@ function More({ navigation }: any) {
               <TutorProfileIcon />
               <Text style={[styles.textType3, { color: Theme.darkGray }]}>Tutor Profile</Text>
             </TouchableOpacity>
-            {tutorDetails?.status?.toLowerCase() == 'verified' && (
-              <TouchableOpacity
-                onPress={() => navigation.navigate('Notifications')}
-                activeOpacity={0.8}
-                style={{
-                  flexDirection: 'row',
-                  gap: 10,
-                  paddingVertical: 10,
-                  alignItems: 'center',
-                }}>
-                <NotificationIcon />
-                <Text style={[styles.textType3]}>Notification</Text>
-              </TouchableOpacity>
-            )}
-            {tutorDetails?.status?.toLowerCase() == 'verified' && (
-              <TouchableOpacity
-                onPress={() => navigation.navigate('PaymentHistory')}
-                activeOpacity={0.8}
-                style={{
-                  flexDirection: 'row',
-                  gap: 10,
-                  paddingVertical: 10,
-                  alignItems: 'center',
-                }}>
-                <PaymentIcon />
-                <Text style={[styles.textType3]}>Payment History</Text>
-              </TouchableOpacity>
-            )}
+            {/* {tutorDetails?.status?.toLowerCase() == 'verified' && ()} */}
+            <TouchableOpacity
+              onPress={() => navigation.navigate('Notifications')}
+              activeOpacity={0.8}
+              style={{
+                flexDirection: 'row',
+                gap: 10,
+                paddingVertical: 10,
+                alignItems: 'center',
+              }}>
+              <NotificationIcon />
+              <Text style={[styles.textType3]}>Notification</Text>
+            </TouchableOpacity>
+
+            {/* {tutorDetails?.status?.toLowerCase() == 'verified' && ()} */}
+            <TouchableOpacity
+              onPress={() => navigation.navigate('PaymentHistory')}
+              activeOpacity={0.8}
+              style={{
+                flexDirection: 'row',
+                gap: 10,
+                paddingVertical: 10,
+                alignItems: 'center',
+              }}>
+              <PaymentIcon />
+              <Text style={[styles.textType3]}>Payment History</Text>
+            </TouchableOpacity>
+
             <View
               style={{
                 borderBottomWidth: 1,
@@ -274,7 +288,7 @@ function More({ navigation }: any) {
                 paddingBottom: 20,
               }}></View>
           </View>
-          {tutorDetails?.status?.toLowerCase() == 'verified' && (
+          {/* {tutorDetails?.status?.toLowerCase() == 'verified' && (  )} */}
           <View style={{ marginBottom: 30 }}>
             <Text
               style={[
@@ -293,7 +307,7 @@ function More({ navigation }: any) {
                 paddingVertical: 10,
                 alignItems: 'center',
               }}>
-              <ScheduleOverviewIcon/>
+              <ScheduleOverviewIcon />
               <Text style={[styles.textType3]}>Schedule Overview</Text>
             </TouchableOpacity>
 
@@ -331,9 +345,9 @@ function More({ navigation }: any) {
                 alignItems: 'center',
               }}>
               <StudentOverviewIcon />
-              <Text style={[styles.textType3]}>Students Class Records</Text>
+              <Text style={[styles.textType3]}>Class Record</Text>
             </TouchableOpacity>
-            
+
             <View
               style={{
                 borderBottomWidth: 1,
@@ -341,7 +355,7 @@ function More({ navigation }: any) {
                 paddingBottom: 20,
               }}></View>
           </View>
-          )}
+
           <View style={{ marginBottom: 30 }}>
             <Text
               style={[
@@ -376,7 +390,7 @@ function More({ navigation }: any) {
               <Text style={[styles.textType3]}>JobTicketDetailOnly</Text>
             </TouchableOpacity> */}
 
-          
+
             <View
               style={{
                 borderBottomWidth: 1,
@@ -384,25 +398,69 @@ function More({ navigation }: any) {
                 paddingBottom: 20,
               }}></View>
           </View>
-           {/* Logout */}
-        <View style={{paddingHorizontal: 0, marginBottom: 30}}>
-          <TouchableOpacity
-           onPress={handleFilterPress}
-            style={{
-              flexDirection: 'row',
-              gap: 10,
-              paddingVertical: 0,
-              alignItems: 'center',
-            }}>
-            <LogoutIcon />
-            <Text style={[styles.textType3]}>Logout</Text>
-          </TouchableOpacity>
-          <View
-            style={{
-              paddingBottom: 20,
-            }}></View>
-        </View>
-         
+
+          <View style={{ marginBottom: 30 }}>
+            <Text
+              style={[
+                styles.textType3,
+                { paddingBottom: 10, fontFamily: 'Circular Std Book', color: Theme.IronsideGrey },
+              ]}>
+              About
+            </Text>
+
+            <TouchableOpacity
+              onPress={() => navigation.navigate('TutorlaTermOfServices')}
+              activeOpacity={0.8}
+              style={{
+                flexDirection: 'row',
+                gap: 10,
+                paddingVertical: 10,
+                alignItems: 'center',
+              }}>
+              <TermServices />
+              <Text style={[styles.textType3]}>Sifututor Terms of Services</Text>
+            </TouchableOpacity>
+            <TouchableOpacity
+              onPress={() => navigation.navigate('TutorlaPrivacyStatement')}
+              activeOpacity={0.8}
+              style={{
+                flexDirection: 'row',
+                gap: 10,
+                paddingVertical: 10,
+                alignItems: 'center',
+              }}>
+              <Privacy />
+              <Text style={[styles.textType3]}>Sifututor Privacy Statement</Text>
+            </TouchableOpacity>
+
+
+
+            <View
+              style={{
+                borderBottomWidth: 1,
+                borderBottomColor: Theme.lineColor,
+                paddingBottom: 20,
+              }}></View>
+          </View>
+          {/* Logout */}
+          <View style={{ paddingHorizontal: 0, marginBottom: 30 }}>
+            <TouchableOpacity
+              onPress={handleFilterPress}
+              style={{
+                flexDirection: 'row',
+                gap: 10,
+                paddingVertical: 0,
+                alignItems: 'center',
+              }}>
+              <LogoutIcon />
+              <Text style={[styles.textType3]}>Logout</Text>
+            </TouchableOpacity>
+            <View
+              style={{
+                paddingBottom: 20,
+              }}></View>
+          </View>
+
         </View>
       </ScrollView>
       <Modal visible={modalVisible} animationType="fade" transparent={true}>
@@ -415,21 +473,21 @@ function More({ navigation }: any) {
           <View
             style={[
               styles.modalContainer,
-              {padding: 30, marginHorizontal: 20,},
+              { padding: 30, marginHorizontal: 20, },
             ]}>
             <Text style={styles.textType1}>Logout?</Text>
-            <View style={{margin: 5}}></View>
+            <View style={{ margin: 5 }}></View>
             <Text style={styles.textType3}>
               Are you sure you want to Logout?
             </Text>
-            <View style={{margin: 15}}></View>
+            <View style={{ margin: 15 }}></View>
             <View
               style={{
                 flexDirection: 'row',
                 justifyContent: 'space-between',
                 gap: 8,
               }}>
-              <View style={{width: '48%'}}>
+              <View style={{ width: '48%' }}>
                 <CustomButton
                   btnTitle="Cancel"
                   backgroundColor={Theme.WhiteSmoke}
@@ -439,10 +497,10 @@ function More({ navigation }: any) {
                   onPress={CancelButton}
                 />
               </View>
-              <View style={{width: '48%'}}>
-                <CustomButton btnTitle="Ok"   onPressIn={() => setApply(true)}
-                onPressOut={() => setApply(false)}
-                onPress={ApplyButton} />
+              <View style={{ width: '48%' }}>
+                <CustomButton btnTitle="Ok" onPressIn={() => setApply(true)}
+                  onPressOut={() => setApply(false)}
+                  onPress={ApplyButton} />
               </View>
             </View>
           </View>

@@ -336,12 +336,20 @@ const Students = ({ navigation }: any) => {
               />
             </View>
           ) : (
-            <View style={{ marginTop: 35 }}>
-              <Text
-                style={{ color: Theme.black, fontSize: 14, textAlign: 'center', fontFamily: 'Circular Std Black' }}>
-                No Student Found
-              </Text>
-            </View>
+            <View
+            style={{
+              height: Dimensions.get('window').height - 250,
+              justifyContent: 'center',
+              alignItems: 'center',
+            }}>
+            <Image source={require('../../Assets/Images/noStudent.png')} resizeMode='contain' style={{width:350, height:350}}/>   
+          </View>
+            // <View style={{ marginTop: 35 }}>
+            //   <Text
+            //     style={{ color: Theme.black, fontSize: 14, textAlign: 'center', fontFamily: 'Circular Std Black' }}>
+            //     No Student Found
+            //   </Text>
+            // </View>
           )}
         </View>
       </ScrollView>

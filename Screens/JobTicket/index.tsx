@@ -525,7 +525,7 @@ function JobTicket({ navigation, route }: any) {
             paddingHorizontal: 5,
             borderTopLeftRadius: 16,
             borderTopRightRadius: 16,
-            width: 140,
+            width: 100,
             backgroundColor: (() => {
               switch (item.offer_status) {
                 case 'pending':
@@ -550,7 +550,7 @@ function JobTicket({ navigation, route }: any) {
 
                 textAlign: 'center',
                 textTransform: 'capitalize',
-                fontFamily: 'Circular Std Medium',
+                fontFamily: 'Circular Std Bold',
               },
             ]}>
             {item.offer_status}
@@ -576,7 +576,7 @@ function JobTicket({ navigation, route }: any) {
 
             }}>
             <View>
-              <Text style={[styles.textType3, { fontFamily: 'Circular Std Medium' }]}>{item?.jtuid}</Text>
+              <Text style={[styles.textType3, { fontFamily: 'Circular Std Bold',fontWeight:700,color:Theme.Black }]}>{item?.jtuid}</Text>
               <Text
                 style={[
                   styles.textType1,
@@ -597,10 +597,11 @@ function JobTicket({ navigation, route }: any) {
                     styles.textType3,
                     {
                       color: item.mode == 'online' ? Theme.darkGray : '#1FC07D',
-                      fontFamily: 'Circular Std Medium',
+                      fontFamily: 'Circular Std Bold',
                       paddingVertical: 5,
                       textAlign: 'center',
                       textTransform: 'capitalize',
+                      fontWeight:500
                     },
                   ]}>
                   {item?.mode}
@@ -694,9 +695,9 @@ function JobTicket({ navigation, route }: any) {
                   alignItems: 'center',
                   justifyContent: 'center',
                   flexDirection: 'row',
-                  gap: 14,
+                  gap: 6,
                 }}>
-                <FontAwesome name="level-up" size={18} color={Theme.darkGray} />
+                <LevelIcon/>
                 <Text style={[styles.textType3, { fontFamily: 'Circular Std Medium', color: Theme.ironsidegrey1 }]}>Level</Text>
               </View>
               <Text
@@ -707,7 +708,7 @@ function JobTicket({ navigation, route }: any) {
                 {item?.categoryName}
               </Text>
             </View>
-            <View
+            {/* <View
               style={{
                 justifyContent: 'space-between',
                 flexDirection: 'row',
@@ -731,10 +732,10 @@ function JobTicket({ navigation, route }: any) {
                 ]}>
                 {item?.subscription}
               </Text>
-            </View>
+            </View> */}
           </View>
 
-          <View style={{ flexDirection: 'row', gap: 10, marginTop: 15 }}>
+          <View style={{ flexDirection: 'row', gap: 10, marginTop: 15 ,flexWrap:'wrap' }}>
             <View
               style={{
                 backgroundColor: '#E6F2FF',
@@ -780,6 +781,30 @@ function JobTicket({ navigation, route }: any) {
                     { color: Theme.darkGray, textTransform: 'capitalize', fontFamily: 'Circular Std Medium' },
                   ]}>
                   {item?.classTime}
+                </Text>
+              </View>
+            </View>
+            <View
+              style={{
+                backgroundColor: '#E6F2FF',
+                paddingVertical: 10,
+                borderRadius: 10,
+                paddingHorizontal: 10,
+              }}>
+              <View
+                style={{
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  flexDirection: 'row',
+                  gap: 10,
+                }}>
+                 <Ionicons name="recording-sharp" size={18} color={Theme.darkGray} />
+                <Text
+                  style={[
+                    styles.textType3,
+                    { color: Theme.darkGray, textTransform: 'capitalize', fontFamily: 'Circular Std Medium' },
+                  ]}>
+                  {item?.subscription?.toLowerCase() == 'longterm' ? "Long-Term" : 'Short-Term'}
                 </Text>
               </View>
             </View>
@@ -862,12 +887,14 @@ function JobTicket({ navigation, route }: any) {
                 borderColor: Theme.lightGray,
               }}>
               <View>
-                <Text style={[styles.textType3, { fontFamily: 'Circular Std Medium' }]}>{item?.jtuid}</Text>
+                <Text style={[styles.textType3, { fontFamily: 'Circular Std Bold' ,color:Theme.black, fontWeight:700}]}>{item?.jtuid}</Text>
+                <View style={{margin:2}}/>
                 <Text style={[styles.textType1, { lineHeight: 25, fontFamily: 'Circular Std Medium' }]}>
                   RM {item?.price}
                 </Text>
 
               </View>
+              <View style={{margin:3}}/>
               <View style={{ alignItems: 'center', justifyContent: 'center' }}>
                 <View style={{
                   borderRadius: 30,
@@ -879,10 +906,11 @@ function JobTicket({ navigation, route }: any) {
                       styles.textType3,
                       {
                         color: item.mode == 'online' ? Theme.darkGray : '#1FC07D',
-                        fontFamily: 'Circular Std Medium',
+                        fontFamily: 'Circular Std Bold',
                         paddingVertical: 5,
                         textAlign: 'center',
                         textTransform: 'capitalize',
+                        fontWeight:500
                       },
                     ]}>
                     {item?.mode}
@@ -930,7 +958,7 @@ function JobTicket({ navigation, route }: any) {
                 <Text
                   style={[
                     styles.textType1,
-                    { fontSize: 18, textTransform: 'capitalize', fontFamily: 'Circular Std Bold' },
+                    { fontSize: 20, textTransform: 'capitalize', fontFamily: 'Circular Std Bold' },
                   ]}>
                   {item?.subject_name}
                 </Text>
@@ -972,7 +1000,7 @@ function JobTicket({ navigation, route }: any) {
                     alignItems: 'center',
                     justifyContent: 'center',
                     flexDirection: 'row',
-                    gap: 14,
+                    gap: 6,
                   }}>
                   <LevelIcon/>
                   <Text style={[styles.textType3, { fontFamily: 'Circular Std Medium', color: Theme.ironsidegrey1 }]}>Level</Text>
@@ -985,7 +1013,7 @@ function JobTicket({ navigation, route }: any) {
                   {item?.categoryName}
                 </Text>
               </View>
-              <View
+              {/* <View
                 style={{
                   justifyContent: 'space-between',
                   flexDirection: 'row',
@@ -1009,10 +1037,10 @@ function JobTicket({ navigation, route }: any) {
                   ]}>
                   {item?.subscription}
                 </Text>
-              </View>
+              </View> */}
             </View>
 
-            <View style={{ flexDirection: 'row', gap: 10, marginTop: 15 }}>
+            <View style={{ flexDirection: 'row', gap: 10, marginTop: 15,flexWrap:'wrap' }}>
               <View
                 style={{
                   backgroundColor: '#E6F2FF',
@@ -1057,6 +1085,26 @@ function JobTicket({ navigation, route }: any) {
                   </Text>
                 </View>
               </View>
+              <View
+                style={{
+                  backgroundColor: '#E6F2FF',
+                  paddingVertical: 10,
+                  borderRadius: 10,
+                  paddingHorizontal: 10,
+                }}>
+                <View
+                  style={{
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    flexDirection: 'row',
+                    gap: 10,
+                  }}>
+                  <Ionicons name="recording-sharp" size={18} color={Theme.darkGray} />
+                  <Text style={[styles.textType3, { color: Theme.darkGray, fontFamily: 'Circular Std Medium' }]}>
+                  {item?.subscription?.toLowerCase() == 'longterm' ? "Long-Term" : 'Short-Term'}
+                  </Text>
+                </View>
+              </View>
             </View>
           </TouchableOpacity>
         </>
@@ -1064,7 +1112,7 @@ function JobTicket({ navigation, route }: any) {
     };
 
     return (
-      <View style={{ flex: 1 }}>
+      <View style={{ flex: 1, paddingHorizontal:4 }}>
         {openData.length > 0 ? (
           <>
         <FlatList
@@ -1094,340 +1142,6 @@ function JobTicket({ navigation, route }: any) {
       </View>
     );
   }, [openData, searchText, foundName, refreshing]);
-  // const firstRoute = useCallback(() => {
-
-  //   const data = [
-  //     { id: '1', title: 'All', jtuid: 'J9003428', mode: 'online' },
-  //     { id: '2', title: 'Biology', jtuid: 'J9003428', mode: 'Physical' },
-  //     { id: '3', title: 'Mathematics', jtuid: 'J9003428', mode: 'online' },
-  //     { id: '4', title: 'Bahasa Melayu', jtuid: 'J9003428', mode: 'online' },
-  //     { id: '5', title: 'English ', jtuid: 'J9003428', mode: 'online' },
-  //   ];
-  //   const [selectedJT, setSelectedJT] = useState(0)
-  //   const handelJobTicketPress = (item: any) => {
-  //     setSelectedJT(item.id === selectedJT ? null : item.id);
-  //     navigation.navigate('TicketsDetails', item)
-  //   }
-
-  //   const [selectedItem, setSelectedItem] = useState(data[0].id);
-  //   const renderSubject = ({ item }: any) => {
-  //     const isSelected = selectedItem === item.id;
-
-  //     return (
-  //       <TouchableOpacity
-  //         onPress={() => setSelectedItem(item.id)}
-  //         style={{
-  //           paddingHorizontal: 15,
-  //           height: 30,
-  //           borderBottomWidth: isSelected ? 3 : 2,
-  //           borderBottomColor: isSelected ? Theme.darkGray : Theme.shinyGrey,
-  //           marginTop: 20,
-  //         }}>
-  //         <Text style={[styles.textType3, { color: isSelected ? Theme.darkGray : 'black', }]}>{item.title}</Text>
-  //       </TouchableOpacity>
-  //     );
-  //   };
-
-  //   const renderOpenData: any = ({ item }: any) => {
-
-  //     return (
-  //       <>
-  //         <TouchableOpacity
-  //           onPress={() => navigation.navigate('OpenDetails', item)}
-  //           activeOpacity={0.8}
-  //           style={{
-  //             borderWidth: 1,
-  //             borderRadius: 20,
-  //             marginBottom: 10,
-  //             padding: 20,
-  //             borderColor: Theme.lightGray,
-  //             borderBottomColor: Theme.lightGray,
-  //             backgroundColor: Theme.white,
-  //           }}>
-  //           <View
-  //             style={{
-  //               flexDirection: 'row',
-  //               justifyContent: 'space-between',
-  //               width: '100%',
-  //               borderColor: Theme.lightGray,
-  //             }}>
-  //             <View>
-  //               <Text style={[styles.textType3, { fontFamily: 'Circular Std Medium' }]}>{item?.jtuid}</Text>
-  //               <Text style={[styles.textType1, { lineHeight: 25, fontFamily: 'Circular Std Medium' }]}>
-  //                 RM {item?.price}
-  //               </Text>
-
-  //             </View>
-  //             <View style={{ alignItems: 'center', justifyContent: 'center' }}>
-  //               <View style={{
-  //                 borderRadius: 30,
-  //                 width: 100,
-  //                 backgroundColor: item.mode == 'online' ? '#298CFF33' : Theme.lightGreen,
-  //               }}>
-  //                 <Text
-  //                   style={[
-  //                     styles.textType3,
-  //                     {
-  //                       color: item.mode == 'online' ? Theme.darkGray : '#1FC07D',
-  //                       fontFamily: 'Circular Std Medium',
-  //                       paddingVertical: 5,
-  //                       textAlign: 'center',
-  //                       textTransform: 'capitalize',
-  //                     },
-  //                   ]}>
-  //                   {item?.mode}
-  //                 </Text>
-  //               </View>
-  //             </View>
-  //           </View>
-  //           {item?.mode.toLowerCase() == 'physical' &&
-  //             <View
-  //               style={{
-  //                 flexDirection: 'row', gap: 5, alignItems: 'center',
-  //               }}>
-  //               <Feather name="map-pin" size={18} color={'#003E9C'} />
-  //               <Text style={[styles.textType3, { color: '#003E9C', fontFamily: 'Circular Std Medium' }]}>
-  //                 {item?.city}
-  //               </Text>
-  //             </View>
-  //           }
-  //           <View style={{
-  //             borderBottomWidth: 2,
-  //             paddingBottom: 15, borderColor: Theme.lightGray,
-  //           }}></View>
-  //           <View
-  //             style={{
-  //               paddingVertical: 20,
-  //               borderBottomWidth: 2,
-  //               borderBottomColor: Theme.lightGray,
-  //             }}>
-  //             <View
-  //               style={{
-  //                 justifyContent: 'space-between',
-  //                 flexDirection: 'row',
-  //                 alignItems: 'center',
-  //               }}>
-  //               <View
-  //                 style={{
-  //                   alignItems: 'center',
-  //                   justifyContent: 'center',
-  //                   flexDirection: 'row',
-  //                   gap: 8,
-  //                 }}>
-  //                 <SubjectIcon />
-  //                 <Text style={[styles.textType3, { fontFamily: 'Circular Std Medium', color: Theme.ironsidegrey1 }]}>Subject</Text>
-  //               </View>
-  //               <Text
-  //                 style={[
-  //                   styles.textType1,
-  //                   { fontSize: 18, textTransform: 'capitalize', fontFamily: 'Circular Std Bold' },
-  //                 ]}>
-  //                 {item?.subject_name}
-  //               </Text>
-  //             </View>
-  //             <View
-  //               style={{
-  //                 justifyContent: 'space-between',
-  //                 flexDirection: 'row',
-  //                 alignItems: 'center',
-  //                 marginTop: 10,
-  //               }}>
-  //               <View
-  //                 style={{
-  //                   alignItems: 'center',
-  //                   justifyContent: 'center',
-  //                   flexDirection: 'row',
-  //                   gap: 10,
-  //                 }}>
-  //                 <FontAwesome name="user-o" size={18} color={Theme.darkGray} />
-  //                 <Text style={[styles.textType3, { fontFamily: 'Circular Std Medium', color: Theme.ironsidegrey1 }]}>Pref. Tutor</Text>
-  //               </View>
-  //               <Text
-  //                 style={[
-  //                   styles.textType1,
-  //                   { fontSize: 20, textTransform: 'capitalize', fontFamily: 'Circular Std Bold' },
-  //                 ]}>
-  //                 {item?.tutorPereference}
-  //               </Text>
-  //             </View>
-  //             <View
-  //               style={{
-  //                 justifyContent: 'space-between',
-  //                 flexDirection: 'row',
-  //                 alignItems: 'center',
-  //                 marginTop: 10,
-  //               }}>
-  //               <View
-  //                 style={{
-  //                   alignItems: 'center',
-  //                   justifyContent: 'center',
-  //                   flexDirection: 'row',
-  //                   gap: 14,
-  //                 }}>
-  //                 <FontAwesome name="level-up" size={18} color={Theme.darkGray} />
-  //                 <Text style={[styles.textType3, { fontFamily: 'Circular Std Medium', color: Theme.ironsidegrey1 }]}>Level</Text>
-  //               </View>
-  //               <Text
-  //                 style={[
-  //                   styles.textType1,
-  //                   { fontSize: 20, textTransform: 'capitalize', fontFamily: 'Circular Std Bold' },
-  //                 ]}>
-  //                 {item?.categoryName}
-  //               </Text>
-  //             </View>
-  //             <View
-  //               style={{
-  //                 justifyContent: 'space-between',
-  //                 flexDirection: 'row',
-  //                 alignItems: 'center',
-  //                 marginTop: 10,
-  //               }}>
-  //               <View
-  //                 style={{
-  //                   alignItems: 'center',
-  //                   justifyContent: 'center',
-  //                   flexDirection: 'row',
-  //                   gap: 6,
-  //                 }}>
-  //                 <Ionicons name="recording-sharp" size={18} color={Theme.darkGray} />
-  //                 <Text style={[styles.textType3, { fontFamily: 'Circular Std Medium', color: Theme.ironsidegrey1 }]}>Subscription </Text>
-  //               </View>
-  //               <Text
-  //                 style={[
-  //                   styles.textType1,
-  //                   { fontSize: 20, textTransform: 'capitalize', fontFamily: 'Circular Std Bold' },
-  //                 ]}>
-  //                 {item?.subscription}
-  //               </Text>
-  //             </View>
-  //           </View>
-
-  //           <View style={{ flexDirection: 'row', gap: 10, marginTop: 15 }}>
-  //             <View
-  //               style={{
-  //                 backgroundColor: '#E6F2FF',
-  //                 paddingVertical: 10,
-  //                 borderRadius: 10,
-  //               }}>
-  //               <View
-  //                 style={{
-  //                   alignItems: 'center',
-  //                   justifyContent: 'center',
-  //                   flexDirection: 'row',
-  //                   gap: 10,
-  //                   paddingHorizontal: 10,
-  //                 }}>
-  //                 <AntDesign name="calendar" size={20} color={Theme.darkGray} />
-  //                 <Text
-  //                   style={[
-  //                     styles.textType3,
-  //                     { color: Theme.darkGray, textTransform: 'capitalize', fontFamily: 'Circular Std Medium' },
-  //                   ]}>
-  //                   {item?.classDayType}
-  //                 </Text>
-  //               </View>
-  //             </View>
-  //             <View
-  //               style={{
-  //                 backgroundColor: '#E6F2FF',
-  //                 paddingVertical: 10,
-  //                 borderRadius: 10,
-  //                 paddingHorizontal: 10,
-  //               }}>
-  //               <View
-  //                 style={{
-  //                   alignItems: 'center',
-  //                   justifyContent: 'center',
-  //                   flexDirection: 'row',
-  //                   gap: 10,
-  //                 }}>
-  //                 <AntDesign name="clockcircleo" size={20} color={Theme.darkGray} />
-  //                 <Text style={[styles.textType3, { color: Theme.darkGray, fontFamily: 'Circular Std Medium' }]}>
-  //                   {item?.classTime}
-  //                 </Text>
-  //               </View>
-  //             </View>
-  //           </View>
-  //         </TouchableOpacity>
-  //       </>
-  //     );
-  //   };
-  //   return (
-  //     <View style={{ marginVertical: 20, marginBottom: 0,backgroundColor:'pink' }}>
-  //       {/* Search */}
-  //       {/* <View style={{ justifyContent: 'center', alignItems: 'center' }}>
-  //         <View
-  //           style={{
-  //             width: '100%',
-  //             backgroundColor: Theme.white,
-  //             borderRadius: 10,
-  //             display: 'flex',
-  //             flexDirection: 'row',
-  //             alignItems: 'center',
-  //             paddingVertical: 4,
-  //             paddingHorizontal: 15,
-  //             marginBottom: 15,
-  //             gap: 10,
-  //           }}>
-  //           <TouchableOpacity onPress={() => navigation}>
-  //             <Image
-  //               source={require('../../Assets/Images/search.png')}
-  //               style={{ width: 15, height: 15 }}
-  //             />
-  //           </TouchableOpacity>
-  //           <TextInput
-  //             placeholder="Search"
-  //             placeholderTextColor="black"
-  //             onChangeText={e => searchOpen(e)}
-  //             style={{
-  //               width: '90%',
-  //               padding: 8,
-  //               color: 'black',
-  //               fontFamily: 'Circular Std Book',
-  //               fontSize: 16,
-  //             }}
-  //           />
-  //         </View>
-  //       </View> */}
-
-  //       {openData.length > 0 ? (
-  //         <View style={{flex:1}}>
-  //           {/* <FlatList
-  //             data={data}
-  //             renderItem={renderSubject}
-  //             keyExtractor={(item) => item.id.toString()}
-  //             horizontal
-  //             showsHorizontalScrollIndicator={false}
-  //           /> */}
-  //           {/* <View style={{ marginTop: 20 }}></View> */}
-  //           {openData.map((e:any,i:number)=>{
-  //             return(
-  //               <TouchableOpacity style={{flexDirection:'column'}}>
-  //               <Text>{e.subject_name}</Text>
-  //               </TouchableOpacity>
-  //             )
-  //           })}
-
-  //           <FlatList
-  //             // data={searchText && foundName.length > 0 ? foundName : openData}
-  //             data={openData}
-  //             renderItem={renderOpenData}
-  //             scrollEnabled={true}
-  //             nestedScrollEnabled={true}
-  //             keyExtractor={(items: any, index: number): any => index}
-  //           />
-  //         </View>
-  //       ) : (
-  //         <View style={{ justifyContent: 'center', alignItems: 'center' }}>
-  //           <Image
-  //             source={require('../../Assets/Images/nojobticketavailable.png')}
-  //             style={{ width: 300, height: 300 }}
-  //           />
-  //         </View>
-  //       )}
-  //     </View>
-  //   );
-  // }, [openData, searchText, foundName, refreshing]);
 
   const secondRoute = useCallback(() => {
     return (
@@ -1537,17 +1251,19 @@ function JobTicket({ navigation, route }: any) {
   };
 
   return (
-    <View style={{ backgroundColor: Theme.GhostWhite, height: '100%', paddingHorizontal: 25 }}>
+    <View style={{ backgroundColor: Theme.GhostWhite, height: '100%',  }}>
+      <View style={{paddingHorizontal:8}}>
       <Header
         tab={currentTab}
         title="Job Tickets"
         filter
         navigation={navigation}
-      />
+        />
+        </View>
       <ScrollView
         showsVerticalScrollIndicator={false}
         nestedScrollEnabled>
-        <View style={{ paddingHorizontal: 0, marginTop: 20 }}>
+        <View style={{ paddingHorizontal: 25, marginTop: 20 }}>
           <CustomTabView
             currentTab={currentTab}
             firstRoute={firstRoute}
@@ -1578,7 +1294,6 @@ function JobTicket({ navigation, route }: any) {
                 <View
                   style={{
                     backgroundColor: 'white',
-                    // padding: 15,
                     borderRadius: 5,
                     marginHorizontal: 20,
                   }}>
@@ -1633,11 +1348,11 @@ const styles = StyleSheet.create({
     fontStyle: 'normal',
   },
   textType3: {
-    color: Theme.Dune,
-    fontWeight: '500',
+    color: Theme.IronsideGrey,
     fontSize: 16,
-    fontFamily: 'Circular Std',
-    fontStyle: 'normal',
+    fontFamily: 'Circular Std Book',
+    lineHeight: 22,
+    fontWeight: 400,
   },
   modalContainer: {
     // flex: 1,

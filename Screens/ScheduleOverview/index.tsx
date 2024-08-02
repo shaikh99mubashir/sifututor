@@ -75,15 +75,6 @@ const ScheduleOverview = ({ navigation }: any) => {
     index,
   });
   const [upCommingClasses, setUpCommingClasses] = useState([]);
-
-  const data = [
-    { id: '1', title: 'All', jtuid: 'J9003428', mode: 'online' },
-    { id: '2', title: 'Biology', jtuid: 'J9003428', mode: 'Physical' },
-    { id: '3', title: 'Mathematics', jtuid: 'J9003428', mode: 'online' },
-    { id: '4', title: 'Bahasa Melayu', jtuid: 'J9003428', mode: 'online' },
-    { id: '5', title: 'English ', jtuid: 'J9003428', mode: 'online' },
-  ];
-
   const getUpcomingClasses = async () => {
     const login: any = await AsyncStorage.getItem('loginAuth');
     let loginData = JSON.parse(login);
@@ -176,14 +167,7 @@ const ScheduleOverview = ({ navigation }: any) => {
       });
   };
 
-  useEffect(() => {
-    const currentDateItem = selectedDates.find(item => item.isCurrentDate);
-    if (currentDateItem) {
-      getScheduledData(currentDateItem);
-      const currentIndex = selectedDates.indexOf(currentDateItem);
-      flatListRef?.current?.scrollToIndex({ index: currentIndex, animated: true });
-    }
-  }, []);
+
 
   // useEffect(() => {
   //   if (refresh || selectedDate || data || scheduleData.length == 0) {
@@ -227,8 +211,6 @@ const ScheduleOverview = ({ navigation }: any) => {
   };
 
   const renderClassScheduleData = ({ item }: any) => {
-    // console.log('item',item);
-
     const startTime12Hour = convertTo12HourFormat(item.startTime);
     const endTime12Hour = convertTo12HourFormat(item.endTime);
     const formattedTime = formatTime(item.startTime);
@@ -239,7 +221,7 @@ const ScheduleOverview = ({ navigation }: any) => {
             flexDirection: 'row',
             alignItems: 'center',
             borderLeftWidth: 1,
-            gap: 10,
+            gap: 8,
             borderLeftColor: Theme.lineColor,
             marginLeft: 10,
           }}
@@ -265,9 +247,7 @@ const ScheduleOverview = ({ navigation }: any) => {
               marginBottom: 10,
               padding: 10,
               borderColor: selectedItem == item.id ? Theme.darkGray : Theme.shinyGrey,
-              borderBottomColor: Theme.shinyGrey,
               backgroundColor: Theme.white,
-
             }}>
             <View
               style={{
@@ -389,6 +369,8 @@ const ScheduleOverview = ({ navigation }: any) => {
   };
 
   const [monthYear, setMonthYear] = useState(new Date());
+  // console.log("monthYear",monthYear);
+  
   const [showMonthPicker, setShowMonthPicker] = useState(false);
 
   const showPickerMonthAndYear = useCallback((value: any) => setShowMonthPicker(value), []);
@@ -400,34 +382,10 @@ const ScheduleOverview = ({ navigation }: any) => {
 
       showPickerMonthAndYear(false);
       setMonthYear(selectedDate);
+      
     },
-    [monthYear, showPickerMonthAndYear],
+    [monthYear, showPickerMonthAndYear, ],
   );
-
-  // const getCurrentMonthDates = (monthYear:any) => {
-  //   console.log("monthYear",monthYear);
-
-  //   const currentDate = new Date(monthYear);
-  //   const currentMonth = currentDate.getMonth();
-  //   const currentYear = currentDate.getFullYear();
-  //   const currentDay = currentDate.getDate();
-  //   const daysInMonth = new Date(currentYear, currentMonth + 1, 0).getDate();
-
-  //   const dates = [];
-  //   for (let i = 1; i <= daysInMonth; i++) {
-  //     const date = new Date(currentYear, currentMonth, i);
-  //     const formattedDate = String(i).padStart(2, '0');
-  //     dates.push({
-  //       id: i,
-  //       dates: date.getDate(),
-  //       date: formattedDate,
-  //       day: ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'][date.getDay()],
-  //       isCurrentDate: i === currentDay,
-  //       selectedDate: date.toISOString(),
-  //     });
-  //   }
-  //   return dates;
-  // };
 
 
   const getCurrentMonthDates = (monthYear: any) => {
@@ -482,7 +440,19 @@ const ScheduleOverview = ({ navigation }: any) => {
     return dates;
   };
 
-  const selectedDates = getCurrentMonthDates(monthYear);
+  let selectedDates = getCurrentMonthDates(monthYear);
+  // console.log("selectedDates",selectedDates);
+
+  useEffect(() => {
+    const currentDateItem = selectedDates.find(item => item.isCurrentDate);
+    if (currentDateItem) {
+      getScheduledData(currentDateItem);
+      const currentIndex = selectedDates.indexOf(currentDateItem);
+      flatListRef?.current?.scrollToIndex({ index: currentIndex, animated: true });
+    }
+  }, [monthYear]);
+  
+
   // console.log("selectedDates",selectedDates);
 
   // const renderItem = ({ item }:any) => {
@@ -743,14 +713,14 @@ const ScheduleOverview = ({ navigation }: any) => {
           <View style={{ width: 10, height: 30, backgroundColor: Theme.GhostWhite, position: 'relative', top: -30, left: 5, zIndex: 1 }}></View>
         </View>
 
-        {showMonthPicker && (
+        {/* {showMonthPicker && (
           <MonthPicker
             onChange={onValueChangeMonthPicker}
             value={monthYear}
             minimumDate={new Date()}
             maximumDate={new Date(2025, 5)}
           />
-        )}
+        )} */}
         <Modal
           transparent={true}
           animationType="slide"
@@ -782,7 +752,7 @@ const ScheduleOverview = ({ navigation }: any) => {
                 marginTop: 20,
                 paddingHorizontal: 22,
               }}>
-              <Text style={[styles.textType1, { fontFamily: 'Circular Std Medium' }]}>
+              <Text style={[styles.textType1, { fontFamily: 'Circular Std Medium',lineHeight:30 }]}>
                 Upcoming Classes
               </Text>
             </View>

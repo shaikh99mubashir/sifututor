@@ -24,6 +24,7 @@ import bannerContext from '../../context/bannerContext';
 import TutorDetailsContext from '../../context/tutorDetailsContext';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import CustomLoader from '../../Component/CustomLoader';
+import { useIsFocused } from '@react-navigation/native';
 
 function Inbox({ navigation }: any) {
   let bannerCont = useContext(bannerContext);
@@ -48,40 +49,86 @@ function Inbox({ navigation }: any) {
     }, 2000);
   }, [refresh]);
 
-  const getNews = () => {
-    setLoading(true);
+  // const getNews = async () => {
+  //   setLoading(true);
+  //   const login: any = await AsyncStorage.getItem('loginAuth');
+  //   let loginData = JSON.parse(login);
+  //   let { tutorID } = loginData;
+  //   axios
+  //     .get(`${Base_Uri}api/news`)
+  //     .then(({ data }) => {
+  //       setLoading(false);
+  //       let { news } = data;
 
+       
+
+  //       axios
+  //         .get(`${Base_Uri}api/tutorNewsStatusList/${tutorID}`)
+  //         .then(res => {
+  //           const status = res.data.result;
+  //           console.log("status", status);
+
+  //           news.forEach((e: any, i: number) => {
+  //             status.forEach((event: any, ind: number) => {
+  //               if (event.newsID === e.id) {
+  //                 console.log(`e.ID newsss`,event.newsID);
+  //                 console.log(`e.id status`,e.id);
+                  
+  //                 e.newsStatus = 'old'; // Update the newsStatus property
+  //               }
+  //             });
+  //           });
+  //         });
+
+  //       setInboxData(news);
+  //     })
+  //     .catch(error => {
+  //       setLoading(false);
+  //       // ToastAndroid.show('Internal Server Error', ToastAndroid.SHORT);
+  //     });
+  // };
+
+  const focus = useIsFocused()
+  const getNews = async () => {
+    setLoading(true);
+    const login: any = await AsyncStorage.getItem('loginAuth');
+    let loginData = JSON.parse(login);
+    let { tutorID } = loginData;
+    
     axios
       .get(`${Base_Uri}api/news`)
       .then(({ data }) => {
         setLoading(false);
         let { news } = data;
-
+  
         axios
-          .get(`${Base_Uri}api/tutorNewsStatusList/${tutorDetails.tutorId}`)
+          .get(`${Base_Uri}api/tutorNewsStatusList/${tutorID}`)
           .then(res => {
             const status = res.data.result;
-
-            news.forEach((e: any, i: number) => {
-              status.forEach((event: any, ind: number) => {
-                if (event.newsID === e.id) {
-                  e.newsStatus = 'old'; // Update the newsStatus property
-                }
-              });
+  
+            news.forEach((newsItem: any) => {
+              const newsExists = status.some((event: any) => event.newsID === newsItem.id);
+              
+              if (newsExists) {
+                console.log(`Yes, exists for newsID: ${newsItem.id}`);
+                newsItem.newsStatus = 'old'; // Update the newsStatus property
+              } else {
+                console.log(`Not exist for newsID: ${newsItem.id}`);
+              }
             });
+  
+            setInboxData(news);
           });
-
-        setInboxData(news);
       })
       .catch(error => {
         setLoading(false);
-        // ToastAndroid.show('Internal Server Error', ToastAndroid.SHORT);
+        // Handle error
       });
   };
-
+  
   useEffect(() => {
     getNews();
-  }, [refresh]);
+  }, [refresh,focus]);
   // console.log('inboxData',inboxData);
 
   const [openPPModal, setOpenPPModal] = useState(false);
@@ -115,15 +162,23 @@ function Inbox({ navigation }: any) {
     }
   };
 
-  const routeToInboxDetails = (item: any) => {
-    navigation.navigate('InboxDetail', item);
+  const routeToInboxDetails = async (item: any) => {
+    navigation.navigate('InboxDetail', item.id);
+    console.log("item.id",item.id);
+    console.log("Running");
+    
+    const login: any = await AsyncStorage.getItem('loginAuth');
+    let loginData = JSON.parse(login);
+    let { tutorID } = loginData;
 
     axios
       .get(
-        `${Base_Uri}api/newsStatusUpdate/${item.id}/old/${tutorDetails.tutorId}`,
+        `${Base_Uri}api/newsStatusUpdate/${item.id}/old/${tutorID}`,
       )
       .then(res => {
         console.log('successfully update tutor status');
+        console.log("res newsStatusUpdate", res.data);
+
       })
       .catch(error => {
         console.log(error, 'error');
@@ -131,14 +186,16 @@ function Inbox({ navigation }: any) {
   };
 
   const renderInboxData = ({ item, index }: any): any => {
+
     return (
       <TouchableOpacity
         onPress={() => routeToInboxDetails(item)}
         style={{
           flexDirection: 'row',
           justifyContent: 'space-between',
-          paddingHorizontal: 20,
-          padding: 10,
+          // paddingHorizontal: 20,
+          // padding: 10,
+          paddingVertical: 10,
           borderBottomWidth: 1,
           borderBottomColor: Theme.lightGray,
           width: '100%',
@@ -160,7 +217,7 @@ function Inbox({ navigation }: any) {
                 height: 12,
                 width: 12,
                 backgroundColor:
-                  item.newsStatus == 'old' ? Theme.lightGray : 'rgb(0, 0, 95)',
+                  item.newsStatus == 'old' ? Theme.lineColor : Theme.darkGray,
                 borderRadius: 100,
                 left: 4,
                 top: 0,
@@ -195,7 +252,7 @@ function Inbox({ navigation }: any) {
             <Text
               style={{ fontSize: 12, fontWeight: '500', color: Theme.gray }}
               numberOfLines={1}>
-              {item.created_at}
+              {item.date_time}
             </Text>
           </View>
         </View>
@@ -233,76 +290,77 @@ function Inbox({ navigation }: any) {
   };
 
   return (
-    //   <View style={{flex: 1, justifyContent: 'center', alignItems: 'center'}}>
-    //     <ActivityIndicator size="large" color="black" />
-    //   </View>
-    // ) : (
-    <ScrollView
-      refreshControl={
-        <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
-      }
-      style={{ flex: 1, backgroundColor: Theme.GhostWhite,paddingHorizontal:15 }}>
+    <View style={{ backgroundColor: Theme.GhostWhite, paddingHorizontal: 5 ,height:'100%'}}>
       <View>
-        <CustomHeader title="Inbox" />
+        <CustomHeader title="News" />
       </View>
-      <View>
-      <FlatList data={inboxData} renderItem={renderInboxData} />
-      </View>
+      <ScrollView
+      showsVerticalScrollIndicator={false}
+        refreshControl={
+          <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
+        }
+      >
 
-      {Object.keys(inboxBanner).length > 0 &&
-        (inboxBanner.tutorStatusCriteria == 'All' ||
-          tutorDetails.status == 'verified') && (
-          <View style={{ flex: 1 }}>
-            <Modal
-              visible={openPPModal}
-              animationType="fade"
-              transparent={true}
-              onRequestClose={() => closeBannerModal()}>
-              <TouchableOpacity
-                onPress={linkToOtherPage}
-                style={{
-                  flex: 1,
-                  backgroundColor: 'rgba(0,0,0,0.5)',
-                  justifyContent: 'center',
-                  alignItems: 'center',
-                }}>
-                <View
+        <View style={{ paddingHorizontal: 25 }}>
+          <FlatList data={inboxData} renderItem={renderInboxData} />
+        </View>
+
+        <View style={{margin:60}}></View>
+
+        {Object.keys(inboxBanner).length > 0 &&
+          (inboxBanner.tutorStatusCriteria == 'All' ||
+            tutorDetails.status == 'verified') && (
+            <View style={{ flex: 1 }}>
+              <Modal
+                visible={openPPModal}
+                animationType="fade"
+                transparent={true}
+                onRequestClose={() => closeBannerModal()}>
+                <TouchableOpacity
+                  onPress={linkToOtherPage}
                   style={{
-                    backgroundColor: 'white',
-                    // padding: 15,
-                    borderRadius: 5,
-                    marginHorizontal: 20,
+                    flex: 1,
+                    backgroundColor: 'rgba(0,0,0,0.5)',
+                    justifyContent: 'center',
+                    alignItems: 'center',
                   }}>
-                  <TouchableOpacity onPress={() => closeBannerModal()}>
-                    <View
-                      style={{
-                        alignItems: 'flex-end',
-                        paddingVertical: 10,
-                        paddingRight: 15,
-                      }}>
-                      <AntDesign
-                        name="closecircleo"
-                        size={20}
-                        color={'black'}
-                      />
-                    </View>
-                  </TouchableOpacity>
-                  {/* <Image source={{uri:}} style={{width:Dimensions.get('screen').width/1.1,height:'80%',}} resizeMode='contain'/> */}
-                  <Image
-                    source={{ uri: inboxBanner.bannerImage }}
+                  <View
                     style={{
-                      width: Dimensions.get('screen').width / 1.1,
-                      height: '80%',
-                    }}
-                    resizeMode="contain"
-                  />
-                </View>
-              </TouchableOpacity>
-            </Modal>
-          </View>
-        )}
-          <CustomLoader visible={loading} />
-      {/* <Modal visible={loading} animationType="fade" transparent={true}>
+                      backgroundColor: 'white',
+                      // padding: 15,
+                      borderRadius: 5,
+                      marginHorizontal: 20,
+                    }}>
+                    <TouchableOpacity onPress={() => closeBannerModal()}>
+                      <View
+                        style={{
+                          alignItems: 'flex-end',
+                          paddingVertical: 10,
+                          paddingRight: 15,
+                        }}>
+                        <AntDesign
+                          name="closecircleo"
+                          size={20}
+                          color={'black'}
+                        />
+                      </View>
+                    </TouchableOpacity>
+                    {/* <Image source={{uri:}} style={{width:Dimensions.get('screen').width/1.1,height:'80%',}} resizeMode='contain'/> */}
+                    <Image
+                      source={{ uri: inboxBanner.bannerImage }}
+                      style={{
+                        width: Dimensions.get('screen').width / 1.1,
+                        height: '80%',
+                      }}
+                      resizeMode="contain"
+                    />
+                  </View>
+                </TouchableOpacity>
+              </Modal>
+            </View>
+          )}
+        <CustomLoader visible={loading} />
+        {/* <Modal visible={loading} animationType="fade" transparent={true}>
         <View
           style={{
             flex: 1,
@@ -312,7 +370,8 @@ function Inbox({ navigation }: any) {
           <ActivityIndicator size={'large'} color={Theme.darkGray} />
         </View>
       </Modal> */}
-    </ScrollView>
+      </ScrollView>
+    </View>
   );
 }
 

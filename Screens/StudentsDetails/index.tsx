@@ -198,6 +198,26 @@ const StudentsDetails = ({ navigation, route }: any) => {
                 {data.studentRegisterDate ? data.studentRegisterDate : "not provided"}
               </Text>
             </View>
+            {/* Registration Date */}
+            <View style={{ paddingVertical: 10, paddingHorizontal: 10 }}>
+              <Text
+                style={{
+                  color: Theme.black,
+                  fontSize: 16,
+                  fontFamily: 'Circular Std Medium'
+                }}>
+                Person Incharge Name
+              </Text>
+              <Text
+                style={{
+                  color: Theme.gray,
+                  fontSize: 18,
+                  fontFamily: 'Circular Std Medium',
+                  marginTop: 5,
+                }}>
+                {data.person_incharge ? data.person_incharge : "not provided"}
+              </Text>
+            </View>
           </View>
           <View style={{margin:10}}></View>
           <Text

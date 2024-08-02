@@ -352,7 +352,7 @@ function ClockIn({navigation, route}: any) {
             <Text
               style={[
                 styles.textType1,
-                { fontSize: 18, textTransform: 'capitalize' },
+                { fontSize: 18, textTransform: 'uppercase' },
               ]}>
               {item?.startTime?.toString()} - {item?.endTime?.toString()}
             </Text>

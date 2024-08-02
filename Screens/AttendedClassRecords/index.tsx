@@ -1,4 +1,4 @@
-import { FlatList, Image, RefreshControl, ScrollView, StyleSheet, Text, ToastAndroid, TouchableOpacity, View } from 'react-native'
+import { Dimensions, FlatList, Image, RefreshControl, ScrollView, StyleSheet, Text, ToastAndroid, TouchableOpacity, View } from 'react-native'
 import React, { useEffect, useState } from 'react'
 import { Theme } from '../../constant/theme'
 import Header from '../../Component/Header'
@@ -456,12 +456,20 @@ const AttendedClassRecords = ({ navigation, route }: any) => {
               />
             </View>
           ) : (
-            <View style={{ justifyContent: 'center', alignItems: 'center' }}>
-              <Image
-                source={require('../../Assets/Images/rnf-01.png')}
-                style={{ width: 300, height: 300 }}
-              />
-            </View>
+            // <View style={{ justifyContent: 'center', alignItems: 'center' }}>
+            //   <Image
+            //     source={require('../../Assets/Images/rnf-01.png')}
+            //     style={{ width: 300, height: 300 }}
+            //   />
+            // </View>
+            <View
+            style={{
+              height: Dimensions.get('window').height - 250,
+              justifyContent: 'center',
+              alignItems: 'center',
+            }}>
+            <Image source={require('../../Assets/Images/rnf-01.png')} resizeMode='contain' style={{width:350, height:350}}/>   
+          </View>
           )}
         </View>
       </ScrollView>

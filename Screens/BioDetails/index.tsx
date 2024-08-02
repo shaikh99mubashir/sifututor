@@ -147,16 +147,16 @@ const BioDetails = ({ navigation }: any) => {
           <View style={{ margin: 10 }}></View>
           <View>
             <InputText
-              label="Full Name*"
-              placeholder="Enter Full Name*"
+              label="Full Name"
+              placeholder="Enter Full Name"
               value={tutorBioDetails.fullName}
               onChangeText={(value: string) => handleInputChange('fullName', value)}
               error={errors.fullName}
             />
             <View style={{ margin: 10 }}></View>
             <InputText
-              label="Phone Number*"
-              placeholder="Enter Phone Number*"
+              label="Phone Number"
+              placeholder="Enter Phone Number"
               value={tutorBioDetails.phoneNumber}
               onChangeText={(value: string) => handleInputChange('phoneNumber', value)}
               keyboardType="numeric"
@@ -164,16 +164,16 @@ const BioDetails = ({ navigation }: any) => {
             />
             <View style={{ margin: 10 }}></View>
             <InputText
-              label="Email*"
-              placeholder="Enter Email*"
+              label="Email"
+              placeholder="Enter Email"
               value={tutorBioDetails.email}
               onChangeText={(value: string) => handleInputChange('email', value)}
               error={errors.email}
             />
             <View style={{ margin: 10 }}></View>
             <InputText
-              label="IC Number*"
-              placeholder="Enter IC Number*"
+              label="IC Number"
+              placeholder="Enter IC Number"
               value={tutorBioDetails.icNumber}
               onChangeText={(value: string) => handleInputChange('icNumber', value)}
               keyboardType="numeric"
@@ -181,16 +181,16 @@ const BioDetails = ({ navigation }: any) => {
             />
             <View style={{ margin: 10 }}></View>
             <InputText
-              label="Residential Address*"
-              placeholder="Enter Residential Address*"
+              label="Residential Address"
+              placeholder="Enter Residential Address"
               value={tutorBioDetails.residentialAddress}
               onChangeText={(value: string) => handleInputChange('residentialAddress', value)}
               error={errors.residentialAddress}
             />
             <View style={{ margin: 10 }}></View>
             <InputText
-              label="Postal Code*"
-              placeholder="Enter Postal Code*"
+              label="Postal Code"
+              placeholder="Enter Postal Code"
               value={tutorBioDetails.postalCode}
               onChangeText={(value: string) => handleInputChange('postalCode', value)}
               error={errors.postalCode}

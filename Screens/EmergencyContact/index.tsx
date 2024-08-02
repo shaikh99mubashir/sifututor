@@ -142,8 +142,8 @@ console.log("selectedState",selectedRelationShip);
           <View style={{ margin: 10 }}></View>
           <View>
             <InputText
-              label="Emergency Contact Name*"
-              placeholder="Emergency Contact Name*"
+              label="Emergency Contact Name"
+              placeholder="Emergency Contact Name"
               value={emergencyContactDetails.contactName}
               onChangeText={(value: string) => handleInputChange('contactName', value)}
               error={errors.contactName}
@@ -162,8 +162,8 @@ console.log("selectedState",selectedRelationShip);
             {errors.relationship && <Text style={{ color: 'red' }}>{errors.relationship}</Text>}
             <View style={{ margin: 8 }}></View>
             <InputText
-              label="Emergency Contact Number*"
-              placeholder="Emergency Contact Number*"
+              label="Emergency Contact Number"
+              placeholder="Emergency Contact Number"
               value={emergencyContactDetails.contactNumber}
               onChangeText={(value: string) => handleInputChange('contactNumber', value)}
               keyboardType="numeric"

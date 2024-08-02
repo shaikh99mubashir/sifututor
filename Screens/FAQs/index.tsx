@@ -131,7 +131,7 @@ const FAQs = ({navigation}: any) => {
         <Text
           style={[
             styles.textType1,
-            {textAlign: 'center', fontFamily: 'Circular Std Bold',lineHeight:26},
+            {textAlign: 'center', fontFamily: 'Circular Std Bold',lineHeight:26,fontWeight:700},
           ]}>
           Some of the most Frequently Asked Questions
         </Text>

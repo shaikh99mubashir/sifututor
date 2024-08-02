@@ -11,10 +11,12 @@ const Theme = {
     // lightGray : "#DDE6ED",
     lightGray : "#eee",
     darkGray : "#243cb3",
-    Dune:"#333333",
+    // Dune:"#333333",
+    Dune:"#3F3F3F",
     GhostWhite:'#F5F9FF',
     jobticketBG:'rgba(9, 97, 245, 0.05)',
-    dune:'#333',
+    // dune:'#333',
+    dune:'#3F3F3F',
     ironsidegrey:'(255,102,102,0.05)',
     ironsidegrey1:'#666666',
     liteBlue: '#f7f7f7',
@@ -49,6 +51,7 @@ const Theme = {
     star:'#F4A119',
     YellowishOrange:'#FF9C07',
     YellowishOrangelite:'rgba(255, 156, 7,0.20)',
+    Gray19:'#3F3F3F'
 
 }
 

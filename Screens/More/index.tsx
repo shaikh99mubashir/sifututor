@@ -31,6 +31,9 @@ import ScheduleOverViewIcon from '../../SVGs/ScheduleOverviewIcon';
 import ScheduleOverviewIcon from '../../SVGs/ScheduleOverviewIcon';
 import TermServices from '../../SVGs/TermServices';
 import Privacy from '../../SVGs/Privacy';
+import FaqsIcon from '../../SVGs/faqsIcon';
+import VerifyIcon from '../../SVGs/VerifyIcon';
+import FaqsBanner from '../../SVGs/FaqsBanner';
 
 function More({ navigation }: any) {
   const context = useContext(TutorDetailsContext);
@@ -203,13 +206,14 @@ function More({ navigation }: any) {
               />
             </View>
             <View>
-              {/* {tutorDetails?.status?.toLowerCase() == 'verified' &&} */}
+              {tutorDetails?.status?.toLowerCase() == 'verified' &&
               <View
                 style={{ flexDirection: 'row', gap: 5, alignItems: 'center' }}>
                 <Text style={[styles.textType3,]}>Verified Tutor</Text>
-                <Image source={require('../../Assets/Images/verified.png')} />
+                {/* <Image source={require('../../Assets/Images/verified.png')} /> */}
+                <VerifyIcon/>
               </View>
-
+            }
               <Text style={[styles.textType1, { lineHeight: 35, fontSize: 24 }]}>
                 {tutorDetails?.displayName ?? tutorDetails?.full_name}
               </Text>
@@ -221,11 +225,14 @@ function More({ navigation }: any) {
               onPress={() => navigation.navigate('FAQs')}
               activeOpacity={0.8}>
           <View style={{ paddingHorizontal: 25, justifyContent: 'center', alignItems: 'center', }}>
-            <Image
+            {/* <Image
               source={require('../../Assets/Images/FAQBanner.png')}
               resizeMode="contain"
               style={{ width: Dimensions.get('screen').width / 1.04 }}
-            />
+            /> */}
+
+            <FaqsBanner/>
+     
           </View>
           </TouchableOpacity>
           {/*  */}
@@ -374,7 +381,7 @@ function More({ navigation }: any) {
                 paddingVertical: 10,
                 alignItems: 'center',
               }}>
-              <StudentListIcon />
+              <FaqsIcon/>
               <Text style={[styles.textType3]}>FAQ’s</Text>
             </TouchableOpacity>
             {/* <TouchableOpacity
@@ -418,7 +425,7 @@ function More({ navigation }: any) {
                 alignItems: 'center',
               }}>
               <TermServices />
-              <Text style={[styles.textType3]}>Sifututor Terms of Services</Text>
+              <Text style={[styles.textType3]}>Terms of Services</Text>
             </TouchableOpacity>
             <TouchableOpacity
               onPress={() => navigation.navigate('TutorlaPrivacyStatement')}
@@ -430,7 +437,7 @@ function More({ navigation }: any) {
                 alignItems: 'center',
               }}>
               <Privacy />
-              <Text style={[styles.textType3]}>Sifututor Privacy Statement</Text>
+              <Text style={[styles.textType3]}>Privacy Statement</Text>
             </TouchableOpacity>
 
 

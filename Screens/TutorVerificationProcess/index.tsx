@@ -186,7 +186,7 @@ const TutorVerificationProcess = ({ navigation }: any) => {
       </View></View>
             ) : (
               <>
-                <Text style={styles.textType1}>You are Applying as a Tutor</Text>
+                <Text style={[styles.textType1,{lineHeight:30}]}>You are Applying as a Tutor</Text>
                 <View style={{ margin: 5 }}></View>
                 <Text style={styles.textType3}>
                   Secure your tutoring opportunities by ensuring all your documents

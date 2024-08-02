@@ -391,9 +391,9 @@ console.log('selectedStatus',selectedStatus);
                 searchData={searchCategoryData}
                 searchFunc={handleSearchData}
                 selectedSubject={selectedCategory}
-                ddTitle="Category"
+                ddTitle="Level"
                 headingStyle={{ color: Theme.black, }}
-                dropdownPlace={filterCategory ? filterCategory : "Select Category"}
+                dropdownPlace={filterCategory ? filterCategory : "Select Level"}
                 dropdownContainerStyle={{
                   paddingVertical: 15,
                 }}
@@ -473,9 +473,10 @@ console.log('selectedStatus',selectedStatus);
         flexDirection: "row",
         justifyContent: "center",
         gap: 10, alignSelf: 'center',
-        bottom: 0, marginBottom: 30,
+        bottom: 0, marginBottom: 40,
         paddingHorizontal: 25,
-        backgroundColor: Theme.GhostWhite
+        backgroundColor: Theme.GhostWhite,
+        paddingTop:15
       }}>
         <View style={{ width: '48%' }}>
           <CustomButton btnTitle="Save" onPress={() => data == 'applied' ? applyStatusFilter() : data == 'tutorrecords' ? applyRecordStatusFilter() : applyFilter()} />

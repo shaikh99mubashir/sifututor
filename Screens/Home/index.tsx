@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useContext } from 'react';
+import React, { useEffect, useState, useContext, useCallback } from 'react';
 import {
   View,
   Text,
@@ -13,6 +13,7 @@ import {
   RefreshControl,
   Modal,
   Linking,
+  Button,
 } from 'react-native';
 import { Theme } from '../../constant/theme';
 import notifee, { AndroidImportance, EventType } from '@notifee/react-native';
@@ -28,6 +29,7 @@ import paymentContext from '../../context/paymentHistoryContext';
 import scheduleContext from '../../context/scheduleContext';
 import reportSubmissionContext from '../../context/reportSubmissionContext';
 import AntDesign from 'react-native-vector-icons/AntDesign';
+import Entypo from 'react-native-vector-icons/Entypo';
 import notificationContext from '../../context/notificationContext';
 import bannerContext from '../../context/bannerContext';
 import messaging from '@react-native-firebase/messaging';
@@ -46,6 +48,7 @@ import { getFcmToken } from '../../src/utils/fcmHelper';
 import JobTicketCarousel from '../../Component/JobTicketCarousel';
 import LatestNews from '../../Component/LatestNews';
 import CustomButton from '../../Component/CustomButton';
+import MonthPicker from 'react-native-month-year-picker';
 function Home({ navigation, route }: any) {
   let key = route.key;
 
@@ -634,6 +637,7 @@ function Home({ navigation, route }: any) {
   useEffect(() => {
     if (tutorId) {
       getCummulativeCommission();
+      getDashboardData()
     }
   }, [tutorId, refreshing, focus]);
 
@@ -653,6 +657,7 @@ function Home({ navigation, route }: any) {
       getTutorSubjects();
       getCancelledHours();
       getAssignedTicket();
+      getDashboardData()
     }
   }, [cummulativeCommission, refreshing, tutorId, focus]);
   useEffect(() => {
@@ -663,6 +668,7 @@ function Home({ navigation, route }: any) {
         console.log('Event received:', data);
         if (tutorId && cummulativeCommission) {
           getCummulativeCommission()
+          getDashboardData()
           getAttendedHours();
           getScheduledHours();
           getTutorStudents();
@@ -1102,13 +1108,98 @@ function Home({ navigation, route }: any) {
         });
     }
   });
+  const [monthYear, setMonthYear] = useState(new Date());
+  const [showMonthPicker, setShowMonthPicker] = useState(false);
+  const getCurrentMonthDates = (monthYear: any) => {
+    const currentDate = new Date(monthYear);
+    const currentMonth = currentDate.getMonth();
+    const currentYear = currentDate.getFullYear();
+    const currentDay = currentDate.getDate();
+    const daysInMonth = new Date(currentYear, currentMonth + 1, 0).getDate();
+  
+    const monthNames = [
+      'January', 'February', 'March', 'April', 'May', 'June', 
+      'July', 'August', 'September', 'October', 'November', 'December'
+    ];
+  
+    const monthName = monthNames[currentMonth];
+  
+    const dates = [];
+    for (let i = 1; i <= daysInMonth; i++) {
+      const date = new Date(Date.UTC(currentYear, currentMonth, i));
+      const formattedDate = String(i).padStart(2, '0');
+      const isCurrentDate = currentDay === i;
+      const isoDate = date.toISOString().split('T')[0];
+  
+      dates.push({
+        id: i,
+        dates: date.getUTCDate(),
+        date: formattedDate,
+        day: ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'][date.getUTCDay()],
+        isCurrentDate,
+        selectedDate: date.toISOString(),
+        isoDate: isoDate,
+        month: monthName, // Include the month name here
+      });
+    }
+  
+    return dates;
+  };
+  
+const [dashboardData, setDashboardData] = useState<any>([])
+  let selectedMonth = getCurrentMonthDates(monthYear)
+  
+  const getDashboardData = () => {
+    console.log("tutorId",tutorId);
+    
+    axios
+      .get(`${Base_Uri}api/get_tutor_dashboard_data/${tutorId}/${selectedMonth[0]?.month}`)
+      .then(({ data }) => {
+        // console.log("getDashboardData===>",data);
+        setDashboardData(data)
+        // setCumulativeCommission(data.commulativeCommission);
+      })
+      .catch((error:any) => {
+        console.log("error",error);
+        if (error.response) {
+          // The request was made and the server responded with a status code
+          console.log('Server responded with data:', error.response.data);
+          console.log('Status code:', error.response.status);
+          console.log('Headers:', error.response.headers);
+        } else if (error.request) {
+          // The request was made but no response was received
+          console.log('No response received:', error.request);
+        } else {
+          // Something happened in setting up the request that triggered an Error
+          console.log('Error setting up the request:', error.message);
+        }
+        
+        // ToastAndroid.show('Internal Server Error', ToastAndroid.SHORT);
+      });
+  }
 
+  useEffect(()=>{
+    getDashboardData();
+  },[monthYear,focus])
+
+
+
+  const showPickerMonthAndYear = useCallback((value: any) => setShowMonthPicker(value), []);
+  // console.log("monthYear", monthYear);
+
+  const onValueChangeMonthPicker = useCallback(
+    (event: any, newDate: any) => {
+      const selectedDate = newDate || monthYear;
+
+      showPickerMonthAndYear(false);
+      setMonthYear(selectedDate);
+    },
+    [monthYear, showPickerMonthAndYear],
+  );
   return (
     <View style={{ flex: 1, backgroundColor: Theme.GhostWhite }}>
       <CustomLoader visible={!cancelledHours} />
       <CustomLoader visible={refreshing} />
-
-
       <View style={{ margin: 30 }}></View>
       <View
         style={{
@@ -1129,15 +1220,15 @@ function Home({ navigation, route }: any) {
           </Text>
         </View>
         <View
-          style={{ flexDirection: 'row', alignItems: 'center', gap: 15 }}>
+          style={{ flexDirection: 'row', alignItems: 'center', gap: 14 }}>
           <TouchableOpacity
             activeOpacity={0.8}
             style={{top:7}}
             onPress={() => navigation.navigate('Notifications')}>
             <MaterialCommunityIcons
               name="bell-outline"
-              size={30}
-              color={'black'}
+              size={28}
+              color={Theme.Dune}
             />
             <View
               style={{
@@ -1149,7 +1240,7 @@ function Home({ navigation, route }: any) {
                 justifyContent: 'center',
                 position: 'relative',
                 left: 15,
-                top: -28,
+                top: -26,
               }}>
               <Text
                 style={[styles.text, { fontSize: 10, color: Theme.white }]}>
@@ -1169,7 +1260,7 @@ function Home({ navigation, route }: any) {
             activeOpacity={0.8}>
             <Image
               source={{ uri: tutorImage }}
-              style={{ height: 60, width: 60, borderRadius: 50 }}
+              style={{ height: 40, width: 40, borderRadius: 50 }}
             />
           </TouchableOpacity>
         </View>
@@ -1193,7 +1284,7 @@ function Home({ navigation, route }: any) {
           <Image
             source={require('../../Assets/Images/Banner.png')}
             resizeMode="contain"
-            style={{width: Dimensions.get('screen').width / 1.17}}
+            style={{width: Dimensions.get('screen').width / 1.15}}
           />
         </TouchableOpacity>
         }
@@ -1266,7 +1357,42 @@ function Home({ navigation, route }: any) {
         )}
         {tutorDetails?.status?.toLowerCase() == 'verified' ?
         <View style={{ marginVertical: 25, backgroundColor: Theme.GhostWhite,paddingHorizontal: 25 }}>
-          <Text style={styles.textType1}>Monthly Summary</Text>
+           <View
+            style={{
+              flexDirection: 'row',
+              justifyContent: 'space-between',
+              alignItems: 'center',
+            }}>
+            <Text style={[styles.textType1, {fontFamily: 'Circular Std Bold'}]}>
+              Monthly Summary
+            </Text>
+            <View style={{flexDirection: 'row', alignItems: 'center', gap: 10}}>
+              <TouchableOpacity
+                // onPress={() => showPicker(true)}
+                onPress={() => showPickerMonthAndYear(true)}
+                activeOpacity={0.8}
+                style={{
+                  backgroundColor: Theme.white,
+                  flexDirection: 'row',
+                  gap: 15,
+                  paddingVertical: 5,
+                  alignItems: 'center',
+                  borderRadius: 6,
+                  paddingHorizontal: 5,
+                  paddingLeft: 8,
+                  borderWidth: 1,
+                  borderColor: Theme.lineColor,
+                }}>
+                <Text style={[styles.textType3]}>
+                {monthYear.toLocaleDateString([], {
+                    month: 'short',
+                    // year: 'numeric',
+                  })}
+                </Text>
+                <Entypo name="chevron-down" size={22} color={Theme.Dune} />
+              </TouchableOpacity>
+            </View>
+          </View>
           <View style={{ margin: 6 }}></View>
           <View
             style={{
@@ -1277,7 +1403,8 @@ function Home({ navigation, route }: any) {
               <View
                 style={{
                   backgroundColor: Theme.darkGray,
-                  paddingHorizontal: 15,
+                  paddingRight: 12,
+                  paddingLeft:20,
                   borderTopStartRadius: 15,
                   borderTopEndRadius: 15,
                   borderBottomStartRadius: 15,
@@ -1286,29 +1413,27 @@ function Home({ navigation, route }: any) {
                 <View
                   style={{
                     flexDirection: 'row',
-                    justifyContent: 'space-between',
-                    marginVertical: 15,
+                    justifyContent: 'flex-end',
+                    // marginVertical: 15,
+                    marginTop:15
                   }}>
-                  <Money />
                   <DiagArrow color={Theme.white} />
                 </View>
-                <View style={{ paddingBottom: 15 }}>
+                  <Money />
+                  <View style={{margin:8}}></View>
+                <View style={{ paddingBottom: 20 }}>
                   <Text style={[styles.textType3, { color: 'white' }]}>
-                    Earnings
+                    Earnings RM
                   </Text>
+                  <View style={{margin:2}}></View>
                   <Text
                     style={[
                       styles.textType1,
                       { color: 'white', fontSize: 30, lineHeight: 40 },
                     ]}>
-                    RM {cummulativeCommission && cummulativeCommission}
-                  </Text>
-                  <Text
-                    style={[
-                      styles.textType3,
-                      { color: Theme.white, fontSize: 12 },
-                    ]}>
-                    {currentDate}
+                    {/* RM {cummulativeCommission && cummulativeCommission} */}
+                    {dashboardData?.cumulativeCommission}
+                    {/* RM 2150 */}
                   </Text>
                 </View>
               </View>
@@ -1332,7 +1457,7 @@ function Home({ navigation, route }: any) {
                   <Text style={styles.textType3}>Active Student</Text>
                   <DiagArrow />
                 </View>
-                <View style={{ margin: 10 }}></View>
+                <View style={{ margin: 1 }}></View>
                 <View
                   style={{
                     paddingBottom: 20,
@@ -1377,7 +1502,8 @@ function Home({ navigation, route }: any) {
                       styles.textType1,
                       { fontSize: 30, lineHeight: 40 },
                     ]}>
-                    {attendedHours && attendedHours}
+                    {/* {attendedHours && attendedHours} */}
+                    {dashboardData?.attendedHours}
                   </Text>
                 </View>
               </View>
@@ -1407,7 +1533,8 @@ function Home({ navigation, route }: any) {
                       styles.textType1,
                       { fontSize: 30, lineHeight: 40 },
                     ]}>
-                    {schedulesHours && schedulesHours}
+                    {/* {schedulesHours && schedulesHours} */}
+                    {dashboardData?.scheduledHours}
                   </Text>
                 </View>
               </View>
@@ -1417,7 +1544,26 @@ function Home({ navigation, route }: any) {
         : null
         }
         <View style={{ margin: tutorDetails?.status?.toLowerCase() == 'verified' ? 0 : 16 }}></View>
-
+        <Modal
+          transparent={true}
+          animationType="slide"
+          visible={showMonthPicker}
+          onRequestClose={() => showPickerMonthAndYear(false)}
+        >
+          <View style={styles.modalContainer}>
+            <View style={{
+              position: 'relative',
+              left: -170,
+            }} >
+              <MonthPicker
+                onChange={onValueChangeMonthPicker}
+                value={monthYear}
+                locale="en"
+              />
+              <Button title="Done" onPress={() => showPickerMonthAndYear(false)} />
+            </View>
+          </View>
+        </Modal>
         <View>
           {jobTicketData &&
             <View
@@ -1456,8 +1602,7 @@ function Home({ navigation, route }: any) {
               styles.textType3,
               {textAlign: 'center', lineHeight: 20, marginBottom: 15},
             ]}>
-            Your profile is being reviewed,{'\n'} Please complete your tutor
-            profile
+            Verify your profile to qualify for tutoring jobs. Tap Verify Now to proceed.
           </Text>
           <CustomButton btnTitle="Verify Now" onPress={()=> navigation.navigate('TutorVerificationProcess')} />
         </View>
@@ -1497,7 +1642,7 @@ function Home({ navigation, route }: any) {
           style={{
             justifyContent: 'space-between',
             flexDirection: 'row',
-            marginHorizontal: 10,
+            // marginHorizontal: 10,
             marginTop: 15,
             paddingHorizontal:25
           }}>
@@ -1558,7 +1703,7 @@ function Home({ navigation, route }: any) {
                       <AntDesign
                         name="closecircleo"
                         size={20}
-                        color={'black'}
+                        color={Theme.Dune}
                       />
                     </View>
                   </TouchableOpacity>
@@ -1590,11 +1735,11 @@ const styles = StyleSheet.create({
 
   },
   text: {
-    color: Theme.black,
+    color: Theme.Dune,
     fontSize: 22,
   },
   heading: {
-    color: Theme.black,
+    color: Theme.Dune,
     fontSize: 22,
     fontWeight: '500',
   },
@@ -1619,6 +1764,13 @@ const styles = StyleSheet.create({
     fontSize: 16,
     fontFamily: 'Circular Std',
     fontStyle: 'normal',
+  },
+  modalContainer: {
+    flex: 1,
+
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: 'rgba(0, 0, 0, 0.5)',
   },
 });
 

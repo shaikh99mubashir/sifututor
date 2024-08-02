@@ -10,18 +10,19 @@ import axios from 'axios';
 import { Base_Uri } from '../../constant/BaseUri';
 import Toast from 'react-native-toast-message';
 import CustomLoader from '../../Component/CustomLoader';
+import MultiSelectDropDown from '../../Component/MultiSelectDropDown';
 
 interface ServicePreferenceState {
-  category: string;
-  modeOfTutoring: string;
-  preferableLocation: string;
+  // category?: string;
+  // modeOfTutoring?: string;
+  // preferableLocation?: string;
   teachingExperience: string;
 }
 
 interface Errors {
-  category?: string;
-  modeOfTutoring?: string;
-  preferableLocation?: string;
+  // category?: string;
+  // modeOfTutoring?: string;
+  // preferableLocation?: string;
   teachingExperience?: string;
 }
 
@@ -30,16 +31,20 @@ const ServicePreference = ({ navigation }: any) => {
   const [mode, setMode] = useState<any>('');
   const [selectedCity, setSelectedCity] = useState<any>('');
   const [searchCityData, setSearchCityData] = useState([]);
-  const [selectedCategory, setSelectedCategory] = useState<any>('');
+  const [selectedCategory, setSelectedCategory] = useState<any>([]);
   const [searchCategoryData, setSearchCategoryData] = useState([]);
   const [filterCategory, setFilterCategory] = useState('');
   const [filterCity, setFilterCity] = useState('');
+  console.log(selectedCategory, '=====>selectedCategory');
+
   const [servicePreference, setServicePreference] = useState<ServicePreferenceState>({
-    category: '',
-    modeOfTutoring: '',
-    preferableLocation: '',
+    // category: '',
+    // modeOfTutoring: '',
+    // preferableLocation: '',
     teachingExperience: '',
   });
+  console.log("servicePreference", servicePreference);
+
   const [errors, setErrors] = useState<Errors>({});
   const [loading, setLoading] = useState(false);
 
@@ -63,14 +68,22 @@ const ServicePreference = ({ navigation }: any) => {
   const handleDropdownChange = (value: any, type: string) => {
     const selectedSubject = value?.subject || '';
     if (type === 'category') {
-      setSelectedCategory(value);
-      handleInputChange('category', selectedSubject);
+      // setSelectedCategory(value);
+      const selectedSubjects = value.map((item: any) => item.subject);
+      console.log("selectedSubjects====>",selectedSubjects);
+      
+      setSelectedCategory(selectedSubjects);      
+      console.log("selectedCategory",selectedCategory);
+      // handleInputChange('category', selectedSubject);
     } else if (type === 'mode') {
-      setMode(value);
-      handleInputChange('modeOfTutoring', selectedSubject);
+      const selectedMode = value.map((item: any) => item.subject);
+      // setSelectedCategory(selectedSubjects);  
+      setMode(selectedMode);
+      // handleInputChange('modeOfTutoring', selectedSubject);
     } else if (type === 'city') {
-      setSelectedCity(value);
-      handleInputChange('preferableLocation', selectedSubject);
+      const selectedCity = value.map((item: any) => item.subject);
+      setSelectedCity(selectedCity);
+      // handleInputChange('preferableLocation', selectedSubject);
     }
   };
 
@@ -83,27 +96,28 @@ const ServicePreference = ({ navigation }: any) => {
       setSearchCityData(myData);
     }
   };
-
+  const [levelError, setLevelError] = useState<any>()
+  const validateCategorySelection = () => {
+    if (selectedCategory.length === 0) {
+      setLevelError((prevErrors:any) => ({
+        ...prevErrors,
+        category: 'Please select a level',
+      }));
+      return false;
+    } else {
+      setLevelError((prevErrors:any) => ({
+        ...prevErrors,
+        category: '',
+      }));
+      return true;
+    }
+  };
   const validateForm = () => {
     let valid = true;
     const newErrors: Errors = {};
+ 
 
-    if (!servicePreference.category.trim()) {
-      newErrors.category = 'Category is required';
-      valid = false;
-    }
-
-    if (!servicePreference.modeOfTutoring.trim()) {
-      newErrors.modeOfTutoring = 'Mode of Tutoring is required';
-      valid = false;
-    }
-
-    if (!servicePreference.preferableLocation.trim()) {
-      newErrors.preferableLocation = 'Preferable Location is required';
-      valid = false;
-    }
-
-    if (!servicePreference.teachingExperience.trim()) {
+       if (!servicePreference.teachingExperience.trim()) {
       newErrors.teachingExperience = 'Teaching Experience is required';
       valid = false;
     }
@@ -130,13 +144,25 @@ const ServicePreference = ({ navigation }: any) => {
       let loginData = JSON.parse(login);
       let { tutorID } = loginData;
       let formData = new FormData();
+      console.log("formData",formData);
+      
       formData.append('tutor_id', tutorID);
-      formData.append('category', servicePreference.category);
-      formData.append('mode_of_tutoring', servicePreference.modeOfTutoring);
-      formData.append('preferable_location', servicePreference.preferableLocation);
-      formData.append('teaching_experience', servicePreference.teachingExperience);
+      selectedCategory.forEach((item:any, index:any) => {
+        formData.append(`categories[${index}]`, item);
+      });
+      mode.forEach((item:any, index:any) => {
+        formData.append(`modes_of_tutoring[${index}]`, item);
+      });
+      selectedCity.forEach((item:any, index:any) => {
+        formData.append(`preferable_locations[${index}]`, item);
+      });
+      formData.append('teaching_experiences', servicePreference.teachingExperience);
 
-      const { data } = await axios.post(`${Base_Uri}api/tutor/service-preferences`, formData);
+      const { data } = await axios.post(`${Base_Uri}api/tutor/service-preferences`, formData,  {
+        headers: {
+          'Content-Type': 'multipart/form-data',
+        },
+      });
       Toast.show({
         type: 'success',
         text1: 'Success',
@@ -145,13 +171,25 @@ const ServicePreference = ({ navigation }: any) => {
       });
       setLoading(false);
       navigation.navigate('TutorVerificationProcess');
-    } catch (error) {
+    } catch (error:any) {
       Toast.show({
         type: 'error',
         text1: 'Error',
         text2: 'Network Error',
         position: 'bottom'
       });
+      if (error.response) {
+        // The request was made and the server responded with a status code
+        console.log('Server responded with data:', error.response.data);
+        console.log('Status code:', error.response.status);
+        console.log('Headers:', error.response.headers);
+      } else if (error.request) {
+        // The request was made but no response was received
+        console.log('No response received:', error.request);
+      } else {
+        // Something happened in setting up the request that triggered an Error
+        console.log('Error setting up the request:', error.message);
+      }
       setLoading(false);
     }
   };
@@ -163,32 +201,33 @@ const ServicePreference = ({ navigation }: any) => {
         <View style={{ paddingHorizontal: 25 }}>
           <View style={{ margin: 10 }}></View>
           <View>
-            <CustomDropDown
+            <MultiSelectDropDown
               setSelectedSubject={(value: any) => handleDropdownChange(value, 'category')}
               search={"category"}
               dataShow={5}
               searchData={searchCategoryData}
               searchFunc={(text: string) => handleSearchData(text, 'category')}
               selectedSubject={selectedCategory}
-              ddTitle="Category"
+              ddTitle="Level"
               headingStyle={{ color: Theme.black }}
-              dropdownPlace={filterCategory ? filterCategory : "Select Category"}
+              dropdownPlace={filterCategory ? filterCategory : "Select Level"}
               dropdownContainerStyle={{ paddingVertical: 15 }}
               subject={category}
               categoryShow={"subject"}
             />
-            {errors.category && <Text style={{ color: 'red' }}>{errors.category}</Text>}
-            <CustomDropDown
+
+            {levelError && <Text style={{ color: 'red' }}>{levelError}</Text>}
+            <MultiSelectDropDown
               setSelectedSubject={(value: any) => handleDropdownChange(value, 'mode')}
               selectedSubject={mode}
               ddTitle="Mode of Tutoring"
-              dropdownPlace={'Select'}
+              dropdownPlace={'Select Mode'}
               subject={modeOfTutoringOptions}
               categoryShow={'subject'}
-              headingStyle={{ color: Theme.black }}
+              headingStyle={{ color: Theme.black, textTransform: 'none' }}
             />
-            {errors.modeOfTutoring && <Text style={{ color: 'red' }}>{errors.modeOfTutoring}</Text>}
-            <CustomDropDown
+            {/* {errors?.modeOfTutoring && <Text style={{ color: 'red' }}>{errors.modeOfTutoring}</Text>} */}
+            <MultiSelectDropDown
               ddTitle="Preferable Tutoring Location"
               search={"city"}
               searchData={searchCityData}
@@ -201,7 +240,7 @@ const ServicePreference = ({ navigation }: any) => {
               subject={city}
               categoryShow={"subject"}
             />
-            {errors.preferableLocation && <Text style={{ color: 'red' }}>{errors.preferableLocation}</Text>}
+           
             <View style={{ margin: 3 }}></View>
             <View
               style={[

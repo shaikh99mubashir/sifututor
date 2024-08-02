@@ -43,8 +43,8 @@ console.log(cancelledReason,"reason")
             // ToastAndroid.show(res?.data?.SuccessMessage, ToastAndroid.SHORT)
             Toast.show({
                 type: 'info',
-                // text1: 'Request timeout:',
-                text2:  `${res?.data?.SuccessMessage}`,
+                text1: 'Class status has been updated to Cancel',
+                // text2:  `${res?.data?.SuccessMessage}`,
                 position:'bottom'
               });
             navigation.navigate("Schedule", data.id)

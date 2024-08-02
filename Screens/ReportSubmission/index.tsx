@@ -276,7 +276,7 @@ const ReportSubmission = ({ navigation, route }: any): any => {
       option: 'Scores are consistently high.',
     },
     {
-      option: ' Scores are average.',
+      option: 'Scores are average.',
     },
     {
       option: 'Scores are consistently low.',
@@ -1168,7 +1168,7 @@ const ReportSubmission = ({ navigation, route }: any): any => {
           ) : (
             <>
               <DropDownModalView
-                title="A. Knowledge"
+                title="A. KNOWLEDGE"
                 selectedValue={setKnowledgeAnswer}
                 subTitle="How well does the student recall basic concepts?"
                 placeHolder="Select Answer"
@@ -1200,7 +1200,7 @@ const ReportSubmission = ({ navigation, route }: any): any => {
           {evaluation.option == 'Progress Report' ? (
             <>
               <DropDownModalView
-                title="B. Performance"
+                title="B. UNDERSTANDING"
                 selectedValue={setPerQ1}
                 subTitle="How well does the student understand this subject?"
                 placeHolder="Select Answer"
@@ -1308,7 +1308,7 @@ const ReportSubmission = ({ navigation, route }: any): any => {
           ) : (
             <>
               <DropDownModalView
-                title="B. Performance"
+                title="B. UNDERSTANDING"
                 selectedValue={setUnderstandingAnswer}
                 subTitle="How well does the student explain the basic concepts?"
                 placeHolder="Select Answer"
@@ -1565,7 +1565,7 @@ const ReportSubmission = ({ navigation, route }: any): any => {
               <DropDownModalView
                 title="D. OBSERVATION"
                 selectedValue={setObservationEReport}
-                subTitle="How well does the student solve different types of questions with minimal guidance?"
+                subTitle="Change the question to What is the student's learning style? Do you believe it is effective for them"
                 placeHolder="Select Answer"
                 option={Observation}
                 modalHeading="Observation"

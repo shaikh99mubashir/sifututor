@@ -9,6 +9,7 @@ import {
   ActivityIndicator,
   Image,
   Dimensions,
+  StyleSheet,
 } from 'react-native';
 import CustomHeader from '../../Component/Header';
 import { Theme } from '../../constant/theme';
@@ -20,19 +21,25 @@ import CustomLoader from '../../Component/CustomLoader';
 
 function InboxDetail({ navigation, route }: any) {
   let data = route.params;
-
+  console.log("data",data);
+  
   const [loading, setLoading] = useState(false);
   const [newsData, setNewsData] = useState<any>({});
+console.log("newsData",newsData);
 
   // const handleLinkPress = (url: any) => {
   //     // Replace with your desired URL
   //     Linking.openURL(`https://${url}`);
   // };
 
+  console.log("data?.id news detail",data?.id);
+  
+
   const getDetailedNews = () => {
     setLoading(true);
     axios
-      .get(`${Base_Uri}api/detailedNews/${data?.id}`)
+      // .get(`${Base_Uri}api/detailedNews/17`)
+      .get(`${Base_Uri}api/detailedNews/${data}`)
       .then(({ data }) => {
         let { detailedNEWS } = data;
         setNewsData(detailedNEWS);
@@ -62,31 +69,50 @@ function InboxDetail({ navigation, route }: any) {
   //   </View>
   // ) : 
   return (
-    <View style={{ flex: 1, backgroundColor: Theme.white }}>
-      
+    <View style={{ flex: 1, backgroundColor: Theme.GhostWhite }}>
+
       <View>
         <CustomHeader
           backBtn
-          title="Inbox Detail"
+          title={'News Detail'}
           navigation={navigation}
           containerStyle={{ height: 60 }}
         />
       </View>
 
-      <ScrollView style={{ height: '100%', padding: 15 }}>
-        {newsData.subject && (
-          <Text style={{ fontSize: 18, color: Theme.black, fontWeight: '500',textTransform:'capitalize' }}>
-            {newsData.subject}
-          </Text>
-        )}
+      <ScrollView style={{ height: '100%' }}>
+        <View style={{ paddingHorizontal: 25 }}>
+          <View style={{ margin: 5 }}></View>
+          {newsData?.subject && (
+            <Text style={styles.textType1}>
+              {newsData?.subject}
+            </Text>
+          )}
+          <View style={{ margin: 5 }}></View>
+          {newsData?.preheader && (
+            <Text style={[styles.textType3, { fontSize: 18 }]}>
+              {newsData?.preheader}
+            </Text>
+          )}
+          <View style={{ margin: 2 }}></View>
+          <Text
+              style={[
+                styles.textType3,
+                { color: Theme.IronsideGrey, fontFamily: 'Circular Std Book', fontSize: 13 },
+              ]}>
+              {newsData?.date_time}
+            </Text>
+        </View>
+        <View style={{ margin: 5 }}></View>
 
+        
 
-        {data?.headerimage && (
+        {newsData?.headerimage && (
           <Image
-            source={{ uri: imageUrl }}
+            source={{ uri: newsData?.headerimage }}
             style={{
               // width: '95%',
-              width: Dimensions.get('screen').width / 1.1,
+              width: Dimensions.get('screen').width,
               // height: Dimensions.get('screen').height ,
               height: 400,
               // backgroundColor:'red',
@@ -97,51 +123,49 @@ function InboxDetail({ navigation, route }: any) {
             onLoad={handleImageLoad}
           />
         )}
-    
-        <View style={{ flexDirection: 'row', marginTop: 5 }}>
-          <Text style={{ fontSize: 14, color: Theme.black, fontWeight: '500', fontFamily: 'Circular Std Black' }}>
-            {newsData?.created_at?.slice(0, 10)}
-          </Text>
-          <Text style={{ fontSize: 14, color: Theme.black, fontWeight: '500', fontFamily: 'Circular Std Black' }}>
-            {' '}
-            -{' '}
-          </Text>
-          <Text style={{ fontSize: 14, color: Theme.black, fontWeight: '500', fontFamily: 'Circular Std Black' }}>
-            {newsData?.created_at?.slice(11, 19)}
-          </Text>
-        </View>
 
-        {newsData.preheader && (
-          <Text
-            style={{
-              fontSize: 14,
-              color: Theme.black,
-              fontWeight: '500',
+
+
+        <View style={{paddingHorizontal:25, marginBottom:25}} >
+
+          <HTML
+            source={{ html: newsData?.content }}
+            ignoredDomTags={['o:p']}
+            contentWidth={300} // Set the content width as per your design
+            baseStyle={{
+              // textAlign: 'justify',
+              // fontSize: 14,
+              // color: Color.textColor,
               marginTop: 10,
-              fontFamily: 'Circular Std Black'
-            }}>
-            {newsData.preheader}
-          </Text>
-        )}
-
-        <HTML
-          source={{ html: newsData.content }}
-          ignoredDomTags={['o:p']}
-          contentWidth={300} // Set the content width as per your design
-          baseStyle={{
-            // textAlign: 'justify',
-            // fontSize: 14,
-            // color: Color.textColor,
-            marginTop: 10,
-            fontFamily: 'Circular Std Medium',
-            color: 'black',
-          }}
-        />
-         <CustomLoader visible={loading} />
+              fontFamily: 'Circular Std Medium',
+              color: 'black',
+            }}
+          />
+        </View>
+        <CustomLoader visible={loading} />
 
       </ScrollView>
     </View>
   );
 }
+
+const styles = StyleSheet.create({
+  textType1: {
+    fontWeight: '500',
+    fontSize: 24,
+    color: Theme.Dune,
+    fontFamily: 'Circular Std Medium',
+    lineHeight: 24,
+    fontStyle: 'normal',
+  },
+  textType3: {
+    color: Theme.Dune,
+    fontSize: 16,
+    fontFamily: 'Circular Std Book',
+    lineHeight: 22,
+    fontWeight: 400,
+  },
+});
+
 
 export default InboxDetail;

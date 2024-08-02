@@ -45,7 +45,7 @@ const LatestNews = ({ latestNewsData, navigation }: any) => {
         <TouchableOpacity onPress={() => routeToInboxDetails(item)}>
           <View
             style={{
-              marginHorizontal: 5,
+              marginRight: 5,
               marginVertical: 10,
               gap: 2,
               marginBottom: 40,

@@ -292,7 +292,7 @@ function ClockOut({ navigation, route }: any) {
             <Text
               style={[
                 styles.textType1,
-                { fontSize: 18, textTransform: 'capitalize' },
+                { fontSize: 18, textTransform: 'uppercase' },
               ]}>
               {data?.startHour?.toString().length == 1
                 ? `0${data?.startHour}`

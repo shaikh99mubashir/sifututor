@@ -198,13 +198,16 @@ const CustomDropDown = (props: any) => {
 
             {serviceDD == true &&
               <View>
-                {search && <TextInput onChangeText={(e) => filterSearchData(e)} style={{
+                {search && 
+                <View style={{ flexDirection: 'row', alignItems: 'center', backgroundColor: Theme.white, borderBottomWidth: 0, borderBottomColor: 'lightgrey', borderTopRightRadius: 10, borderTopLeftRadius: 10 }}>
+                <AntDesign name="search1" size={18} color={Theme.IronsideGrey} style={{ paddingHorizontal: 5 }} />
+                <TextInput onChangeText={(e) => filterSearchData(e)} style={{
                   paddingHorizontal: 10,
                   marginVertical: 0,
                   color: 'black',
                   backgroundColor: Theme.white,
                   // backgroundColor: "white",
-                  borderBottomWidth: 1,
+                  // borderBottomWidth: 1,
                   borderBottomColor:'lightgrey',
                   gap: 0,
                   height: 38,
@@ -215,7 +218,9 @@ const CustomDropDown = (props: any) => {
                   placeholder={'Search'}
                   placeholderTextColor={Theme.IronsideGrey}
 
-                />}
+                />
+                </View>
+                }
                 {searchData && searchData.length > 0 ? Array.from(
                   new Set(searchData && searchData.map((item: any) => item?.subject)),
                 ).map((e: any, i: number) => {

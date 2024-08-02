@@ -14,7 +14,7 @@ import {
 } from 'react-native';
 import {Theme} from '../../constant/theme';
 import Header from '../../Component/Header';
-import {launchCamera} from 'react-native-image-picker';
+import {launchCamera, launchImageLibrary} from 'react-native-image-picker';
 import Geolocation from '@react-native-community/geolocation';
 import axios from 'axios';
 import {Base_Uri} from '../../constant/BaseUri';
@@ -73,7 +73,9 @@ function ClockIn({navigation, route}: any) {
               maxHeight: 200,
               quality: 1.0,
             };
-            launchCamera(options, async (res: any) => {
+            // launchCamera
+            launchImageLibrary
+            (options, async (res: any) => {
               if (res?.didCancel) {
                 console.log('User cancelled image picker');
                 // ToastAndroid.show('User cancelled image picker', ToastAndroid.LONG);

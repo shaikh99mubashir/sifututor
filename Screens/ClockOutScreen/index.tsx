@@ -31,7 +31,8 @@ function ClockOut({ navigation, route }: any) {
   const contexts = useContext(noteContext);
   const [tutorId, setTutorId] = useState(null);
   const tutorDetails = useContext(TutorDetailsContext);
-
+  const context = useContext(noteContext)
+  const { hour, minutes, seconds, cleanTime, update, setTime, time, setFirstTimeIn } = context
   let tutorID = tutorDetails?.tutorDetails?.tutorId;
 
   const data = route?.params;
@@ -131,6 +132,9 @@ function ClockOut({ navigation, route }: any) {
         text2:  `${clockOutResponse?.data?.result}`,
         position:'bottom'
       });
+      cleanTime();
+      AsyncStorage.removeItem('classInProcess');
+      AsyncStorage.removeItem('timer');
 
       if (clockOutResponse?.data?.errorMsg) {
         navigation.navigate('Schedule');

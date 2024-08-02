@@ -243,83 +243,30 @@ const ReportSubmissionHistory = ({ navigation }: any) => {
       <div style="margin-top:5px;border: 1px solid rgb(0, 0, 95);padding: 5px;">
       <p style="color: rgb(0, 0, 95); margin: 0px;">1.How well does the student recall basic concepts?</p>
       <div style="display: flex; align-items: center; gap: 10px; padding-bottom: 0px; padding-top: 5px;">
-        <div style="border-radius: 50%; height: 13px; width: 13px; background-color: ${item.knowledge ===
-            'Remember most concepts with minimal errors.'
-            ? 'rgb(0, 0, 95)'
-            : 'white'
-          };border: 2px solid rgb(0, 0, 95);"></div>
+
         <p style="margin: 0px; padding: 5px;">${item.knowledge ===
             'Remember most concepts with minimal errors.'
             ? 'Remember most concepts with minimal errors.'
-            : 'Remember most concepts with minimal errors.'
-          }</p>
+            : item.knowledge == 'Remember basic concepts after receiving guidance.'
+              ? 'Remember basic concepts after receiving guidance.'
+              : item.knowledge == 'Struggles to remember concepts without a lot of help.'
+                ? 'Struggles to remember concepts without a lot of help.'
+                : ''}</p>
       </div>
-      <div style="display: flex; align-items: center; gap: 10px; padding-bottom: 0px; padding-top: 5px;">
-        <div style="border-radius: 50%; height: 13px; width: 13px; background-color: ${item.knowledge ===
-            'Remember basic concepts after receiving guidance.'
-            ? 'rgb(0, 0, 95)'
-            : 'white'
-          };border: 2px solid rgb(0, 0, 95);"></div>
-        <p style="margin: 0px; padding: 5px;">${item.knowledge ===
-            'Remember basic concepts after receiving guidance.'
-            ? 'Remember basic concepts after receiving guidance.'
-            : 'Remember basic concepts after receiving guidance.'
-          }</p>
-      </div>
-      <div style="display: flex; align-items: center; gap: 10px; padding-bottom: 0px; padding-top: 5px;">
-        <div style="border-radius: 50%; height: 13px; width: 13px; background-color: ${item.knowledge ===
-            'Struggles to remember concepts without a lot of help.'
-            ? 'rgb(0, 0, 95)'
-            : 'white'
-          };border: 2px solid rgb(0, 0, 95);"></div>
-        <p style="margin: 0px; padding: 5px;">${item.knowledge ===
-            'Struggles to remember concepts without a lot of help.'
-            ? 'Struggles to remember concepts without a lot of help.'
-            : 'Struggles to remember concepts without a lot of help.'
-          }</p>
-      </div>
+      
+      
 
       <p style="color: rgb(0, 0, 95); margin-top: 10px;">2. How well does the student share their ideas on the topics under discussion?</p>
       <div style="display: flex; align-items: center; gap: 10px; padding-bottom: 0px; padding-top: 5px;">
-        <div style="border-radius: 50%; height: 13px; width: 13px; background-color: ${item.knowledge2 ===
-            'Able to share their ideas clearly and actively.'
-            ? 'rgb(0, 0, 95)'
-            : 'white'
-          };border: 2px solid rgb(0, 0, 95);"></div>
         <p style="margin: 0px; padding: 5px;">${item.knowledge2 ===
             'Able to share their ideas clearly and actively.'
             ? 'Able to share their ideas clearly and actively.'
-            : 'Able to share their ideas clearly and actively.'
-          }</p>
+            : item.knowledge2 == 'Shares ideas after receiving guidance.'
+              ? 'Shares ideas after receiving guidance.'
+              : item.knowledge2 == 'Struggles to put ideas into words and rarely expresses thoughts.'
+                ? 'Struggles to put ideas into words and rarely expresses thoughts.'
+                : ''}</p>
       </div>
-      <div style="display: flex; align-items: center; gap: 10px; padding-bottom: 0px; padding-top: 5px;">
-        <div style="border-radius: 50%; height: 13px; width: 13px; background-color: ${item.knowledge2 ===
-            'Shares ideas after receiving guidance.'
-            ? 'rgb(0, 0, 95)'
-            : 'white'
-          };border: 2px solid rgb(0, 0, 95);"></div>
-        <p style="margin: 0px; padding: 5px;">${item.knowledge2 ===
-            'Shares ideas after receiving guidance.'
-            ? 'Shares ideas after receiving guidance.'
-            : 'Shares ideas after receiving guidance.'
-          }</p>
-      </div>
-      <div style="display: flex; align-items: center; gap: 10px; padding-bottom: 0px; padding-top: 5px;">
-        <div style="border-radius: 50%; height: 13px; width: 13px; background-color: ${item.knowledge2 ===
-            'Struggles to put ideas into words and rarely expresses thoughts.'
-            ? 'rgb(0, 0, 95)'
-            : 'white'
-          };border: 2px solid rgb(0, 0, 95);"></div>
-        <p style="margin: 0px; padding: 5px;">${item.knowledge2 ===
-            'Struggles to put ideas into words and rarely expresses thoughts.'
-            ? 'Struggles to put ideas into words and rarely expresses thoughts.'
-            : 'Struggles to put ideas into words and rarely expresses thoughts.'
-          }</p>
-      </div>
-      
-      
-      
-     
   </div>
   </div>
   <div style="margin-top: 20px;">
@@ -327,78 +274,28 @@ const ReportSubmissionHistory = ({ navigation }: any) => {
       <div style="margin-top:5px;border: 1px solid rgb(0, 0, 95);padding: 5px;">
       <p style="color: rgb(0, 0, 95); margin: 0px;">1. How well does the student explain the basic concepts?</p>
       <div style="display: flex; align-items: center; gap: 10px; padding-bottom: 0px; padding-top: 5px;">
-        <div style="border-radius: 50%; height: 13px; width: 13px; background-color: ${item.understanding ===
-            'Explains concepts clearly and accurately.'
-            ? 'rgb(0, 0, 95)'
-            : 'white'
-          };border: 2px solid rgb(0, 0, 95);"></div>
-        <p style="margin: 0px; padding: 5px;">${item.understanding ===
+         <p style="margin: 0px; padding: 5px;">${item.understanding ===
             'Explains concepts clearly and accurately.'
             ? 'Explains concepts clearly and accurately.'
-            : 'Explains concepts clearly and accurately.'
-          }</p>
+            : item.understanding == 'Explains basic concepts clearly but with a few errors.'
+              ? 'Explains basic concepts clearly but with a few errors.'
+              : item.understanding == 'Struggles to explain concepts and makes many mistakes.'
+                ? 'Struggles to explain concepts and makes many mistakes.'
+                : ''}</p>
+       
       </div>
-      <div style="display: flex; align-items: center; gap: 10px; padding-bottom: 0px; padding-top: 5px;">
-        <div style="border-radius: 50%; height: 13px; width: 13px; background-color: ${item.understanding ===
-            'Explains basic concepts clearly but with a few errors.'
-            ? 'rgb(0, 0, 95)'
-            : 'white'
-          };border: 2px solid rgb(0, 0, 95);"></div>
-        <p style="margin: 0px; padding: 5px;">${item.understanding ===
-            'Explains basic concepts clearly but with a few errors.'
-            ? 'Explains basic concepts clearly but with a few errors.'
-            : 'Explains basic concepts clearly but with a few errors.'
-          }</p>
-      </div>
-      <div style="display: flex; align-items: center; gap: 10px; padding-bottom: 0px; padding-top: 5px;">
-        <div style="border-radius: 50%; height: 13px; width: 13px; background-color: ${item.understanding ===
-            'Struggles to explain concepts and makes many mistakes.'
-            ? 'rgb(0, 0, 95)'
-            : 'white'
-          };border: 2px solid rgb(0, 0, 95);"></div>
-        <p style="margin: 0px; padding: 5px;">${item.understanding ===
-            'Struggles to explain concepts and makes many mistakes.'
-            ? 'Struggles to explain concepts and makes many mistakes.'
-            : 'Struggles to explain concepts and makes many mistakes.'
-          }</p>
-      </div>
+
 
       <p style="color: rgb(0, 0, 95); margin-top: 10px;">2. How well does the student apply learned concepts to solve problems or answer questions?</p>
       <div style="display: flex; align-items: center; gap: 10px; padding-bottom: 0px; padding-top: 5px;">
-        <div style="border-radius: 50%; height: 13px; width: 13px; background-color: ${item.understanding2 ===
-            'Applies concepts well and solves most problems correctly.'
-            ? 'rgb(0, 0, 95)'
-            : 'white'
-          };border: 2px solid rgb(0, 0, 95);"></div>
-        <p style="margin: 0px; padding: 5px;">${item.understanding2 ===
+         <p style="margin: 0px; padding: 5px;">${item.understanding2 ===
             'Applies concepts well and solves most problems correctly.'
             ? 'Applies concepts well and solves most problems correctly.'
-            : 'Applies concepts well and solves most problems correctly.'
-          }</p>
-      </div>
-      <div style="display: flex; align-items: center; gap: 10px; padding-bottom: 0px; padding-top: 5px;">
-        <div style="border-radius: 50%; height: 13px; width: 13px; background-color: ${item.understanding2 ===
-            'Applies concepts well and solves certain questions correctly.'
-            ? 'rgb(0, 0, 95)'
-            : 'white'
-          };border: 2px solid rgb(0, 0, 95);"></div>
-        <p style="margin: 0px; padding: 5px;">${item.understanding2 ===
-            'Applies concepts well and solves certain questions correctly.'
-            ? 'Applies concepts well and solves certain questions correctly.'
-            : 'Applies concepts well and solves certain questions correctly.'
-          }</p>
-      </div>
-      <div style="display: flex; align-items: center; gap: 10px; padding-bottom: 0px; padding-top: 5px;">
-        <div style="border-radius: 50%; height: 13px; width: 13px; background-color: ${item.understanding2 ===
-            'Unable to apply concepts and solve problems correctly.'
-            ? 'rgb(0, 0, 95)'
-            : 'white'
-          };border: 2px solid rgb(0, 0, 95);"></div>
-        <p style="margin: 0px; padding: 5px;">${item.understanding2 ===
-            'Unable to apply concepts and solve problems correctly.'
-            ? 'Unable to apply concepts and solve problems correctly.'
-            : 'Unable to apply concepts and solve problems correctly.'
-          }</p>
+            : item.understanding2 == 'Applies concepts well and solves certain questions correctly.'
+              ? 'Applies concepts well and solves certain questions correctly.'
+              : item.understanding2 == 'Unable to apply concepts and solve problems correctly.'
+                ? 'Unable to apply concepts and solve problems correctly.'
+                : ''}</p>
       </div>
   </div>
   <div style="margin-top: 20px;">
@@ -406,74 +303,26 @@ const ReportSubmissionHistory = ({ navigation }: any) => {
       <div style="margin-top:5px;border: 1px solid rgb(0, 0, 95);padding: 5px;">
       <p style="color: rgb(0, 0, 95); margin: 0px;">1. How well does the student solve different types of questions with minimal guidance?</p>
       <div style="display: flex; align-items: center; gap: 10px; padding-bottom: 0px; padding-top: 5px;">
-        <div style="border-radius: 50%; height: 13px; width: 13px; background-color: ${item.criticalThinking ===
-            'Solves many different questions correctly on their own.'
-            ? 'rgb(0, 0, 95)'
-            : 'white'
-          };border: 2px solid rgb(0, 0, 95);"></div>
         <p style="margin: 0px; padding: 5px;">${item.criticalThinking ===
             'Solves many different questions correctly on their own.'
             ? 'Solves many different questions correctly on their own.'
-            : 'Solves many different questions correctly on their own.'
-          }</p>
-      </div>
-      <div style="display: flex; align-items: center; gap: 10px; padding-bottom: 0px; padding-top: 5px;">
-        <div style="border-radius: 50%; height: 13px; width: 13px; background-color: ${item.criticalThinking ===
-            'Solves most questions correctly with little guidance.'
-            ? 'rgb(0, 0, 95)'
-            : 'white'
-          };border: 2px solid rgb(0, 0, 95);"></div>
-        <p style="margin: 0px; padding: 5px;">${item.criticalThinking ===
-            'Solves most questions correctly with little guidance.'
-            ? 'Solves most questions correctly with little guidance.'
-            : 'Solves most questions correctly with little guidance.'
-          }</p>
-      </div>
-      <div style="display: flex; align-items: center; gap: 10px; padding-bottom: 0px; padding-top: 5px;">
-        <div style="border-radius: 50%; height: 13px; width: 13px; background-color: ${item.criticalThinking === 'Answers some questions correctly but needs a lot of guidance.'
-            ? 'rgb(0, 0, 95)'
-            : 'white'
-          };border: 2px solid rgb(0, 0, 95);"></div>
-        <p style="margin: 0px; padding: 5px;">${item.criticalThinking === 'Answers some questions correctly but needs a lot of guidance.'
-            ? 'Answers some questions correctly but needs a lot of guidance.'
-            : 'Answers some questions correctly but needs a lot of guidance.'
-          }</p>
+            : item.criticalThinking == 'Solves most questions correctly with little guidance.'
+              ? 'Solves most questions correctly with little guidance.'
+              : item.criticalThinking == 'Answers some questions correctly but needs a lot of guidance.'
+                ? 'Answers some questions correctly but needs a lot of guidance.'
+                : ''}</p>
       </div>
 
       <p style="color: rgb(0, 0, 95); margin-top: 10px;">2. How well is the is the student able to answer questions using a variety of methods and concepts?</p>
       <div style="display: flex; align-items: center; gap: 10px; padding-bottom: 0px; padding-top: 5px;">
-        <div style="border-radius: 50%; height: 13px; width: 13px; background-color: ${item.criticalThinking2 ===
-            'Able to answer questions using many different methods and concepts.'
-            ? 'rgb(0, 0, 95)'
-            : 'white'
-          };border: 2px solid rgb(0, 0, 95);"></div>
         <p style="margin: 0px; padding: 5px;">${item.criticalThinking2 ===
             'Able to answer questions using many different methods and concepts.'
             ? 'Able to answer questions using many different methods and concepts.'
-            : 'Able to answer questions using many different methods and concepts.'
-          }</p>
-      </div>
-      <div style="display: flex; align-items: center; gap: 10px; padding-bottom: 0px; padding-top: 5px;">
-        <div style="border-radius: 50%; height: 13px; width: 13px; background-color: ${item.criticalThinking2 ===
-            'Able to use various methods and concepts, but not frequently.'
-            ? 'rgb(0, 0, 95)'
-            : 'white'
-          };border: 2px solid rgb(0, 0, 95);"></div>
-        <p style="margin: 0px; padding: 5px;">${item.criticalThinking2 ===
-            'Able to use various methods and concepts, but not frequently.'
-            ? 'Able to use various methods and concepts, but not frequently.'
-            : 'Able to use various methods and concepts, but not frequently.'
-          }</p>
-      </div>
-      <div style="display: flex; align-items: center; gap: 10px; padding-bottom: 0px; padding-top: 5px;">
-        <div style="border-radius: 50%; height: 13px; width: 13px; background-color: ${item.criticalThinking2 === 'Finds it hard to use different methods and concepts to answer questions.'
-            ? 'rgb(0, 0, 95)'
-            : 'white'
-          };border: 2px solid rgb(0, 0, 95);"></div>
-        <p style="margin: 0px; padding: 5px;">${item.criticalThinking2 === 'Finds it hard to use different methods and concepts to answer questions.'
-            ? 'Finds it hard to use different methods and concepts to answer questions.'
-            : 'Finds it hard to use different methods and concepts to answer questions.'
-          }</p>
+            : item.criticalThinking2 == 'Able to use various methods and concepts, but not frequently'
+              ? 'Able to use various methods and concepts, but not frequently'
+              : item.criticalThinking2 == 'Finds it hard to use different methods and concepts to answer questions.'
+                ? 'Finds it hard to use different methods and concepts to answer questions.'
+                : ''}</p>
       </div>
   </div>
   <div style="margin-top: 20px;">
@@ -482,51 +331,18 @@ const ReportSubmissionHistory = ({ navigation }: any) => {
   <p style="color: rgb(0, 0, 95); margin: 0px;">What is the student's learning style so that you can personalize tutoring sessions effectively?</p>
  
   <div style="display: flex; align-items: center; gap: 10px; padding-bottom: 0px; padding-top: 5px;">
-    <div style="border-radius: 50%; height: 13px; width: 13px; background-color: ${item.observation ===
-            'Visual: Learns with images and diagrams.'
-            ? 'rgb(0, 0, 95)'
-            : 'white'
-          };border: 2px solid rgb(0, 0, 95);"></div>
     <p style="margin: 0px; padding: 5px;">${item.observation ===
             'Visual: Learns with images and diagrams.'
             ? 'Visual: Learns with images and diagrams.'
-            : 'Visual: Learns with images and diagrams.'
-          }</p>
+            : item.observation == 'Auditory: Listening and verbal instruction.'
+              ? 'Auditory: Listening and verbal instruction.'
+              : item.observation == 'Reading/Writing: Reading and writing notes.'
+                ? 'Reading/Writing: Reading and writing notes.'
+                : item.observation == 'Multimodal: Learns best with a combination of styles.'
+                  ? 'Multimodal: Learns best with a combination of styles.'
+                  : ''}</p>
   </div>
-  <div style="display: flex; align-items: center; gap: 10px; padding-bottom: 0px; padding-top: 5px;">
-    <div style="border-radius: 50%; height: 13px; width: 13px; background-color: ${item.observation === 'Auditory: Listening and verbal instruction.'
-            ? 'rgb(0, 0, 95)'
-            : 'white'
-          };border: 2px solid rgb(0, 0, 95);"></div>
-    <p style="margin: 0px; padding: 5px;">${item.observation === 'Auditory: Listening and verbal instruction.'
-            ? 'Auditory: Listening and verbal instruction.'
-            : 'Auditory: Listening and verbal instruction.'
-          }</p>
-  </div>
-  <div style="display: flex; align-items: center; gap: 10px; padding-bottom: 0px; padding-top: 5px;">
-  <div style="border-radius: 50%; height: 13px; width: 13px; background-color: ${item.observation ===
-            'Reading/Writing: Reading and writing notes.'
-            ? 'rgb(0, 0, 95)'
-            : 'white'
-          };border: 2px solid rgb(0, 0, 95);"></div>
-  <p style="margin: 0px; padding: 5px;">${item.observation ===
-            'Reading/Writing: Reading and writing notes.'
-            ? 'Reading/Writing: Reading and writing notes.'
-            : 'Reading/Writing: Reading and writing notes.'
-          }</p>
-</div>
-<div style="display: flex; align-items: center; gap: 10px; padding-bottom: 0px; padding-top: 5px;">
-<div style="border-radius: 50%; height: 13px; width: 13px; background-color: ${item.observation ===
-            'Multimodal: Learns best with a combination of styles.'
-            ? 'rgb(0, 0, 95)'
-            : 'white'
-          };border: 2px solid rgb(0, 0, 95);"></div>
-<p style="margin: 0px; padding: 5px;">${item.observation ===
-            'Multimodal: Learns best with a combination of styles.'
-            ? 'Multimodal: Learns best with a combination of styles.'
-            : 'Multimodal: Learns best with a combination of styles.'
-          }</p>
-</div>
+
 </div>
   <div style="margin-top: 20px;">
   <p style="background-color: black;color: white;font-weight: 700;padding: 5px; margin: 0px;">E. ADDITIONAL ASSESMENT</p>
@@ -663,15 +479,8 @@ const ReportSubmissionHistory = ({ navigation }: any) => {
       <p style="color: rgb(0, 0, 95); margin-top: 5px; margin-bottom:5px;">1.  Did you (tutor) hold or carried out any form of examination/test/quiz for the student within this 3 months?</p>
       <div style='display:flex; flex-direction:row; gap:20px'>
       <div style="display: flex; align-items: center; gap: 15px; padding-bottom: 0px; padding-top: 0px;">
-      <div style="border-radius: 50%; height: 13px; width: 13px; background-color: ${item.observation === 'Yes' ? 'rgb(0, 0, 95)' : 'white'
-          };border: 2px solid rgb(0, 0, 95);"></div>
-      <p style="margin: 0px; padding: 0px;">${item.observation === 'Yes' ? 'Yes' : 'No'}</p>
-    </div>
-
-      <div style="display: flex; align-items: center; gap: 10px; padding-bottom: 0px; padding-top: 0px;">
-      <div style="border-radius: 50%; height: 13px; width: 13px; background-color: ${item.observation === 'No' ? 'rgb(0, 0, 95)' : 'white'
-          };border: 2px solid rgb(0, 0, 95);"></div>
-      <p style="margin: 0px; padding: 0px;">${item.observation === 'No' ? 'No' : 'No'}</p>
+      
+      <p style="margin: 0px; padding: 0px;">${item.observation === 'Yes' ? 'Yes' : item.observation == 'No' ? 'No' : ''}</p>
     </div>
 </div>
 
@@ -679,49 +488,20 @@ const ReportSubmissionHistory = ({ navigation }: any) => {
 <p style="color: rgb(0, 0, 95); margin-top: 10px; margin-bottom:5px;">2. What is the student's learning style?</p>
 <div style=''>
       <div style="display: flex; align-items: center; gap: 10px; padding-bottom: 0px; padding-top: 0px;">
-      <div style="border-radius: 50%; height: 13px; width: 13px; background-color: ${item.observation2 === 'Visual: Learns with images and diagrams.'
-            ? 'rgb(0, 0, 95)'
-            : 'white'
-          };border: 2px solid rgb(0, 0, 95);"></div>
-      <p style="margin: 0px; padding: 5px;">${item.observation2 === 'Visual: Learns with images and diagrams.'
+     <p style="margin: 0px; padding: 5px;">${item.observation2 ===
+            'Visual: Learns with images and diagrams.'
             ? 'Visual: Learns with images and diagrams.'
-            : 'Visual: Learns with images and diagrams.'
-          }</p>
+            : item.observation2 == 'Auditory: Listening and verbal instruction.'
+              ? 'Auditory: Listening and verbal instruction.'
+              : item.observation2 == 'Reading/Writing: Reading and writing notes.'
+                ? 'Reading/Writing: Reading and writing notes.'
+                : item.observation2 == 'Multimodal: Learns best with a combination of styles.'
+                  ? 'Multimodal: Learns best with a combination of styles.'
+                  : ''}</p>
     </div>
 
-      <div style="display: flex; align-items: center; gap: 10px; padding-bottom: 0px; padding-top: 0px;">
-      <div style="border-radius: 50%; height: 13px; width: 13px; background-color: ${item.observation2 === 'Auditory: Listening and verbal instruction.'
-            ? 'rgb(0, 0, 95)'
-            : 'white'
-          };border: 2px solid rgb(0, 0, 95);"></div>
-      <p style="margin: 0px; padding: 5px;">${item.observation2 === 'Auditory: Listening and verbal instruction.'
-            ? 'Auditory: Listening and verbal instruction.'
-            : 'Auditory: Listening and verbal instruction.'
-          }</p>
-    </div>
+ 
 
-    <div style="display: flex; align-items: center; gap: 10px; padding-bottom: 0px; padding-top: 0px;">
-    <div style="border-radius: 50%; height: 13px; width: 13px; background-color: ${item.observation2 === 'Reading/Writing: Reading and writing notes.'
-            ? 'rgb(0, 0, 95)'
-            : 'white'
-          };border: 2px solid rgb(0, 0, 95);"></div>
-    <p style="margin: 0px; padding: 5px;">${item.observation2 === 'Reading/Writing: Reading and writing notes.'
-            ? 'Reading/Writing: Reading and writing notes.'
-            : 'Reading/Writing: Reading and writing notes.'
-          }</p>
-  </div>
-
-  <div style="display: flex; align-items: center; gap: 10px; padding-bottom: 0px; padding-top: 0px;">
-  <div style="border-radius: 50%; height: 13px; width: 13px; background-color: ${item.observation2 === 'Multimodal: Learns best with a combination of styles'
-            ? 'rgb(0, 0, 95)'
-            : 'white'
-          };border: 2px solid rgb(0, 0, 95);"></div>
-  <p style="margin: 0px; padding: 5px;">${item.observation2 ===
-            'Multimodal: Learns best with a combination of styles'
-            ? 'Multimodal: Learns best with a combination of styles'
-            : 'Multimodal: Learns best with a combination of styles'
-          }</p>
-</div>
 </div>
 
 
@@ -740,36 +520,22 @@ const ReportSubmissionHistory = ({ navigation }: any) => {
   <p style="background-color: black;color: white;font-weight: 700;padding: 5px; margin: 0px;">B. PERFORMANCE</p>
   <div style="margin-top:5px;border: 1px solid rgb(0, 0, 95);padding: 10px;">
   <p style="color: rgb(0, 0, 95); margin-top: 10px; margin-bottom:5px;">1. How well does the student understand this subject?</p>
-  <div style=''>
+ 
   <div style="display: flex; align-items: center; gap: 10px; padding-bottom: 0px; padding-top: 0px;">
-  <div style="border-radius: 50%; height: 13px; width: 13px; background-color: ${item.performance === 'Strong understanding.' ? 'rgb(0, 0, 95)' : 'white'
-          };border: 2px solid rgb(0, 0, 95);"></div>
-  <p style="margin: 0px; padding: 5px;">${item.performance === 'Strong understanding.'
+<p style="margin: 0px; padding: 5px;">${item.performance ===
+            'Strong understanding.'
             ? 'Strong understanding.'
-            : 'Strong understanding.'
-          }</p>
+            : item.performance == 'Basic understanding.'
+              ? 'Basic understanding.'
+              : item.performance == 'Little to no understanding.'
+                ? 'Little to no understanding.'
+                : ''}</p>
+
 </div>
 
-  <div style="display: flex; align-items: center; gap: 10px; padding-bottom: 0px; padding-top: 0px;">
-  <div style="border-radius: 50%; height: 13px; width: 13px; background-color: ${item.performance === 'Basic understanding.' ? 'rgb(0, 0, 95)' : 'white'
-          };border: 2px solid rgb(0, 0, 95);"></div>
-  <p style="margin: 0px; padding: 5px;">${item.performance === 'Basic understanding.'
-            ? 'Basic understanding.'
-            : 'Basic understanding.'
-          }</p>
-</div>
 
-<div style="display: flex; align-items: center; gap: 10px; padding-bottom: 0px; padding-top: 0px;">
-<div style="border-radius: 50%; height: 13px; width: 13px; background-color: ${item.performance === 'Little to no understanding.'
-            ? 'rgb(0, 0, 95)'
-            : 'white'
-          };border: 2px solid rgb(0, 0, 95);"></div>
-<p style="margin: 0px; padding: 5px;">${item.performance === 'Little to no understanding.'
-            ? 'Little to no understanding.'
-            : 'Little to no understanding.'
-          }</p>
-</div>
-</div>
+
+
 
 <p style="color: rgb(0, 0, 95); margin-top: 10px; margin-bottom:5px;">2. How well the student’s performance during these 3 months ?</p>
   <div style=''>
@@ -1355,8 +1121,9 @@ const ReportSubmissionHistory = ({ navigation }: any) => {
           alignSelf: 'center',
           padding: 10,
           backgroundColor: 'black',
+          paddingBottom: 40
         }}>
-        <Text style={{ fontSize: 16, textAlign: 'center', color: 'white' }}>
+        <Text style={{ fontSize: 16, textAlign: 'center', color: 'white', fontFamily: 'Circular Std Medium' }}>
           Go Back
         </Text>
       </TouchableOpacity>
@@ -1372,7 +1139,7 @@ const ReportSubmissionHistory = ({ navigation }: any) => {
         nestedScrollEnabled>
         <View style={{ paddingHorizontal: 25 }}>
           {/* Search */}
-          <View style={{ justifyContent: 'center', alignItems: 'center' }}>
+          {/* <View style={{ justifyContent: 'center', alignItems: 'center' }}>
             <View
               style={{
                 width: '100%',
@@ -1398,7 +1165,7 @@ const ReportSubmissionHistory = ({ navigation }: any) => {
                 />
               </TouchableOpacity>
             </View>
-          </View>
+          </View> */}
 
           {allReports && allReports.length > 0 ? (
             <View>

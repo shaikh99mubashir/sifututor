@@ -2,7 +2,7 @@ import React, { useContext, useEffect, useRef, useState } from "react"
 import { View, Text, Image, ActivityIndicator, TouchableOpacity, PermissionsAndroid, ToastAndroid, AppState, Platform } from "react-native"
 import { Theme } from "../../constant/theme"
 import Header from "../../Component/Header"
-import { launchCamera } from "react-native-image-picker"
+import { launchCamera, launchImageLibrary } from "react-native-image-picker"
 import { Base_Uri } from "../../constant/BaseUri"
 import axios from "axios"
 import Timer from "../../Component/Timer/timer"
@@ -13,6 +13,7 @@ import moment from "moment"
 import CustomLoader from "../../Component/CustomLoader"
 import { PERMISSIONS, request } from "react-native-permissions"
 import Toast from "react-native-toast-message"
+import ClockTimmer from "../../SVGs/ClockTimmer"
 // import messaging from '@react-native-firebase/messaging';
 
 
@@ -338,7 +339,9 @@ function ClassTimerCount({ navigation, route }: any) {
             quality: 1.0,
           };
     
-          launchCamera(options, (res:any) => {
+          // launchCamera
+          launchImageLibrary
+          (options, (res:any) => {
             if (res.didCancel) {
               // Handle cancellation
             } else if (res.error) {
@@ -384,9 +387,9 @@ function ClassTimerCount({ navigation, route }: any) {
                   studentID: item?.item?.studentID,
                 };
     
-                cleanTime();
-                AsyncStorage.removeItem('classInProcess');
-                AsyncStorage.removeItem('timer');
+                // cleanTime();
+                // AsyncStorage.removeItem('classInProcess');
+                // AsyncStorage.removeItem('timer');
                 navigation.replace('ClockOut', data);
               } catch (error) {
                 Toast.show({
@@ -424,7 +427,10 @@ function ClassTimerCount({ navigation, route }: any) {
             
 
             <View style={{ alignItems: 'center', justifyContent: 'center', flex: 1, }}>
-                <Image source={require('../../Assets/Images/Timmmer1.png')} resizeMode="contain" style={{ width: 350, height: 350 }} />
+                {/* <Image source={require('../../Assets/Images/Timmmer1.png')} resizeMode="contain" style={{ width: 350, height: 350 }} /> */}
+                
+
+                <ClockTimmer/>
                 <View style={{ alignItems: 'center', position: 'absolute', top: '45%', left: '31%', justifyContent: 'center' }}>
                     <>
                         <TouchableOpacity style={{ alignItems: 'center', justifyContent: 'center' }} onPress={() => handleClockOut()} activeOpacity={0.8} >

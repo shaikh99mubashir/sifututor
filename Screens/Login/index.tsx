@@ -4,6 +4,7 @@ import {
   SafeAreaView,
   StyleSheet,
   Text,
+  TextInput,
   ToastAndroid,
   View,
 } from 'react-native';
@@ -15,26 +16,50 @@ import CustomButton from '../../Component/CustomButton';
 import axios from 'axios';
 import { Base_Uri } from '../../constant/BaseUri';
 import Toast from 'react-native-toast-message';
+import parsePhoneNumberFromString from 'libphonenumber-js';
 const Login = ({ navigation }: any) => {
   const [phoneNumber, setPhoneNumber] = useState('');
   const [loading, setLoading] = useState(false);
-  console.log("phoneNumber",phoneNumber);
-  
+  console.log("phoneNumber", phoneNumber);
+  const phoneInput = useRef<PhoneInput>(null);
+
   const handleLoginPress = async () => {
     if (!phoneNumber) {
       Toast.show({
         type: 'error',
         text1: 'Error',
         text2: 'Kindly Enter Phone Number',
-        position:'bottom'
+        position: 'bottom'
       });
       return;
     }
-    setLoading(true);
+    
+    // const phoneNumberObject = parsePhoneNumberFromString(phoneNumber);
+    // console.log('phoneNumberObject',phoneNumberObject);
+    
+    // if (!phoneNumberObject?.isValid()) {
+    //   Toast.show({
+    //     type: 'error',
+    //     text1: 'Invalid Number',
+    //     text2: 'Please enter a valid phone number',
+    //     position: 'bottom',
+    //   });
+    //   return;
+    // }
+    const checkValid = phoneInput.current?.isValidNumber(phoneNumber);
+    
+    if (!checkValid) {
+      Toast.show({
+        type: 'error',
+        text1: 'Invalid Number',
+        text2: 'Please enter a valid phone number',
+        position: 'bottom',
+      });
+      return;
+    }
 
     const phoneNumberWithCountryCode = phoneNumber;
-    console.log("phoneNumberWithCountryCode", phoneNumberWithCountryCode);
-
+    setLoading(true);
     try {
       await apiRequestWithTimeout(`${Base_Uri}loginAPI/${phoneNumberWithCountryCode}`, 60000);
     } catch (error) {
@@ -43,46 +68,46 @@ const Login = ({ navigation }: any) => {
         type: 'error',
         text1: 'Request timeout:',
         text2: 'Please check your internet connection',
-        position:'bottom'
+        position: 'bottom'
       });
     }
   };
 
-  const apiRequestWithTimeout = (url:any, timeout:any) => {
+  const apiRequestWithTimeout = (url: any, timeout: any) => {
     return Promise.race([
       axios.get(url),
       new Promise((_, reject) =>
         setTimeout(() => reject(new Error('Request timeout')), timeout)
       ),
     ])
-    .then(({ data }:any) => {
-      setLoading(false);
-      if (data?.status === 404) {
+      .then(({ data }: any) => {
+        setLoading(false);
+        if (data?.status === 404) {
+          Toast.show({
+            type: 'success',
+            text1: `${data.msg}`,
+            position: 'bottom'
+          });
+        } else if (data?.status === 200) {
+          Toast.show({
+            type: 'success',
+            text1: 'Hello 👋',
+            text2: 'Enter verification code to continue',
+            position: 'bottom'
+          });
+          navigation.navigate('Verification', data);
+        }
+      })
+      .catch(error => {
         Toast.show({
-          type: 'success',
-          text1: `${data.msg}`,
-          position:'bottom'
+          type: 'error',
+          text1: 'Request timeout:',
+          text2: ' Please check your internet connection',
+          position: 'bottom'
         });
-      } else if (data?.status === 200) {
-        Toast.show({
-          type: 'success',
-          text1: 'Hello 👋',
-          text2: 'Enter verification code to continue',
-          position:'bottom'
-        });
-        navigation.navigate('Verification', data);
-      }
-    })
-    .catch(error => {
-      Toast.show({
-        type: 'error',
-        text1: 'Request timeout:',
-        text2: ' Please check your internet connection',
-        position:'bottom'
+        throw error;
+
       });
-      throw error;
-      
-    });
   };
   return (
     <View
@@ -105,7 +130,7 @@ const Login = ({ navigation }: any) => {
       <View style={{ margin: 4 }}></View>
       <View>
         <PhoneInput
-          // ref={phoneInput}
+          ref={phoneInput}
           placeholder="149655271"
           defaultValue={phoneNumber}
           defaultCode="MY"
@@ -142,14 +167,22 @@ const Login = ({ navigation }: any) => {
             borderColor: Theme.GhostWhite,
           }}
           onChangeFormattedText={text => {
-            setPhoneNumber(text);
+            if (text.length <= 13) {
+              setPhoneNumber(text);
+            } else {
+              Toast.show({
+                type: 'error',
+                text1: 'You have reached the number limit',
+                position: 'bottom',
+              });
+            }
           }}
         />
       </View>
 
       <View style={{ margin: 20 }}></View>
 
-      <CustomButton btnTitle='Continue' loading={loading}  onPress={handleLoginPress}/>
+      <CustomButton btnTitle='Continue' loading={loading} onPress={handleLoginPress} />
     </View>
   );
 };

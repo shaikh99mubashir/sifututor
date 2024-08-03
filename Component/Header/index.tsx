@@ -139,17 +139,14 @@ const Header = (Props: any) => {
             </View>
           ) :
             recordsFilter ? (
-              <View style={{ flex: 1 }}>
+              <View style={{ 
+                backgroundColor: Theme.shinyGrey,
+                padding: 10,
+                borderRadius: 50,}}>
                 <TouchableOpacity
-                  style={{
-                    flex: 1,
-                    justifyContent: 'center',
-                    alignItems: 'flex-end',
-                  }}
                   activeOpacity={0.8}
                   onPress={() => routeToRecordFilter()}>
-                  <Image source={require('../../Assets/Images/funnel.png')} style={{ width: 20, height: 20 }} resizeMode='contain' />
-
+                  <AntDesign name="filter" size={25} color={'black'} />
                 </TouchableOpacity>
               </View>
             ) :

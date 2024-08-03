@@ -46,8 +46,8 @@ const CustomDropDown = (props: any) => {
               fontFamily: 'Circular Std Medium',
               color: Theme.gray,
               fontSize: 16,
-              marginVertical: 5,
               textTransform:'capitalize',
+              marginVertical: 5,
               marginHorizontal: 5,
               ...headingStyle
 

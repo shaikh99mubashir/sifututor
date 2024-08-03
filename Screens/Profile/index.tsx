@@ -506,7 +506,7 @@ const Profile = ({ navigation }: any) => {
             <Image
               source={{ uri: name ? `file://${uri}` : `${tutorImage}` ? `${tutorImage}` : `${imageUrl}` }}
               style={{ width: 90, height: 90, borderRadius: 50, borderWidth: 2, borderColor: Theme.darkGray }}
-              resizeMode="contain"
+              resizeMode="cover"
             />
 
             <TouchableOpacity
@@ -578,7 +578,7 @@ const Profile = ({ navigation }: any) => {
               style={{
                 backgroundColor: Theme.white,
                 paddingHorizontal: 20,
-                paddingVertical: 10,
+                paddingVertical: 20,
                 borderRadius: 12,
                 marginVertical: 5,
                 height: 60
@@ -587,7 +587,8 @@ const Profile = ({ navigation }: any) => {
                 editable
                 onChangeText={text => setEmail(text)}
                 placeholder={tutorDetail?.email}
-                style={{ color: 'black', fontFamily: 'Circular Std Book', fontSize: 16, textTransform: 'capitalize' }}
+                style={{ color: 'black', fontFamily: 'Circular Std Book',
+               fontSize: 16, textTransform: 'lowercase', }}
                 placeholderTextColor={Theme.black}
               />
             </View>
@@ -606,7 +607,7 @@ const Profile = ({ navigation }: any) => {
               style={{
                 backgroundColor: Theme.white,
                 paddingHorizontal: 20,
-                paddingVertical: 10,
+                paddingVertical: 20,
                 borderRadius: 12,
                 marginVertical: 5,
                 height: 60
@@ -638,7 +639,7 @@ const Profile = ({ navigation }: any) => {
               style={{
                 backgroundColor: Theme.white,
                 paddingHorizontal: 20,
-                paddingVertical: 10,
+                paddingVertical: 20,
                 borderRadius: 12,
                 marginVertical: 5,
                 height: 60
@@ -648,7 +649,6 @@ const Profile = ({ navigation }: any) => {
                   color: Theme.black,
                   fontFamily: 'Circular Std Book',
                   fontSize: 16,
-                  marginTop: 8,
                 }}>
                 {tutorDetail?.phoneNumber}
               </Text>
@@ -705,7 +705,7 @@ const Profile = ({ navigation }: any) => {
               style={{
                 backgroundColor: Theme.white,
                 paddingHorizontal: 20,
-                paddingVertical: 10,
+                paddingVertical: 20,
                 borderRadius: 12,
                 marginVertical: 5,
                 height: 60
@@ -716,6 +716,7 @@ const Profile = ({ navigation }: any) => {
                   color: 'black', textTransform: 'capitalize', fontFamily: 'Circular Std Book',
                   fontSize: 16,
                 }}
+                maxLength={2}
                 keyboardType="numeric"
                 onChangeText={text => setAge(text)}
                 placeholder={
@@ -741,7 +742,7 @@ const Profile = ({ navigation }: any) => {
               style={{
                 backgroundColor: Theme.white,
                 paddingHorizontal: 20,
-                paddingVertical: 10,
+                paddingVertical: 20,
                 borderRadius: 12,
                 marginVertical: 5,
                 height: 60

@@ -205,10 +205,11 @@ const VerificationDocumentsUpload = ({ navigation }: any) => {
             btnTitle="Save"
             onPress={handleSave}
             // disabled={!isButtonEnabled}
+            loading={loading}
           />
         </View>
       </ScrollView>
-      <CustomLoader visible={loading}/>
+      {/* <CustomLoader visible={loading}/> */}
     </View>
   );
 };

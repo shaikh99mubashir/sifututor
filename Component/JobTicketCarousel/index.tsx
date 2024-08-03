@@ -91,7 +91,7 @@ const JobTicketCarousel = ({ jobTicketData, navigation }: any) => {
                                 Location
                             </Text>
                             <Text style={[styles.textType3, { fontSize: 18 }]}>
-                                {item?.city.length > 7 ? `${item?.city.slice(0, 7)}..` : item?.city}
+                                {item?.city.length > 7 ? `${item?.city.slice(0, 5)}..` : item?.city}
                                 </Text>
                         </View>
                         <View style={styles.jobTicketImg}>

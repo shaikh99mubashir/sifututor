@@ -49,6 +49,7 @@ import JobTicketCarousel from '../../Component/JobTicketCarousel';
 import LatestNews from '../../Component/LatestNews';
 import CustomButton from '../../Component/CustomButton';
 import MonthPicker from 'react-native-month-year-picker';
+import VerifyBanner from '../../SVGs/VerifyBanner';
 function Home({ navigation, route }: any) {
   let key = route.key;
 

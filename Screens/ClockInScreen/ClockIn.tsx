@@ -73,8 +73,8 @@ function ClockIn({navigation, route}: any) {
               maxHeight: 200,
               quality: 1.0,
             };
-            // launchCamera
-            launchImageLibrary
+            launchCamera
+            // launchImageLibrary
             (options, async (res: any) => {
               if (res?.didCancel) {
                 console.log('User cancelled image picker');

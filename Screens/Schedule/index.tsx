@@ -1071,11 +1071,12 @@ function Schedule({ navigation, route }: any) {
               }}>
               <Text
                 style={styles.textType3}>
-                {selectedDate.toLocaleDateString([], {
+                {/* {selectedDate.toLocaleDateString([], {
                   month: 'short',
                   day: '2-digit',
                   year: 'numeric',
-                })}
+                })} */}
+                {moment(selectedDate).format('DD MMM YYYY')}
               </Text>
               <ScheduleIcon />
             </View>

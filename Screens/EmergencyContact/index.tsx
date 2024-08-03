@@ -156,11 +156,12 @@ console.log("selectedState",selectedRelationShip);
               dropdownPlace="Select"
               subject={Relationship}
               categoryShow="subject"
-              headingStyle={{ color: Theme.black, }} 
+              headingStyle={{ color: Theme.black,  marginVertical: 5,
+                marginHorizontal: 0,}} 
             />
            
             {errors.relationship && <Text style={{ color: 'red' }}>{errors.relationship}</Text>}
-            <View style={{ margin: 8 }}></View>
+            <View style={{ margin: 6 }}></View>
             <InputText
               label="Emergency Contact Number"
               placeholder="Emergency Contact Number"
@@ -174,11 +175,12 @@ console.log("selectedState",selectedRelationShip);
           <CustomButton
             btnTitle="Save"
             onPress={handleSave}
+            loading={loading}
           />
           <View style={{ margin: 10 }}></View>
         </View>
       </ScrollView>
-      <CustomLoader visible={loading}/>
+      {/* <CustomLoader visible={loading}/> */}
     </View>
   );
 };

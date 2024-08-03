@@ -195,10 +195,11 @@ console.log("educationDetails",educationDetails);
           <CustomButton
             btnTitle="Save"
             onPress={handleSave}
+            loading={loading}
           />
         </View>
       </ScrollView>
-      <CustomLoader visible={loading}/>
+      {/* <CustomLoader visible={loading}/> */}
     </View>
   );
 };

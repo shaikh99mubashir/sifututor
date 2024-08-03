@@ -122,6 +122,7 @@ const TutorVerificationDeclaration = ({navigation}: any) => {
         <CustomButton
           btnTitle="Next"
           onPress={handleNext}
+          loading={loading}
         />
       </View>
     </View>

@@ -21,11 +21,11 @@ import CustomLoader from '../../Component/CustomLoader';
 
 function InboxDetail({ navigation, route }: any) {
   let data = route.params;
-  console.log("data",data);
+  // console.log("data",data);
   
   const [loading, setLoading] = useState(false);
   const [newsData, setNewsData] = useState<any>({});
-console.log("newsData",newsData);
+// console.log("newsData",newsData);
 
   // const handleLinkPress = (url: any) => {
   //     // Replace with your desired URL
@@ -81,7 +81,7 @@ console.log("newsData",newsData);
       </View>
 
       <ScrollView style={{ height: '100%' }}>
-        <View style={{ paddingHorizontal: 25 }}>
+        <View style={{ paddingHorizontal: 28 }}>
           <View style={{ margin: 5 }}></View>
           {newsData?.subject && (
             <Text style={styles.textType1}>

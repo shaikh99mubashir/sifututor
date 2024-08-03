@@ -1,4 +1,4 @@
-import { Image, ScrollView, StyleSheet, Text, TextInput, View, Alert } from 'react-native';
+import { Image, ScrollView, StyleSheet, Text, TextInput, View, Alert, KeyboardAvoidingView } from 'react-native';
 import React, { useState } from 'react';
 import { Theme } from '../../constant/theme';
 import Header from '../../Component/Header';
@@ -104,7 +104,7 @@ const BioDetails = ({ navigation }: any) => {
       return;
     }
 
-    setLoading(true);
+    // setLoading(true)
     const login: any = await AsyncStorage.getItem('loginAuth');
     const loginData = JSON.parse(login);
     const { tutorID } = loginData;
@@ -142,6 +142,7 @@ const BioDetails = ({ navigation }: any) => {
   return (
     <View style={{ backgroundColor: Theme.GhostWhite, height: '100%' }}>
         <Header title={'Bio Details'} backBtn navigation={navigation} />
+        <KeyboardAvoidingView behavior="height">
       <ScrollView showsVerticalScrollIndicator={false} nestedScrollEnabled>
         <View style={{ paddingHorizontal: 25 }}>
           <View style={{ margin: 10 }}></View>
@@ -206,7 +207,8 @@ const BioDetails = ({ navigation }: any) => {
           <View style={{ margin: 10 }}></View>
         </View>
       </ScrollView>
-      <CustomLoader visible={loading}/>
+      </KeyboardAvoidingView>
+      {/* <CustomLoader visible={loading}/> */}
     </View>
   );
 };

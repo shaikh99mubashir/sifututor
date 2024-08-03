@@ -431,7 +431,7 @@ function ClassTimerCount({ navigation, route }: any) {
                 
 
                 <ClockTimmer/>
-                <View style={{ alignItems: 'center', position: 'absolute', top: '45%', left: '31%', justifyContent: 'center' }}>
+                <View style={{ alignItems: 'center', position:'relative',top: '-28%', left: '2%', justifyContent: 'center' }}>
                     <>
                         <TouchableOpacity style={{ alignItems: 'center', justifyContent: 'center' }} onPress={() => handleClockOut()} activeOpacity={0.8} >
 

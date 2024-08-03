@@ -6,6 +6,7 @@ import {
   TouchableOpacity,
   ScrollView,
   Linking,
+  KeyboardAvoidingView,
 } from 'react-native';
 import React, { useRef, useState } from 'react';
 import Toast from 'react-native-toast-message';
@@ -38,7 +39,7 @@ const UpdateProfile = ({ navigation, route }: any) => {
 
   const [loading, setLoading] = useState(false)
   const handleUpdateProfile = async () => {
-    setLoading(true)
+
     // Validation logic goes here
     const newErrors = {
       fullName: updateProfile.fullName ? '' : 'Full Name is required',
@@ -60,7 +61,7 @@ const UpdateProfile = ({ navigation, route }: any) => {
       });
     }
     setErrors(newErrors);
-
+    setLoading(true)
     // Proceed with updating profile if there are no errors
     if (Object.values(newErrors).every((error) => !error)) {
       try {
@@ -69,10 +70,10 @@ const UpdateProfile = ({ navigation, route }: any) => {
         formData.append('email', updateProfile.email);
         formData.append('tutorId', data.tutorDetailById[0]?.id);
         formData.append('phoneNumber', data.tutorDetailById[0]?.phoneNumber);
-    
+
         setLoading(true);
         console.log(formData, 'formData');
-        console.log("data.tutorDetailById[0]?.id",data.tutorDetailById[0]?.id);
+        console.log("data.tutorDetailById[0]?.id", data.tutorDetailById[0]?.id);
         axios
           .post(`${Base_Uri}api/appTutorRegister`, formData, {
             headers: {
@@ -81,11 +82,11 @@ const UpdateProfile = ({ navigation, route }: any) => {
           })
           .then(({ data }) => {
             console.log('data signup===>', data.Msg);
-            if(data?.Msg){
+            if (data?.Msg) {
               Toast.show({
                 type: 'success',
                 text1: 'Success',
-                text2:  `${data?.Msg}`,
+                text2: `${data?.Msg}`,
                 position: 'bottom'
               });
               setLoading(false);
@@ -109,7 +110,7 @@ const UpdateProfile = ({ navigation, route }: any) => {
               Toast.show({
                 type: 'success',
                 text1: 'Register Successfully',
-                text2:  `${data?.Msg}`,
+                text2: `${data?.Msg}`,
                 position: 'bottom'
               });
               setLoading(false);
@@ -121,7 +122,7 @@ const UpdateProfile = ({ navigation, route }: any) => {
             Toast.show({
               type: 'error',
               text1: 'Error',
-              text2:  `Network Error`,
+              text2: `Network Error`,
               position: 'bottom'
             });
           });
@@ -164,84 +165,86 @@ const UpdateProfile = ({ navigation, route }: any) => {
         paddingHorizontal: 25,
         height: '100%'
       }}>
-      <ScrollView showsVerticalScrollIndicator={false}>
+      <KeyboardAvoidingView>
+        <ScrollView showsVerticalScrollIndicator={false}>
 
-        <Header navigation={navigation} />
-        <Text style={[styles.textType2]}>Update Profile</Text>
-        <View style={{ margin: 8 }}></View>
-        <Text
-          style={[
-            styles.textType1,
-            { lineHeight: 20, color: Theme.IronsideGrey,fontFamily: 'Circular Std Book', },
-          ]}>
-          We are glad that you Joined with us, {'\n'}Enter your details.{' '}
-        </Text>
-        <View style={{ margin: 10 }}></View>
-
-        <InputText
-          placeholder="Full Name"
-          value={updateProfile.fullName}
-          onChangeText={(e: string) => setUpdateProfile({ ...updateProfile, fullName: e })}
-          error={errors.fullName}
-        />
-        <InputText
-          placeholder="Email"
-          value={updateProfile.email}
-          onChangeText={(e: string) => setUpdateProfile({ ...updateProfile, email: e })}
-          error={errors.email}
-        />
-
-        <View style={{ margin: 10 }}></View>
-        <View style={{ flexDirection: 'row', gap: 8 }}>
-          {isChecked ? (
-            <TouchableOpacity onPress={() => toggleCheckbox()}>
-              <MaterialCommunityIcons
-                name="checkbox-outline"
-                color={Theme.darkGray}
-                size={24}
-              />
-            </TouchableOpacity>
-          ) : (
-            <TouchableOpacity onPress={() => toggleCheckbox()}>
-              <MaterialCommunityIcons
-                name="checkbox-blank-outline"
-                color={Theme.darkGray}
-                size={24}
-              />
-            </TouchableOpacity>
-          )}
-          <TouchableOpacity activeOpacity={0.8} onPress={() => Linking.openURL('https://sifututor.my/terms-of-use/')}>
-            <Text
-              style={[
-                styles.textType1,
-                {
-                  color: Theme.IronsideGrey,
-                  fontFamily: 'Circular Std Book',
-                  lineHeight: 23,
-                  width: 330,
-                  fontSize: 16,
-                },
-              ]}>
-              By doing this, I agree to Sifututor {'\n'}
-              <Text style={{ textDecorationLine: 'underline', color: Theme.Black }}>
-                Terms and Privacy Policy
-              </Text>
-            </Text>
-          </TouchableOpacity>
+          <Header navigation={navigation} />
+          <Text style={[styles.textType2]}>Update Profile</Text>
+          <View style={{ margin: 8 }}></View>
+          <Text
+            style={[
+              styles.textType1,
+              { lineHeight: 20, color: Theme.IronsideGrey, fontFamily: 'Circular Std Book', },
+            ]}>
+            We are glad that you Joined with us, {'\n'}Enter your details.{' '}
+          </Text>
           <View style={{ margin: 10 }}></View>
-        </View>
-        <View style={{ margin: 20 }}></View>
-        <CustomButton
-          btnTitle="Save"
-          backgroundColor={Theme.darkGray}
-          color={Theme.white}
-          onPress={handleUpdateProfile}
-          loading={loading}
-        />
-        <View style={{ margin: 20 }}></View>
+
+          <InputText
+            placeholder="Full Name"
+            value={updateProfile.fullName}
+            onChangeText={(e: string) => setUpdateProfile({ ...updateProfile, fullName: e })}
+            error={errors.fullName}
+          />
+          <InputText
+            placeholder="Email"
+            value={updateProfile.email}
+            onChangeText={(e: string) => setUpdateProfile({ ...updateProfile, email: e })}
+            error={errors.email}
+          />
+
+          <View style={{ margin: 10 }}></View>
+          <View style={{ flexDirection: 'row', gap: 8 }}>
+            {isChecked ? (
+              <TouchableOpacity onPress={() => toggleCheckbox()}>
+                <MaterialCommunityIcons
+                  name="checkbox-outline"
+                  color={Theme.darkGray}
+                  size={24}
+                />
+              </TouchableOpacity>
+            ) : (
+              <TouchableOpacity onPress={() => toggleCheckbox()}>
+                <MaterialCommunityIcons
+                  name="checkbox-blank-outline"
+                  color={Theme.darkGray}
+                  size={24}
+                />
+              </TouchableOpacity>
+            )}
+            <TouchableOpacity activeOpacity={0.8} onPress={() => Linking.openURL('https://sifututor.my/terms-of-use/')}>
+              <Text
+                style={[
+                  styles.textType1,
+                  {
+                    color: Theme.IronsideGrey,
+                    fontFamily: 'Circular Std Book',
+                    lineHeight: 23,
+                    width: 330,
+                    fontSize: 16,
+                  },
+                ]}>
+                By doing this, I agree to Sifututor {'\n'}
+                <Text style={{ textDecorationLine: 'underline', color: Theme.Black }}>
+                  Terms and Privacy Policy
+                </Text>
+              </Text>
+            </TouchableOpacity>
+            <View style={{ margin: 10 }}></View>
+          </View>
+          <View style={{ margin: 20 }}></View>
+          <CustomButton
+            btnTitle="Save"
+            backgroundColor={Theme.darkGray}
+            color={Theme.white}
+            onPress={handleUpdateProfile}
+            loading={loading}
+          />
+          <View style={{ margin: 20 }}></View>
 
 
-      </ScrollView>
+        </ScrollView>
+      </KeyboardAvoidingView>
     </View>
   );
 };

@@ -23,7 +23,7 @@ const LatestNews = ({ latestNewsData, navigation }: any) => {
     },
   ];
   const routeToInboxDetails = async (item: any) => {
-    navigation.navigate('InboxDetail', item);
+    navigation.navigate('InboxDetail',  item.id);
     const data: any = await AsyncStorage.getItem('loginAuth');
     let loginData = JSON.parse(data);
 
@@ -52,7 +52,7 @@ const LatestNews = ({ latestNewsData, navigation }: any) => {
             }}>
             <Image
               source={{ uri: item?.headerimage }}
-              resizeMode="cover"
+              resizeMode='contain'
               style={{ borderRadius: 10, width: 155, height: 90 }}
             />
             <View style={{ marginTop: 3 }}></View>

@@ -394,12 +394,14 @@ const AttendedClassRecords = ({ navigation, route }: any) => {
   };
   return (
     <View style={{ backgroundColor: Theme.GhostWhite, height: '100%' }}>
+      <View style={{paddingRight:8}}>
       <Header
         title="Class Record"
         recordsFilter
         backBtn
         navigation={navigation}
       />
+      </View>
 
       <ScrollView
         refreshControl={

@@ -841,7 +841,7 @@ function AddClass({navigation}: any) {
               mode={mode}
               onConfirm={handleConfirm}
               onCancel={hideDatePicker}
-              minimumDate={new Date()}
+              minimumDate={mode === 'date' ? new Date() : undefined}
             />
 
             {show && (

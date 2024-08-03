@@ -765,7 +765,7 @@ const Profile = ({ navigation }: any) => {
             </View>
           </View>
           <View style={{ margin: 10 }} />
-          <CustomButton btnTitle='Save' onPress={() => updateTutorDetail()} />
+          <CustomButton loading={loading} btnTitle='Save' onPress={() => updateTutorDetail()} />
           <View style={{ margin: 10 }} />
         </View>
       </ScrollView>
@@ -880,7 +880,7 @@ const Profile = ({ navigation }: any) => {
         </View>
       </Modal> */}
 
-      <CustomLoader visible={loading} />
+      {/* <CustomLoader visible={loading} /> */}
     </View>
   );
 };

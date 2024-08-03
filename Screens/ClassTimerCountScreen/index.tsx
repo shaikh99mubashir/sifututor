@@ -339,8 +339,8 @@ function ClassTimerCount({ navigation, route }: any) {
             quality: 1.0,
           };
     
-          // launchCamera
-          launchImageLibrary
+          launchCamera
+          // launchImageLibrary
           (options, (res:any) => {
             if (res.didCancel) {
               // Handle cancellation

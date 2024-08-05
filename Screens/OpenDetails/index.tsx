@@ -8,6 +8,7 @@ import {
   ActivityIndicator,
   ToastAndroid,
   Image,
+  KeyboardAvoidingView,
 } from 'react-native';
 import React, { useContext, useState } from 'react';
 import Header from '../../Component/Header';
@@ -104,6 +105,7 @@ const OpenDetails = ({ route, navigation }: any) => {
   return (
     <View style={{ backgroundColor: Theme.GhostWhite, height: '100%' }}>
       <Header title={data?.jtuid} backBtn navigation={navigation} />
+      <KeyboardAvoidingView behavior="height">
       <ScrollView showsVerticalScrollIndicator={false} nestedScrollEnabled>
         <View style={{ paddingHorizontal: 25 }}>
           <View
@@ -714,10 +716,11 @@ const OpenDetails = ({ route, navigation }: any) => {
 
             {/* Submit Button */}
             <CustomButton btnTitle={'Apply'} onPress={sendOpenDetailData} />
-            <View style={{ margin: 10 }}></View>
+            <View style={{ margin: 30 }}></View>
           </View>
         </View>
       </ScrollView>
+      </KeyboardAvoidingView>
     </View>
   );
 };

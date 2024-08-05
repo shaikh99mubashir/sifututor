@@ -69,7 +69,6 @@ const Profile = ({ navigation }: any) => {
   let tutorDetail = context?.tutorDetails;
   let tutorDetails = context?.tutorDetails;
   console.log('tutorDetails', tutorDetails);
-  console.log('tutorDetail', tutorDetail);
   let bannerCont = useContext(bannerContext);
 
   let { profileBanner, setProfileBanner }: any = bannerCont;
@@ -722,7 +721,7 @@ const Profile = ({ navigation }: any) => {
                 placeholder={
                   tutorDetail?.age
                     ? tutorDetail?.age.toString()
-                    : 'Not Provided'
+                    : 'Enter your age'
                 }
                 placeholderTextColor={Theme.black}
               />
@@ -758,7 +757,7 @@ const Profile = ({ navigation }: any) => {
                 value={nric}
                 maxLength={14}
                 placeholder={
-                  tutorDetail?.nric == null ? 'Not Provided' : tutorDetail?.nric
+                  tutorDetail?.nric == null ? 'Enter your NRIC number' : tutorDetail?.nric
                 }
                 placeholderTextColor={Theme.black}
               />

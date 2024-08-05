@@ -1,5 +1,5 @@
 import { Image, ScrollView, StyleSheet, Text, TextInput, View, Alert, KeyboardAvoidingView } from 'react-native';
-import React, { useState } from 'react';
+import React, { useContext, useState } from 'react';
 import { Theme } from '../../constant/theme';
 import Header from '../../Component/Header';
 import InputText from '../../Component/InputText';
@@ -9,6 +9,7 @@ import axios from 'axios';
 import { Base_Uri } from '../../constant/BaseUri';
 import Toast from 'react-native-toast-message';
 import CustomLoader from '../../Component/CustomLoader';
+import TutorDetailsContext from '../../context/tutorDetailsContext';
 
 interface TutorBioDetails {
   fullName: string;
@@ -30,10 +31,15 @@ interface Errors {
 
 const BioDetails = ({ navigation }: any) => {
   const [loading, setLoading] = useState(false);
+  const context = useContext(TutorDetailsContext);
+  let tutorDetails = context?.tutorDetails;
+  console.log("context",context);
+  
+  console.log('tutorDetails bio detail---->', tutorDetails.full_name);
   const [tutorBioDetails, setTutorBioDetails] = useState<TutorBioDetails>({
-    fullName: '',
-    phoneNumber: '',
-    email: '',
+    fullName: tutorDetails?.full_name,
+    phoneNumber: tutorDetails?.phoneNumber,
+    email: tutorDetails?.email,
     icNumber: '',
     residentialAddress: '',
     postalCode: '',
@@ -139,74 +145,77 @@ const BioDetails = ({ navigation }: any) => {
     }
   };
 
+
+
   return (
     <View style={{ backgroundColor: Theme.GhostWhite, height: '100%' }}>
-        <Header title={'Bio Details'} backBtn navigation={navigation} />
-        <KeyboardAvoidingView behavior="height">
-      <ScrollView showsVerticalScrollIndicator={false} nestedScrollEnabled>
-        <View style={{ paddingHorizontal: 25 }}>
-          <View style={{ margin: 10 }}></View>
-          <View>
-            <InputText
-              label="Full Name"
-              placeholder="Enter Full Name"
-              value={tutorBioDetails.fullName}
-              onChangeText={(value: string) => handleInputChange('fullName', value)}
-              error={errors.fullName}
-            />
+      <Header title={'Bio Details'} backBtn navigation={navigation} />
+      <KeyboardAvoidingView behavior="height">
+        <ScrollView showsVerticalScrollIndicator={false} nestedScrollEnabled>
+          <View style={{ paddingHorizontal: 25 }}>
             <View style={{ margin: 10 }}></View>
-            <InputText
-              label="Phone Number"
-              placeholder="Enter Phone Number"
-              value={tutorBioDetails.phoneNumber}
-              onChangeText={(value: string) => handleInputChange('phoneNumber', value)}
-              keyboardType="numeric"
-              error={errors.phoneNumber}
-            />
-            <View style={{ margin: 10 }}></View>
-            <InputText
-              label="Email"
-              placeholder="Enter Email"
-              value={tutorBioDetails.email}
-              onChangeText={(value: string) => handleInputChange('email', value)}
-              error={errors.email}
-            />
-            <View style={{ margin: 10 }}></View>
-            <InputText
-              label="IC Number"
-              placeholder="Enter IC Number"
-              value={tutorBioDetails.icNumber}
-              onChangeText={(value: string) => handleInputChange('icNumber', value)}
-              keyboardType="numeric"
-              error={errors.icNumber}
-            />
-            <View style={{ margin: 10 }}></View>
-            <InputText
-              label="Residential Address"
-              placeholder="Enter Residential Address"
-              value={tutorBioDetails.residentialAddress}
-              onChangeText={(value: string) => handleInputChange('residentialAddress', value)}
-              error={errors.residentialAddress}
-            />
-            <View style={{ margin: 10 }}></View>
-            <InputText
-              label="Postal Code"
-              placeholder="Enter Postal Code"
-              value={tutorBioDetails.postalCode}
-              onChangeText={(value: string) => handleInputChange('postalCode', value)}
-              error={errors.postalCode}
+            <View>
+              <InputText
+                label="Full Name"
+                placeholder="Enter Full Name"
+                value={tutorDetails?.full_name}
+                onChangeText={(value: string) => handleInputChange('fullName', value)}
+                error={errors.fullName}
+              />
+              <View style={{ margin: 10 }}></View>
+              <InputText
+                label="Phone Number"
+                placeholder="Enter Phone Number"
+                value={tutorDetails?.phoneNumber}
+                onChangeText={(value: string) => handleInputChange('phoneNumber', value)}
+                keyboardType="numeric"
+                error={errors.phoneNumber}
+              />
+              <View style={{ margin: 10 }}></View>
+              <InputText
+                label="Email"
+                placeholder={tutorDetails?.email}
+                value={tutorDetails?.email}
+                onChangeText={(value: string) => handleInputChange('email', value)}
+                error={errors.email}
+                editable={false}
+              />
+              <View style={{ margin: 10 }}></View>
+              <InputText
+                label="IC Number"
+                placeholder="Enter IC Number"
+                value={tutorBioDetails.icNumber}
+                onChangeText={(value: string) => handleInputChange('icNumber', value)}
+                keyboardType="numeric"
+                error={errors.icNumber}
+              />
+              <View style={{ margin: 10 }}></View>
+              <InputText
+                label="Residential Address"
+                placeholder="Enter Residential Address"
+                value={tutorBioDetails.residentialAddress}
+                onChangeText={(value: string) => handleInputChange('residentialAddress', value)}
+                error={errors.residentialAddress}
+              />
+              <View style={{ margin: 10 }}></View>
+              <InputText
+                label="Postal Code"
+                placeholder="Enter Postal Code"
+                value={tutorBioDetails.postalCode}
+                onChangeText={(value: string) => handleInputChange('postalCode', value)}
+                error={errors.postalCode}
+              />
+              <View style={{ margin: 10 }}></View>
+            </View>
+            <View style={{ margin: 8 }}></View>
+            <CustomButton
+              btnTitle="Save"
+              onPress={handelBioData}
+              loading={loading}
             />
             <View style={{ margin: 10 }}></View>
           </View>
-          <View style={{ margin: 8 }}></View>
-          <CustomButton
-            btnTitle="Save"
-            onPress={handelBioData}
-            loading={loading}
-          />
-          <View style={{ margin: 10 }}></View>
-        </View>
-      </ScrollView>
+        </ScrollView>
       </KeyboardAvoidingView>
       {/* <CustomLoader visible={loading}/> */}
     </View>

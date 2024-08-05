@@ -102,7 +102,6 @@ const AttendedClassRecords = ({ navigation, route }: any) => {
             classAttendedTime &&
             classAttendedTime.length > 0 &&
             classAttendedTime.filter((e: any, i: number) => {
-              console.log("e", e);
               return (
                 e?.status.toString().toLowerCase() ==
                 status.option.toString().toLowerCase()
@@ -115,6 +114,8 @@ const AttendedClassRecords = ({ navigation, route }: any) => {
           setLoading(false);
         })
         .catch((error) => {
+          console.log('error--',error);
+          
           Toast.show({
             type: 'info',
             // text1: 'Request timeout:',

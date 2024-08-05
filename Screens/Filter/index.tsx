@@ -128,7 +128,6 @@ console.log('selectedStatus',selectedStatus);
 
     if (!selectedAttendedStatus) {
 
-      // ToastAndroid.show("Kindly Select Status", ToastAndroid.SHORT)
       Toast.show({
         type: 'info',
         // text1: 'Request timeout:',
@@ -142,7 +141,6 @@ console.log('selectedStatus',selectedStatus);
 
     await AsyncStorage.setItem("ClassRecordsFilter", data)
 
-    // ToastAndroid.show("Filter has been succesfully Applied", ToastAndroid.SHORT)
     Toast.show({
       type: 'info',
       // text1: 'Request timeout:',

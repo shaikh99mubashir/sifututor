@@ -2,18 +2,16 @@ import { Image, Modal, StyleSheet, Text, View } from 'react-native'
 import React from 'react'
 
 const CustomLoader = ({ visible }: any) => {
-  console.log("Visible", visible);
-
   return (
     <>
-      {visible == true &&
+      {visible == true ?
         <Modal visible={visible} animationType="fade" transparent={true}>
           <View
             style={{
               flex: 1,
               justifyContent: 'center',
               alignItems: 'center',
-              backgroundColor: 'rgba(0,0,0,0.5)',
+              backgroundColor: 'rgba(0,0,0,1)',
             }}>
             <Image
               source={require('../../Assets/Images/SIFU.gif')}
@@ -21,7 +19,7 @@ const CustomLoader = ({ visible }: any) => {
             />
           </View>
         </Modal>
-      }
+      :null}
     </>
   )
 }

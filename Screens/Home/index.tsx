@@ -1285,7 +1285,7 @@ const [dashboardData, setDashboardData] = useState<any>([])
           <Image
             source={require('../../Assets/Images/Banner.png')}
             resizeMode="contain"
-            style={{width: Dimensions.get('screen').width / 1.15}}
+            style={{width: Dimensions.get('screen').width / 1.14}}
           />
         </TouchableOpacity>
         }
@@ -1424,7 +1424,7 @@ const [dashboardData, setDashboardData] = useState<any>([])
                   <View style={{margin:8}}></View>
                 <View style={{ paddingBottom: 20 }}>
                   <Text style={[styles.textType3, { color: 'white' }]}>
-                    Earnings RM
+                    Earnings
                   </Text>
                   <View style={{margin:2}}></View>
                   <Text
@@ -1433,7 +1433,7 @@ const [dashboardData, setDashboardData] = useState<any>([])
                       { color: 'white', fontSize: 30, lineHeight: 40 },
                     ]}>
                     {/* RM {cummulativeCommission && cummulativeCommission} */}
-                    {dashboardData?.cumulativeCommission}
+                    RM {dashboardData?.cumulativeCommission}
                     {/* RM 2150 */}
                   </Text>
                 </View>

@@ -87,7 +87,6 @@ const Verification = ({ navigation, route }: any) => {
           },
         })
           .then(({ data }: any) => {
-            console.log('data.tutorID', data);
 
             if (data?.status !== 200) {
               console.log('Running');

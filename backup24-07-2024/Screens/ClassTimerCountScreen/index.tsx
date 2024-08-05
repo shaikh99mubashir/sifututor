@@ -384,9 +384,9 @@ function ClassTimerCount({ navigation, route }: any) {
                   studentID: item?.item?.studentID,
                 };
     
-                cleanTime();
-                AsyncStorage.removeItem('classInProcess');
-                AsyncStorage.removeItem('timer');
+                // cleanTime();
+                // AsyncStorage.removeItem('classInProcess');
+                // AsyncStorage.removeItem('timer');
                 navigation.replace('ClockOut', data);
               } catch (error) {
                 Toast.show({

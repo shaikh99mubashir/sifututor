@@ -168,6 +168,7 @@ const Students = ({ navigation }: any) => {
                 paddingVertical: 4,
                 paddingHorizontal: 10,
                 marginVertical: 15,
+                height:60,
               }}>
               <TextInput
                 placeholder="Search"

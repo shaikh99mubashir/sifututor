@@ -994,6 +994,7 @@ const ReportSubmission = ({ navigation, route }: any): any => {
                 titleStyle={{ fontSize: 18 }}
                 subTitleText={{ fontSize: 16, color: Theme.Black }}
                 valueText={{ fontSize: 16, color: Theme.IronsideGrey }}
+                optionText={{textTransform: 'none'}}
               />
               <DropDownModalView
                 selectedValue={setObQ2}
@@ -1007,6 +1008,7 @@ const ReportSubmission = ({ navigation, route }: any): any => {
                 titleStyle={{ fontSize: 18 }}
                 subTitleText={{ fontSize: 16, color: Theme.Black }}
                 valueText={{ fontSize: 16, color: Theme.IronsideGrey }}
+                optionText={{textTransform: 'none'}}
               />
               <>
                 <Text
@@ -1180,6 +1182,7 @@ const ReportSubmission = ({ navigation, route }: any): any => {
                 titleStyle={{ fontSize: 18 }}
                 subTitleText={{ fontSize: 16, color: Theme.Black }}
                 valueText={{ fontSize: 16, color: Theme.IronsideGrey }}
+                optionText={{textTransform: 'none'}}
               />
               <DropDownModalView
                 selectedValue={setKnowledgeAnswer2}
@@ -1193,6 +1196,7 @@ const ReportSubmission = ({ navigation, route }: any): any => {
                 titleStyle={{ fontSize: 18 }}
                 subTitleText={{ fontSize: 16, color: Theme.Black }}
                 valueText={{ fontSize: 16, color: Theme.IronsideGrey }}
+                optionText={{textTransform: 'none'}}
               />
             </>
           )}
@@ -1212,6 +1216,7 @@ const ReportSubmission = ({ navigation, route }: any): any => {
                 titleStyle={{ fontSize: 18 }}
                 subTitleText={{ fontSize: 16, color: Theme.Black }}
                 valueText={{ fontSize: 16, color: Theme.IronsideGrey }}
+                optionText={{textTransform: 'none'}}
               />
               <DropDownModalView
                 selectedValue={setPerQ2}
@@ -1225,6 +1230,7 @@ const ReportSubmission = ({ navigation, route }: any): any => {
                 titleStyle={{ fontSize: 18 }}
                 subTitleText={{ fontSize: 16, color: Theme.Black }}
                 valueText={{ fontSize: 16, color: Theme.IronsideGrey }}
+                optionText={{textTransform: 'none'}}
               />
               <DropDownModalView
                 selectedValue={setPerQ3}
@@ -1238,6 +1244,7 @@ const ReportSubmission = ({ navigation, route }: any): any => {
                 titleStyle={{ fontSize: 18 }}
                 subTitleText={{ fontSize: 16, color: Theme.Black }}
                 valueText={{ fontSize: 16, color: Theme.IronsideGrey }}
+                optionText={{textTransform: 'none'}}
               />
               <DropDownModalView
                 selectedValue={setPerQ4}
@@ -1251,6 +1258,7 @@ const ReportSubmission = ({ navigation, route }: any): any => {
                 titleStyle={{ fontSize: 18 }}
                 subTitleText={{ fontSize: 16, color: Theme.Black }}
                 valueText={{ fontSize: 16, color: Theme.IronsideGrey }}
+                optionText={{textTransform: 'none'}}
               />
               <DropDownModalView
                 selectedValue={setPerQ5}
@@ -1264,6 +1272,7 @@ const ReportSubmission = ({ navigation, route }: any): any => {
                 titleStyle={{ fontSize: 18 }}
                 subTitleText={{ fontSize: 16, color: Theme.Black }}
                 valueText={{ fontSize: 16, color: Theme.IronsideGrey }}
+                optionText={{textTransform: 'none'}}
               />
               <>
                 <Text
@@ -1320,6 +1329,7 @@ const ReportSubmission = ({ navigation, route }: any): any => {
                 titleStyle={{ fontSize: 18 }}
                 subTitleText={{ fontSize: 16, color: Theme.Black }}
                 valueText={{ fontSize: 16, color: Theme.IronsideGrey }}
+                optionText={{textTransform: 'none'}}
               />
               <DropDownModalView
                 selectedValue={setUnderstandingAnswer2}
@@ -1333,6 +1343,7 @@ const ReportSubmission = ({ navigation, route }: any): any => {
                 titleStyle={{ fontSize: 18 }}
                 subTitleText={{ fontSize: 16, color: Theme.Black }}
                 valueText={{ fontSize: 16, color: Theme.IronsideGrey }}
+                optionText={{textTransform: 'none'}}
               />
             </>
           )}
@@ -1352,6 +1363,7 @@ const ReportSubmission = ({ navigation, route }: any): any => {
                 titleStyle={{ fontSize: 18 }}
                 subTitleText={{ fontSize: 16, color: Theme.Black }}
                 valueText={{ fontSize: 16, color: Theme.IronsideGrey }}
+                optionText={{textTransform: 'none'}}
               />
               <DropDownModalView
                 selectedValue={setattQ2}
@@ -1365,6 +1377,7 @@ const ReportSubmission = ({ navigation, route }: any): any => {
                 titleStyle={{ fontSize: 18 }}
                 subTitleText={{ fontSize: 16, color: Theme.Black }}
                 valueText={{ fontSize: 16, color: Theme.IronsideGrey }}
+                optionText={{textTransform: 'none'}}
               />
               <DropDownModalView
                 selectedValue={setattQ3}
@@ -1378,6 +1391,7 @@ const ReportSubmission = ({ navigation, route }: any): any => {
                 titleStyle={{ fontSize: 18 }}
                 subTitleText={{ fontSize: 16, color: Theme.Black }}
                 valueText={{ fontSize: 16, color: Theme.IronsideGrey }}
+                optionText={{textTransform: 'none'}}
               />
               <DropDownModalView
                 selectedValue={setattQ4}
@@ -1391,6 +1405,7 @@ const ReportSubmission = ({ navigation, route }: any): any => {
                 titleStyle={{ fontSize: 18 }}
                 subTitleText={{ fontSize: 16, color: Theme.Black }}
                 valueText={{ fontSize: 16, color: Theme.IronsideGrey }}
+                optionText={{textTransform: 'none'}}
               />
               <DropDownModalView
                 selectedValue={setattQ5}
@@ -1404,6 +1419,7 @@ const ReportSubmission = ({ navigation, route }: any): any => {
                 titleStyle={{ fontSize: 18 }}
                 subTitleText={{ fontSize: 16, color: Theme.Black }}
                 valueText={{ fontSize: 16, color: Theme.IronsideGrey }}
+                optionText={{textTransform: 'none'}}
               />
               <>
                 <Text
@@ -1459,7 +1475,7 @@ const ReportSubmission = ({ navigation, route }: any): any => {
                 titleStyle={{ fontSize: 18 }}
                 subTitleText={{ fontSize: 16, color: Theme.Black }}
                 valueText={{ fontSize: 16, color: Theme.IronsideGrey }}
-
+                optionText={{textTransform: 'none'}}
 
               />
               <DropDownModalView
@@ -1474,6 +1490,7 @@ const ReportSubmission = ({ navigation, route }: any): any => {
                 titleStyle={{ fontSize: 18 }}
                 subTitleText={{ fontSize: 16, color: Theme.Black }}
                 valueText={{ fontSize: 16, color: Theme.IronsideGrey }}
+                optionText={{textTransform: 'none'}}
               />
             </>
           )}
@@ -1494,6 +1511,7 @@ const ReportSubmission = ({ navigation, route }: any): any => {
                 titleStyle={{ fontSize: 18 }}
                 subTitleText={{ fontSize: 16, color: Theme.Black }}
                 valueText={{ fontSize: 16, color: Theme.IronsideGrey }}
+                optionText={{textTransform: 'none'}}
               />
               <DropDownModalView
                 selectedValue={setRulQ2}
@@ -1507,6 +1525,7 @@ const ReportSubmission = ({ navigation, route }: any): any => {
                 titleStyle={{ fontSize: 18 }}
                 subTitleText={{ fontSize: 16, color: Theme.Black }}
                 valueText={{ fontSize: 16, color: Theme.IronsideGrey }}
+                optionText={{textTransform: 'none'}}
               />
               <DropDownModalView
                 selectedValue={setRulQ3}
@@ -1520,6 +1539,7 @@ const ReportSubmission = ({ navigation, route }: any): any => {
                 titleStyle={{ fontSize: 18 }}
                 subTitleText={{ fontSize: 16, color: Theme.Black }}
                 valueText={{ fontSize: 16, color: Theme.IronsideGrey }}
+                optionText={{textTransform: 'none'}}
               />
               <>
                 <Text
@@ -1575,6 +1595,7 @@ const ReportSubmission = ({ navigation, route }: any): any => {
                 titleStyle={{ fontSize: 18 }}
                 subTitleText={{ fontSize: 16, color: Theme.Black }}
                 valueText={{ fontSize: 16, color: Theme.IronsideGrey }}
+                optionText={{textTransform: 'none'}}
               />
             </>
           )}
@@ -1612,6 +1633,9 @@ const ReportSubmission = ({ navigation, route }: any): any => {
                     // borderWidth: 1,
                     borderRadius: 10,
                     marginTop: 5,
+                    height:60,
+                    paddingHorizontal:15,
+                    paddingVertical:20
                   },
                 ]}>
                 <TextInput
@@ -1624,6 +1648,7 @@ const ReportSubmission = ({ navigation, route }: any): any => {
                     color: Theme.IronsideGrey, fontSize: 16,
                     fontFamily: 'Circular Std Medium',
                   }}
+                  maxLength={2}
                   value={questions?.addationalAssessments}
                   underlineColorAndroid="transparent"
                   placeholderTextColor="grey"

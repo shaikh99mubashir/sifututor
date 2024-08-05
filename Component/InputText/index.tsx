@@ -3,7 +3,7 @@ import React from 'react'
 import { Theme } from '../../constant/theme'
 
 
-const InputText = ({ label, placeholder, onChangeText, value, error,keyboardType, Required }: any) => {
+const InputText = ({ label, placeholder, onChangeText, value, error,keyboardType, Required,editable }: any) => {
   return (
     <View style={{ gap: 5, marginTop: 0 }}>
     <Text style={styles.label}>{label} {Required  && <Text style={{color:Theme.Red}}>*</Text>}</Text>
@@ -18,6 +18,7 @@ const InputText = ({ label, placeholder, onChangeText, value, error,keyboardType
         value={value}
         onChangeText={onChangeText}
         keyboardType={keyboardType}
+        editable={editable}
       />
     </View>
     {error && <Text style={{ color: 'red', }}> {error}</Text>}

@@ -1,4 +1,4 @@
-import { Image, ScrollView, StyleSheet, Text, TextInput, View, Alert } from 'react-native';
+import { Image, ScrollView, StyleSheet, Text, TextInput, View, Alert, KeyboardAvoidingView } from 'react-native';
 import React, { useState } from 'react';
 import { Theme } from '../../constant/theme';
 import Header from '../../Component/Header';
@@ -136,8 +136,11 @@ console.log("selectedState",selectedRelationShip);
 
   return (
     <View style={{ backgroundColor: Theme.GhostWhite, height: '100%' }}>
-      <ScrollView showsVerticalScrollIndicator={false} nestedScrollEnabled>
+
+     
         <Header title={'Emergency Contact'} backBtn navigation={navigation} />
+      <ScrollView showsVerticalScrollIndicator={false} nestedScrollEnabled>
+      <KeyboardAvoidingView behavior="height">
         <View style={{ paddingHorizontal: 25 }}>
           <View style={{ margin: 10 }}></View>
           <View>
@@ -179,6 +182,7 @@ console.log("selectedState",selectedRelationShip);
           />
           <View style={{ margin: 10 }}></View>
         </View>
+      </KeyboardAvoidingView>
       </ScrollView>
       {/* <CustomLoader visible={loading}/> */}
     </View>

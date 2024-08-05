@@ -9,10 +9,14 @@ import {
 import React, { useEffect, useState } from 'react';
 import { Theme } from '../../constant/theme';
 import Icon from 'react-native-vector-icons/AntDesign';
-import { getFocusedRouteNameFromRoute } from '@react-navigation/native';
+import { getFocusedRouteNameFromRoute, useFocusEffect } from '@react-navigation/native';
 import Entypo from 'react-native-vector-icons/Entypo';
+import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 import AntDesign from 'react-native-vector-icons/AntDesign';
 import NeedHelp from '../../SVGs/NeedHelp';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import FilterIcon from '../../SVGs/FilterIcon';
+import FilterIconTick from '../../SVGs/FilterIconTick';
 export type Props = {
   navigation: any;
 };
@@ -38,20 +42,114 @@ const Header = (Props: any) => {
     needHelp
   } = Props;
 
-  const routeToFilter = () => {
+
+  const routeToFilter = async () => {
 
     let selectedTab = tab.filter((e: any, i: number) => {
-
       return e.selected
-
     })
 
     if (selectedTab[0]?.name == "Applied") {
+
       navigation.navigate('Filter', "applied")
+
     } else {
       navigation.navigate('Filter')
     }
   }
+
+  console.log("recordsFilter====>",recordsFilter);
+  
+  const [filterApplied, setFilterApplied] = useState<{ tab0: boolean; tab1: boolean; recordsFilter: boolean }>({
+    tab0: false,
+    tab1: false,
+    recordsFilter: false
+  });
+
+
+
+  useFocusEffect(
+    React.useCallback(() => {
+      const checkFilterStatus = async () => {
+        try {
+          // Check filter for tab[0]
+          if (tab[0]?.selected) {
+            const filterTab0 = await AsyncStorage.getItem('filter');
+            setFilterApplied(prevState => ({
+              ...prevState,
+              tab0: !!filterTab0
+            }));
+          } else {
+            setFilterApplied(prevState => ({
+              ...prevState,
+              tab0: false
+            }));
+          }
+
+          // Check filter for tab[1]
+          if (tab[1]?.selected) {
+            const filterTab1 = await AsyncStorage.getItem("statusFilter");
+            setFilterApplied(prevState => ({
+              ...prevState,
+              tab1: !!filterTab1
+            }));
+          } else {
+            setFilterApplied(prevState => ({
+              ...prevState,
+              tab1: false
+            }));
+          }
+
+        } catch (error) {
+          console.error("Error retrieving filter from AsyncStorage:", error);
+          setFilterApplied({ tab0: false, tab1: false, recordsFilter: false });
+        }
+      };
+
+      checkFilterStatus();
+    }, [tab, ]) // Dependency array includes tab and recordsFilter to rerun effect when they change
+  );
+
+  const [isClassRecordFilter, setIsClassRecordFilter] = useState(false)
+
+  const checkFilterStatus = async () => {
+    try {
+      if (recordsFilter) {
+        const recordsStatus = await AsyncStorage.getItem('ClassRecordsFilter');
+        const status = JSON.parse(recordsStatus || '{}');
+        console.log("status", status);
+
+        if (status.option) {
+          setIsClassRecordFilter(true);
+        } else {
+          setIsClassRecordFilter(false);
+        }
+      } else {
+        console.log("recordsFilter else ");
+        setIsClassRecordFilter(false);
+      }
+    } catch (error) {
+      console.error("Error retrieving filter from AsyncStorage:", error);
+    }
+  };
+
+  useFocusEffect(
+    React.useCallback(() => {
+      checkFilterStatus();
+    }, [recordsFilter])
+  );
+
+  useEffect(() => {
+    const unsubscribe = navigation?.addListener('focus', () => {
+      checkFilterStatus();
+    });
+
+    return unsubscribe;
+  }, [navigation]);
+
+  
+
+
 
   const routeToRecordFilter = () => {
     navigation.navigate('Filter', "tutorrecords")
@@ -76,7 +174,7 @@ const Header = (Props: any) => {
   return (
     <>
       <View style={{
-        margin: noTop ? 0 :20,
+        margin: noTop ? 0 : 20,
       }} />
       <View
         style={{
@@ -99,7 +197,7 @@ const Header = (Props: any) => {
               width: '100%',
             }}>
             {backBtnJT && (
-              <TouchableOpacity onPress={() =>  navigation.replace('Main',{
+              <TouchableOpacity onPress={() => navigation.replace('Main', {
                 screen: 'jobTicket',
               })} style={{ padding: 10, paddingLeft: 0, }}>
                 <AntDesign name="arrowleft" size={25} color={'black'} />
@@ -134,19 +232,34 @@ const Header = (Props: any) => {
               <TouchableOpacity
                 activeOpacity={0.8}
                 onPress={() => routeToFilter()}>
-                <AntDesign name="filter" size={25} color={'black'} />
+                <Text>
+                  <Text>
+                    {(tab[1]?.selected && filterApplied.tab1) || (tab[0]?.selected && filterApplied.tab0) ? (
+                      // <FilterIconTick/>
+                      <MaterialCommunityIcons name="filter-check-outline" size={25} color={'black'} />
+                    ) : (
+                      <MaterialCommunityIcons name="filter-outline" size={25} color={'black'} />
+                      // <FilterIcon/>
+                    )}
+                  </Text>
+                </Text>
               </TouchableOpacity>
             </View>
           ) :
             recordsFilter ? (
-              <View style={{ 
+              <View style={{
                 backgroundColor: Theme.shinyGrey,
                 padding: 10,
-                borderRadius: 50,}}>
+                borderRadius: 50,
+              }}>
                 <TouchableOpacity
                   activeOpacity={0.8}
                   onPress={() => routeToRecordFilter()}>
-                  <AntDesign name="filter" size={25} color={'black'} />
+                  {isClassRecordFilter? (
+                   <MaterialCommunityIcons name="filter-check-outline" size={25} color={'black'} />
+                  ) : (
+                    <MaterialCommunityIcons name="filter-outline" size={25} color={'black'} />
+                  )}
                 </TouchableOpacity>
               </View>
             ) :
@@ -180,16 +293,16 @@ const Header = (Props: any) => {
                   <Icon name={"plus"} size={24} color={Theme.white} />
                 </TouchableOpacity>
               </View> : needHelp ?
-              <View style={{flexDirection:'row', alignItems:'center', gap:4}}>
-                <Text style={{fontSize:14,fontFamily: 'Circular Std Book',}}>Need Help</Text>
-                <NeedHelp/>
-              </View>
-              :
-              (
-                <View style={{  }}>
-                  <Text></Text>
+                <View style={{ flexDirection: 'row', alignItems: 'center', gap: 4 }}>
+                  <Text style={{ fontSize: 14, fontFamily: 'Circular Std Book', }}>Need Help</Text>
+                  <NeedHelp />
                 </View>
-              )}
+                :
+                (
+                  <View style={{}}>
+                    <Text></Text>
+                  </View>
+                )}
         </>
       </View>
     </>

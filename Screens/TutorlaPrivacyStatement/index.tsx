@@ -18,7 +18,7 @@ const TutorlaPrivacyStatement = ({ navigation }: any) => {
         backgroundColor: Theme.GhostWhite,
         height: '100%',
       }}>
-      <Header title={'Privacy Policy'} BackBtn navigation={navigation} />
+      <Header title={'Privacy Policy'} backBtn navigation={navigation} />
       <ScrollView showsVerticalScrollIndicator={false} nestedScrollEnabled>
         <View style={{ paddingHorizontal: 25, marginBottom: 0 }}>
           <View style={{ margin: 0 }}></View>

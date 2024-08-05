@@ -127,7 +127,7 @@ const TutorVerificationProcess = ({ navigation }: any) => {
     formData.append('tutor_id', tutorID);
     setLoading(true);
     axios
-      .post(`${Base_Uri}api/tutor/checkTutorData`, formData ,{ timeout: 5000 })
+      .post(`${Base_Uri}api/tutor/checkTutorData`, formData ,{ timeout: 9000 })
       .then(({ data }) => {
         const { dataStatus } = data;
         console.log("data hello world", data);
@@ -137,6 +137,12 @@ const TutorVerificationProcess = ({ navigation }: any) => {
       .catch(error => {
         console.log("error", error);
         setLoading(false);
+        Toast.show({
+          type: 'error',
+          text1: 'Network Error',
+          text2: `${error}`,
+          position: 'bottom',
+        });
         // ToastAndroid.show('Internal Server Error', ToastAndroid.SHORT);
       });
   };
@@ -223,7 +229,7 @@ const TutorVerificationProcess = ({ navigation }: any) => {
           </View>
         )}
       </ScrollView>
-      {/* <CustomLoader visible={loading} /> */}
+      <CustomLoader visible={loading} />
     </View>
   );
 };

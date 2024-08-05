@@ -258,7 +258,7 @@ const ScheduleOverview = ({ navigation }: any) => {
               }}>
               <View style={{ flexDirection: 'row', alignItems: 'center', gap: 5 }}>
                 <Text style={[styles.textType1, { fontSize: 20 }]}>
-                  {item?.studentName.length > 14 ? `${item?.studentName.slice(0, 14)}..` : item?.studentName}
+                  {item?.studentName.length > 8 ? `${item?.studentName.slice(0, 8)}..` : item?.studentName}
                 </Text>
               </View>
               <View style={{ alignItems: 'center', justifyContent: 'center' }}>
@@ -750,7 +750,7 @@ const ScheduleOverview = ({ navigation }: any) => {
                 justifyContent: 'space-between',
                 flexDirection: 'row',
                 marginTop: 20,
-                paddingHorizontal: 22,
+                paddingHorizontal: 25,
               }}>
               <Text style={[styles.textType1, { fontFamily: 'Circular Std Medium',lineHeight:30 }]}>
                 Upcoming Classes

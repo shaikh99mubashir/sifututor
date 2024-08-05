@@ -110,10 +110,10 @@ function Inbox({ navigation }: any) {
               const newsExists = status.some((event: any) => event.newsID === newsItem.id);
               
               if (newsExists) {
-                console.log(`Yes, exists for newsID: ${newsItem.id}`);
+                // console.log(`Yes, exists for newsID: ${newsItem.id}`);
                 newsItem.newsStatus = 'old'; // Update the newsStatus property
               } else {
-                console.log(`Not exist for newsID: ${newsItem.id}`);
+                // console.log(`Not exist for newsID: ${newsItem.id}`);
               }
             });
   

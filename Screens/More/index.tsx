@@ -385,7 +385,7 @@ function More({ navigation }: any) {
               <Text style={[styles.textType3]}>FAQ’s</Text>
             </TouchableOpacity>
             {/* <TouchableOpacity
-              onPress={() => navigation.navigate('JobTicketDetailOnly', juid)}
+              onPress={() => navigation.navigate('JobTicketDetailOnly', 'JT-27236')}
               activeOpacity={0.8}
               style={{
                 flexDirection: 'row',

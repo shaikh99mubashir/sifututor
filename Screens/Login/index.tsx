@@ -17,7 +17,9 @@ import axios from 'axios';
 import { Base_Uri } from '../../constant/BaseUri';
 import Toast from 'react-native-toast-message';
 import parsePhoneNumberFromString from 'libphonenumber-js';
-const Login = ({ navigation }: any) => {
+const Login = ({ navigation, route }: any) => {
+  const data = route?.params
+  
   const [phoneNumber, setPhoneNumber] = useState('');
   const [loading, setLoading] = useState(false);
   console.log("phoneNumber", phoneNumber);
@@ -117,13 +119,13 @@ const Login = ({ navigation }: any) => {
         paddingHorizontal: 25,
       }}>
       <Header navigation={navigation} color={Theme.GhostWhite} />
-      <Text style={[styles.textType2]}>Register</Text>
+      <Text style={[styles.textType2]}>{data == 'Login' ? 'Register' : 'Login'}</Text>
       <View style={{ margin: 20 }}></View>
       <Text
         style={[styles.textType1, { lineHeight: 20, color: Theme.IronsideGrey }]}>
         Please Enter your{' '}
         <Text style={[styles.textType1, { lineHeight: 20 }]}>Phone Number</Text>{' '}
-        to register and begin using our app.
+        to {data == 'Login' ? 'register' : 'login'} and begin using our app.
       </Text>
       <View style={{ margin: 15 }}></View>
       <Text style={styles.textType1}>Phone Number*</Text>

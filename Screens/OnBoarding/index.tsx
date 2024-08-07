@@ -119,7 +119,7 @@ const OnBoarding = ({navigation}: any) => {
 
   const handleDonePress = () => {
     AsyncStorage.setItem('login', 'login');
-    navigation.replace('GetStarted');
+    navigation.replace('Login','Login');
   };
   const handleLoginPress = () => {
     // AsyncStorage.setItem('OnBoarding', 'true');

@@ -32,11 +32,11 @@ const EmergencyContact = ({ navigation }: any) => {
     contactNumber: '',
   });
 
-console.log("selectedState",selectedRelationShip);
+  console.log("selectedState", selectedRelationShip);
 
 
-  console.log("emergencyContactDetails",emergencyContactDetails);
-  
+  console.log("emergencyContactDetails", emergencyContactDetails);
+
   const [errors, setErrors] = useState<Errors>({});
 
   const Relationship = [
@@ -135,57 +135,59 @@ console.log("selectedState",selectedRelationShip);
   };
 
   return (
+        <KeyboardAvoidingView behavior="height">
     <View style={{ backgroundColor: Theme.GhostWhite, height: '100%' }}>
 
-     
-        <Header title={'Emergency Contact'} backBtn navigation={navigation} />
+
+      <Header title={'Emergency Contact'} backBtn navigation={navigation} />
       <ScrollView showsVerticalScrollIndicator={false} nestedScrollEnabled>
-      <KeyboardAvoidingView behavior="height">
-        <View style={{ paddingHorizontal: 25 }}>
-          <View style={{ margin: 10 }}></View>
-          <View>
-            <InputText
-              label="Emergency Contact Name"
-              placeholder="Emergency Contact Name"
-              value={emergencyContactDetails.contactName}
-              onChangeText={(value: string) => handleInputChange('contactName', value)}
-              error={errors.contactName}
+          <View style={{ paddingHorizontal: 25 }}>
+            <View style={{ margin: 10 }}></View>
+            <View>
+              <InputText
+                label="Emergency Contact Name"
+                placeholder="Emergency Contact Name"
+                value={emergencyContactDetails.contactName}
+                onChangeText={(value: string) => handleInputChange('contactName', value)}
+                error={errors.contactName}
+              />
+              <View style={{ margin: 8 }}></View>
+              <CustomDropDown
+                setSelectedSubject={handleDropdownChange}
+                selectedSubject={selectedRelationShip}
+                ddTitle="Relationship"
+                dropdownPlace="Select"
+                subject={Relationship}
+                categoryShow="subject"
+                headingStyle={{
+                  color: Theme.black, marginVertical: 5,
+                  marginHorizontal: 0,
+                }}
+              />
+
+              {errors.relationship && <Text style={{ color: 'red' }}>{errors.relationship}</Text>}
+              <View style={{ margin: 6 }}></View>
+              <InputText
+                label="Emergency Contact Number"
+                placeholder="+60 149824799"
+                value={emergencyContactDetails.contactNumber}
+                onChangeText={(value: string) => handleInputChange('contactNumber', value)}
+                keyboardType="numeric"
+                error={errors.contactNumber}
+              />
+            </View>
+            <View style={{ margin: 25 }}></View>
+            <CustomButton
+              btnTitle="Save"
+              onPress={handleSave}
+              loading={loading}
             />
-            <View style={{ margin: 8 }}></View>
-            <CustomDropDown
-              setSelectedSubject={handleDropdownChange}
-              selectedSubject={selectedRelationShip}
-              ddTitle="Relationship"
-              dropdownPlace="Select"
-              subject={Relationship}
-              categoryShow="subject"
-              headingStyle={{ color: Theme.black,  marginVertical: 5,
-                marginHorizontal: 0,}} 
-            />
-           
-            {errors.relationship && <Text style={{ color: 'red' }}>{errors.relationship}</Text>}
-            <View style={{ margin: 6 }}></View>
-            <InputText
-              label="Emergency Contact Number"
-              placeholder="Emergency Contact Number"
-              value={emergencyContactDetails.contactNumber}
-              onChangeText={(value: string) => handleInputChange('contactNumber', value)}
-              keyboardType="numeric"
-              error={errors.contactNumber}
-            />
+            <View style={{ margin: 10 }}></View>
           </View>
-          <View style={{ margin: 25 }}></View>
-          <CustomButton
-            btnTitle="Save"
-            onPress={handleSave}
-            loading={loading}
-          />
-          <View style={{ margin: 10 }}></View>
-        </View>
-      </KeyboardAvoidingView>
       </ScrollView>
       {/* <CustomLoader visible={loading}/> */}
     </View>
+        </KeyboardAvoidingView>
   );
 };
 

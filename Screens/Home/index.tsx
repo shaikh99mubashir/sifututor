@@ -50,6 +50,7 @@ import LatestNews from '../../Component/LatestNews';
 import CustomButton from '../../Component/CustomButton';
 import MonthPicker from 'react-native-month-year-picker';
 import VerifyBanner from '../../SVGs/VerifyBanner';
+import BackToDashboard from '../../Component/BackToDashboard';
 function Home({ navigation, route }: any) {
   let key = route.key;
 
@@ -1117,21 +1118,21 @@ function Home({ navigation, route }: any) {
     const currentYear = currentDate.getFullYear();
     const currentDay = currentDate.getDate();
     const daysInMonth = new Date(currentYear, currentMonth + 1, 0).getDate();
-  
+
     const monthNames = [
-      'January', 'February', 'March', 'April', 'May', 'June', 
+      'January', 'February', 'March', 'April', 'May', 'June',
       'July', 'August', 'September', 'October', 'November', 'December'
     ];
-  
+
     const monthName = monthNames[currentMonth];
-  
+
     const dates = [];
     for (let i = 1; i <= daysInMonth; i++) {
       const date = new Date(Date.UTC(currentYear, currentMonth, i));
       const formattedDate = String(i).padStart(2, '0');
       const isCurrentDate = currentDay === i;
       const isoDate = date.toISOString().split('T')[0];
-  
+
       dates.push({
         id: i,
         dates: date.getUTCDate(),
@@ -1143,16 +1144,16 @@ function Home({ navigation, route }: any) {
         month: monthName, // Include the month name here
       });
     }
-  
+
     return dates;
   };
-  
-const [dashboardData, setDashboardData] = useState<any>([])
+
+  const [dashboardData, setDashboardData] = useState<any>([])
   let selectedMonth = getCurrentMonthDates(monthYear)
-  
+
   const getDashboardData = () => {
-    console.log("tutorId",tutorId);
-    
+    console.log("tutorId", tutorId);
+
     axios
       .get(`${Base_Uri}api/get_tutor_dashboard_data/${tutorId}/${selectedMonth[0]?.month}`)
       .then(({ data }) => {
@@ -1160,8 +1161,8 @@ const [dashboardData, setDashboardData] = useState<any>([])
         setDashboardData(data)
         // setCumulativeCommission(data.commulativeCommission);
       })
-      .catch((error:any) => {
-        console.log("error",error);
+      .catch((error: any) => {
+        console.log("error", error);
         if (error.response) {
           // The request was made and the server responded with a status code
           console.log('Server responded with data:', error.response.data);
@@ -1174,14 +1175,14 @@ const [dashboardData, setDashboardData] = useState<any>([])
           // Something happened in setting up the request that triggered an Error
           console.log('Error setting up the request:', error.message);
         }
-        
+
         // ToastAndroid.show('Internal Server Error', ToastAndroid.SHORT);
       });
   }
 
-  useEffect(()=>{
+  useEffect(() => {
     getDashboardData();
-  },[monthYear,focus])
+  }, [monthYear, focus])
 
 
 
@@ -1197,6 +1198,83 @@ const [dashboardData, setDashboardData] = useState<any>([])
     },
     [monthYear, showPickerMonthAndYear],
   );
+
+  const [modalVisible, setModalVisible] = useState(false);
+  const checkTutorStatus = async () => {
+    // isVerified = true
+    // if(isVerified){
+    //   setModalVisible(true)
+    // }
+    console.log('tutorId', tutorId);
+
+    axios
+      .get(`${Base_Uri}getTutorDetailByID/${tutorId}`)
+      .then(({ data }) => {
+        let { tutorDetailById } = data;
+        let tutorDetails = tutorDetailById[0];
+        if (data.tutorDetailById == null) {
+          AsyncStorage.removeItem('loginAuth');
+          navigation.replace('Login');
+          // setTutorDetail('')
+          // ToastAndroid.show('Terminated', ToastAndroid.SHORT);
+          Toast.show({
+            type: 'info',
+            // text1: 'Request timeout:',
+            text2: `Terminated`,
+            position: 'bottom'
+          });
+          return;
+        }
+        let details = {
+          full_name: tutorDetails?.full_name,
+          email: tutorDetails?.email,
+          displayName: tutorDetails?.displayName,
+          gender: tutorDetails?.gender,
+          phoneNumber: tutorDetails?.phoneNumber,
+          age: tutorDetails?.age,
+          nric: tutorDetails?.nric,
+          tutorImage: tutorDetails?.tutorImage,
+          tutorId: tutorDetails?.id,
+          status: tutorDetails?.status,
+        };
+        updateTutorDetails(details);
+        if (tutorDetailById[0].status.toLowerCase() == 'verified' && tutorDetailById[0]?.open_dashboard != 'yes') {
+          axios
+            .get(`${Base_Uri}api/update_dashboard_status/${tutorId}`)
+            .then(({ data }) => {
+              setModalVisible(true)
+            })
+            .catch((error: any) => {
+              console.log('errror========>', error);
+            });
+          return;
+        }
+      })
+      .catch(error => {
+        // ToastAndroid.show(
+        //   'Internal Server Error getTutorDetailByID ',
+        //   ToastAndroid.SHORT,
+        // );
+      });
+  };
+
+  const HandelGoToDashboard = () => {
+    setModalVisible(false);
+    navigation.navigate('Home')
+  };
+
+  useEffect(() => {
+    const unsubscribe = subscribeToChannel({
+      channelName: 'tutor-approved',
+      eventName: 'App\\Events\\TutorApproved',
+      callback: (data: any) => {
+        console.log('Event received:', data);
+        checkTutorStatus();
+      }
+    });
+
+    return unsubscribe;
+  }, [focus]);
   return (
     <View style={{ flex: 1, backgroundColor: Theme.GhostWhite }}>
       <CustomLoader visible={!cancelledHours} />
@@ -1224,7 +1302,7 @@ const [dashboardData, setDashboardData] = useState<any>([])
           style={{ flexDirection: 'row', alignItems: 'center', gap: 14 }}>
           <TouchableOpacity
             activeOpacity={0.8}
-            style={{top:7}}
+            style={{ top: 7 }}
             onPress={() => navigation.navigate('Notifications')}>
             <MaterialCommunityIcons
               name="bell-outline"
@@ -1275,19 +1353,19 @@ const [dashboardData, setDashboardData] = useState<any>([])
 
 
         {/* unverified banner */}
-        
+
         {tutorDetails?.status?.toLowerCase() == 'verified' ? null :
-        <TouchableOpacity
-          activeOpacity={0.8}
-          onPress={() => navigation.navigate('TutorVerificationProcess')}
-          style={{alignItems: 'center',paddingHorizontal: 25}}>
+          <TouchableOpacity
+            activeOpacity={0.8}
+            onPress={() => navigation.navigate('TutorVerificationProcess')}
+            style={{ alignItems: 'center', paddingHorizontal: 25,}}>
             <View style={{ margin: 6 }}></View>
-          <Image
-            source={require('../../Assets/Images/Banner.png')}
-            resizeMode="contain"
-            style={{width: Dimensions.get('screen').width / 1.14}}
-          />
-        </TouchableOpacity>
+            <Image
+              source={require('../../Assets/Images/Banner.png')}
+              resizeMode="contain"
+              style={{ width: Dimensions.get('screen').width / 1.14 }}
+            />
+          </TouchableOpacity>
         }
 
         {classInProcess && Object.keys(classInProcess).length > 0 ? (
@@ -1357,216 +1435,197 @@ const [dashboardData, setDashboardData] = useState<any>([])
           null
         )}
         {tutorDetails?.status?.toLowerCase() == 'verified' ?
-        <View style={{ marginVertical: 25, backgroundColor: Theme.GhostWhite,paddingHorizontal: 25 }}>
-           <View
-            style={{
-              flexDirection: 'row',
-              justifyContent: 'space-between',
-              alignItems: 'center',
-            }}>
-            <Text style={[styles.textType1, {fontFamily: 'Circular Std Bold'}]}>
-              Monthly Summary
-            </Text>
-            <View style={{flexDirection: 'row', alignItems: 'center', gap: 10}}>
-              <TouchableOpacity
-                // onPress={() => showPicker(true)}
-                onPress={() => showPickerMonthAndYear(true)}
-                activeOpacity={0.8}
-                style={{
-                  backgroundColor: Theme.white,
-                  flexDirection: 'row',
-                  gap: 15,
-                  paddingVertical: 5,
-                  alignItems: 'center',
-                  borderRadius: 6,
-                  paddingHorizontal: 5,
-                  paddingLeft: 8,
-                  borderWidth: 1,
-                  borderColor: Theme.lineColor,
-                }}>
-                <Text style={[styles.textType3]}>
-                {monthYear.toLocaleDateString([], {
-                    month: 'short',
-                    // year: 'numeric',
-                  })}
-                </Text>
-                <Entypo name="chevron-down" size={22} color={Theme.Dune} />
-              </TouchableOpacity>
-            </View>
-          </View>
-          <View style={{ margin: 6 }}></View>
-          <View
-            style={{
-              flexDirection: 'row',
-              justifyContent: 'space-between',
-            }}>
-            <View style={{ width: '49%' }}>
-              <View
-                style={{
-                  backgroundColor: Theme.darkGray,
-                  paddingRight: 12,
-                  paddingLeft:20,
-                  borderTopStartRadius: 15,
-                  borderTopEndRadius: 15,
-                  borderBottomStartRadius: 15,
-                  borderBottomEndRadius: 45,
-                }}>
-                <View
+          <View style={{ marginVertical: 25, backgroundColor: Theme.GhostWhite, paddingHorizontal: 25 }}>
+            <View
+              style={{
+                flexDirection: 'row',
+                justifyContent: 'space-between',
+                alignItems: 'center',
+              }}>
+              <Text style={[styles.textType1, { fontFamily: 'Circular Std Bold' }]}>
+                Monthly Summary
+              </Text>
+              <View style={{ flexDirection: 'row', alignItems: 'center', gap: 10 }}>
+                <TouchableOpacity
+                  // onPress={() => showPicker(true)}
+                  onPress={() => showPickerMonthAndYear(true)}
+                  activeOpacity={0.8}
                   style={{
+                    backgroundColor: Theme.white,
                     flexDirection: 'row',
-                    justifyContent: 'flex-end',
-                    // marginVertical: 15,
-                    marginTop:15
-                  }}>
-                  <DiagArrow color={Theme.white} />
-                </View>
-                  <Money />
-                  <View style={{margin:8}}></View>
-                <View style={{ paddingBottom: 20 }}>
-                  <Text style={[styles.textType3, { color: 'white' }]}>
-                    Earnings
-                  </Text>
-                  <View style={{margin:2}}></View>
-                  <Text
-                    style={[
-                      styles.textType1,
-                      { color: 'white', fontSize: 30, lineHeight: 40 },
-                    ]}>
-                    {/* RM {cummulativeCommission && cummulativeCommission} */}
-                    RM {dashboardData?.cumulativeCommission}
-                    {/* RM 2150 */}
-                  </Text>
-                </View>
-              </View>
-              <View
-                style={{
-                  backgroundColor: Theme.white,
-                  paddingHorizontal: 15,
-                  marginTop: 10,
-                  borderTopStartRadius: 15,
-                  borderTopEndRadius: 15,
-                  borderBottomStartRadius: 30,
-                  borderBottomEndRadius: 15,
-                }}>
-                <View
-                  style={{
-                    flexDirection: 'row',
-                    justifyContent: 'space-between',
-                    marginBottom: 5,
-                    marginTop: 15,
-                  }}>
-                  <Text style={styles.textType3}>Active Student</Text>
-                  <DiagArrow />
-                </View>
-                <View style={{ margin: 1 }}></View>
-                <View
-                  style={{
-                    paddingBottom: 20,
-                    flexDirection: 'row',
-                    justifyContent: 'space-between',
+                    gap: 15,
+                    paddingVertical: 5,
                     alignItems: 'center',
+                    borderRadius: 6,
+                    paddingHorizontal: 5,
+                    paddingLeft: 8,
+                    borderWidth: 1,
+                    borderColor: Theme.lineColor,
                   }}>
-                  <Text
-                    style={[
-                      styles.textType1,
-                      { fontSize: 30, lineHeight: 38 },
-                    ]}>
-                    {students?.length ? students?.length : '0'}
+                  <Text style={[styles.textType3]}>
+                    {monthYear.toLocaleDateString([], {
+                      month: 'short',
+                      // year: 'numeric',
+                    })}
                   </Text>
-                  <Student />
-                </View>
+                  <Entypo name="chevron-down" size={22} color={Theme.Dune} />
+                </TouchableOpacity>
               </View>
             </View>
-            <View style={{ width: '49%' }}>
-              <View
-                style={{
-                  backgroundColor: Theme.white,
-                  paddingHorizontal: 15,
-                  borderTopStartRadius: 15,
-                  borderTopEndRadius: 15,
-                  borderBottomStartRadius: 45,
-                  borderBottomEndRadius: 15,
-                }}>
+            <View style={{ margin: 6 }}></View>
+            <View
+              style={{
+                flexDirection: 'row',
+                justifyContent: 'space-between',
+              }}>
+              <View style={{ width: '49%' }}>
                 <View
                   style={{
-                    flexDirection: 'row',
-                    justifyContent: 'space-between',
-                    marginVertical: 20,
+                    backgroundColor: Theme.darkGray,
+                    paddingRight: 12,
+                    paddingLeft: 20,
+                    borderTopStartRadius: 15,
+                    borderTopEndRadius: 15,
+                    borderBottomStartRadius: 15,
+                    borderBottomEndRadius: 45,
                   }}>
-                  <Clock />
-                  <DiagArrow />
+                  <View
+                    style={{
+                      flexDirection: 'row',
+                      justifyContent: 'flex-end',
+                      // marginVertical: 15,
+                      marginTop: 15
+                    }}>
+                    <DiagArrow color={Theme.white} />
+                  </View>
+                  <Money />
+                  <View style={{ margin: 8 }}></View>
+                  <View style={{ paddingBottom: 20 }}>
+                    <Text style={[styles.textType3, { color: 'white' }]}>
+                      Earnings
+                    </Text>
+                    <View style={{ margin: 2 }}></View>
+                    <Text
+                      style={[
+                        styles.textType1,
+                        { color: 'white', fontSize: 30, lineHeight: 40 },
+                      ]}>
+                      {/* RM {cummulativeCommission && cummulativeCommission} */}
+                      RM {dashboardData?.cumulativeCommission}
+                      {/* RM 2150 */}
+                    </Text>
+                  </View>
                 </View>
-                <View style={{ paddingBottom: 20 }}>
-                  <Text style={[styles.textType3]}>Attended Hours</Text>
-                  <Text
-                    style={[
-                      styles.textType1,
-                      { fontSize: 30, lineHeight: 40 },
-                    ]}>
-                    {/* {attendedHours && attendedHours} */}
-                    {dashboardData?.attendedHours}
-                  </Text>
+                <View
+                  style={{
+                    backgroundColor: Theme.white,
+                    paddingHorizontal: 15,
+                    marginTop: 10,
+                    borderTopStartRadius: 15,
+                    borderTopEndRadius: 15,
+                    borderBottomStartRadius: 30,
+                    borderBottomEndRadius: 15,
+                  }}>
+                  <View
+                    style={{
+                      flexDirection: 'row',
+                      justifyContent: 'space-between',
+                      marginBottom: 5,
+                      marginTop: 15,
+                    }}>
+                    <Text style={styles.textType3}>Active Student</Text>
+                    <DiagArrow />
+                  </View>
+                  <View style={{ margin: 1 }}></View>
+                  <View
+                    style={{
+                      paddingBottom: 20,
+                      flexDirection: 'row',
+                      justifyContent: 'space-between',
+                      alignItems: 'center',
+                    }}>
+                    <Text
+                      style={[
+                        styles.textType1,
+                        { fontSize: 30, lineHeight: 38 },
+                      ]}>
+                      {students?.length ? students?.length : '0'}
+                    </Text>
+                    <Student />
+                  </View>
                 </View>
               </View>
-              <View
-                style={{
-                  backgroundColor: Theme.white,
-                  paddingHorizontal: 15,
-                  marginTop: 10,
-                  borderTopStartRadius: 15,
-                  borderTopEndRadius: 15,
-                  borderBottomStartRadius: 30,
-                  borderBottomEndRadius: 15,
-                }}>
+              <View style={{ width: '49%' }}>
                 <View
                   style={{
-                    flexDirection: 'row',
-                    justifyContent: 'space-between',
-                    marginVertical: 16,
+                    backgroundColor: Theme.white,
+                    paddingHorizontal: 15,
+                    borderTopStartRadius: 15,
+                    borderTopEndRadius: 15,
+                    borderBottomStartRadius: 45,
+                    borderBottomEndRadius: 15,
                   }}>
-                  <Schedule />
-                  <DiagArrow />
+                  <View
+                    style={{
+                      flexDirection: 'row',
+                      justifyContent: 'space-between',
+                      marginVertical: 20,
+                    }}>
+                    <Clock />
+                    <DiagArrow />
+                  </View>
+                  <View style={{ paddingBottom: 20 }}>
+                    <Text style={[styles.textType3]}>Attended Hours</Text>
+                    <Text
+                      style={[
+                        styles.textType1,
+                        { fontSize: 30, lineHeight: 40 },
+                      ]}>
+                      {/* {attendedHours && attendedHours} */}
+                      {dashboardData?.attendedHours}
+                    </Text>
+                  </View>
                 </View>
-                <View style={{ paddingBottom: 20 }}>
-                  <Text style={[styles.textType3]}>Scheduled Hours</Text>
-                  <Text
-                    style={[
-                      styles.textType1,
-                      { fontSize: 30, lineHeight: 40 },
-                    ]}>
-                    {/* {schedulesHours && schedulesHours} */}
-                    {dashboardData?.scheduledHours}
-                  </Text>
+                <View
+                  style={{
+                    backgroundColor: Theme.white,
+                    paddingHorizontal: 15,
+                    marginTop: 10,
+                    borderTopStartRadius: 15,
+                    borderTopEndRadius: 15,
+                    borderBottomStartRadius: 30,
+                    borderBottomEndRadius: 15,
+                  }}>
+                  <View
+                    style={{
+                      flexDirection: 'row',
+                      justifyContent: 'space-between',
+                      marginVertical: 16,
+                    }}>
+                    <Schedule />
+                    <DiagArrow />
+                  </View>
+                  <View style={{ paddingBottom: 20 }}>
+                    <Text style={[styles.textType3]}>Scheduled Hours</Text>
+                    <Text
+                      style={[
+                        styles.textType1,
+                        { fontSize: 30, lineHeight: 40 },
+                      ]}>
+                      {/* {schedulesHours && schedulesHours} */}
+                      {dashboardData?.scheduledHours}
+                    </Text>
+                  </View>
                 </View>
               </View>
             </View>
           </View>
-        </View>
-        : null
+          : null
         }
         <View style={{ margin: tutorDetails?.status?.toLowerCase() == 'verified' ? 0 : 16 }}></View>
-        <Modal
-          transparent={true}
-          animationType="slide"
-          visible={showMonthPicker}
-          onRequestClose={() => showPickerMonthAndYear(false)}
-        >
-          <View style={styles.modalContainer}>
-            <View style={{
-              position: 'relative',
-              left: -170,
-            }} >
-              <MonthPicker
-                onChange={onValueChangeMonthPicker}
-                value={monthYear}
-                locale="en"
-              />
-              <Button title="Done" onPress={() => showPickerMonthAndYear(false)} />
-            </View>
-          </View>
-        </Modal>
-        <View>
-          {jobTicketData &&
+
+        {jobTicketData && jobTicketData?.length > 0 ?
+          <View>
             <View
               style={{
                 justifyContent: 'space-between',
@@ -1589,83 +1648,116 @@ const [dashboardData, setDashboardData] = useState<any>([])
                 </Text>
               </TouchableOpacity>
             </View>
-          }
-          <View style={{ margin: 3 }}></View>
-          <View style={{paddingHorizontal:22}}>
-          <JobTicketCarousel jobTicketData={jobTicketData} navigation={navigation} />
-          </View>
-        </View>
-        <View style={{ margin: 8 }}></View>
-        {tutorDetails?.status?.toLowerCase() == 'verified' ? null :
-        <View style={{marginTop: 30, marginBottom: 0,paddingHorizontal: 25}}>
-          <Text
-            style={[
-              styles.textType3,
-              {textAlign: 'center', lineHeight: 20, marginBottom: 15},
-            ]}>
-            Verify your profile to qualify for tutoring jobs. Tap Verify Now to proceed.
-          </Text>
-          <CustomButton btnTitle="Verify Now" onPress={()=> navigation.navigate('TutorVerificationProcess')} />
-        </View>
-        } 
-        {tutorDetails?.status?.toLowerCase() == 'verified' &&
-        <View style={{paddingHorizontal: 25}}>
-        <View style={{ margin: 8 }}></View>
-        <View>
-          <View
-            style={{
-              justifyContent: 'space-between',
-              flexDirection: 'row',
-              marginTop: 20,
-              marginBottom: 10,
-            }}>
-            <Text style={[styles.textType1, { fontFamily: 'Circular Std Bold' }]}>
-              Upcoming Classes
-            </Text>
-          </View>
-          <View style={{ margin: 3 }}></View>
-          {upCommingClasses && upCommingClasses.length > 0 ? (
-            <View>
-              <UpCommingCarousel upCommingClassesdata={upCommingClasses} />
+
+            <View style={{ margin: 3 }}></View>
+            <View style={{ paddingHorizontal: 22 }}>
+              <JobTicketCarousel jobTicketData={jobTicketData} navigation={navigation} />
             </View>
-          ) : (
-            <View style={{ marginTop: 35 }}>
-              <Text style={[styles.textType3, { textAlign: 'center' }]}>
-                No Upcoming Classes
-              </Text>
-            </View>
-          )}
-        </View>
-        </View>
+          </View>
+          : null
         }
         <View style={{ margin: 8 }}></View>
-        <View
-          style={{
-            justifyContent: 'space-between',
-            flexDirection: 'row',
-            // marginHorizontal: 10,
-            marginTop: 15,
-            paddingHorizontal:25
-          }}>
-          <Text style={[styles.textType1]}>Latest News</Text>
-          <TouchableOpacity 
-          onPress={() => navigation.navigate('Main',{
-              screen: 'inbox',
-            })}
-          >
+        {tutorDetails?.status?.toLowerCase() == 'verified' ? null :
+          <View style={{ marginTop: 30, marginBottom: 0, paddingHorizontal: 25 }}>
             <Text
               style={[
                 styles.textType3,
-                { color: Theme.BrightBlue, fontFamily: 'Circular Std Book' },
+                { textAlign: 'center', lineHeight: 20, marginBottom: 15 },
               ]}>
-              View All
+              Verify your profile to qualify for tutoring jobs. Tap Verify Now to proceed.
             </Text>
-          </TouchableOpacity>
-        </View>
-        <View style={{ margin: 2 }}></View>
-        <View style={{paddingHorizontal:25}}>
-        <LatestNews latestNewsData={latestNewsData} navigation={navigation} />
-        </View>
+            <CustomButton btnTitle="Verify Now" onPress={() => navigation.navigate('TutorVerificationProcess')} />
+          </View>
+        }
+        {tutorDetails?.status?.toLowerCase() == 'verified' &&
+          <View style={{ paddingHorizontal: 25 }}>
+            <View style={{ margin: 8 }}></View>
+            <View>
+              <View
+                style={{
+                  justifyContent: 'space-between',
+                  flexDirection: 'row',
+                  marginTop: 20,
+                  marginBottom: 10,
+                }}>
+                <Text style={[styles.textType1, { fontFamily: 'Circular Std Bold' }]}>
+                  Upcoming Classes
+                </Text>
+              </View>
+              <View style={{ margin: 3 }}></View>
+              {upCommingClasses && upCommingClasses.length > 0 ? (
+                <View>
+                  <UpCommingCarousel upCommingClassesdata={upCommingClasses} />
+                </View>
+              ) : (
+                <View style={{ marginTop: 35 }}>
+                  <Text style={[styles.textType3, { textAlign: 'center' }]}>
+                    No Upcoming Classes
+                  </Text>
+                </View>
+              )}
+            </View>
+          </View>
+        }
+        {latestNewsData && latestNewsData?.length > 0 ? (
+          <>
+            <View style={{ margin: 8 }}></View>
+            <View
+              style={{
+                justifyContent: 'space-between',
+                flexDirection: 'row',
+                // marginHorizontal: 10,
+                marginTop: 15,
+                paddingHorizontal: 25
+              }}>
+              <Text style={[styles.textType1]}>Latest News</Text>
+              <TouchableOpacity
+                onPress={() => navigation.navigate('Main', {
+                  screen: 'inbox',
+                })}
+              >
+                <Text
+                  style={[
+                    styles.textType3,
+                    { color: Theme.BrightBlue, fontFamily: 'Circular Std Book' },
+                  ]}>
+                  View All
+                </Text>
+              </TouchableOpacity>
+            </View>
+            <View style={{ margin: 2 }}></View>
+
+            <View style={{ paddingHorizontal: 25 }}>
+              <LatestNews latestNewsData={latestNewsData} navigation={navigation} />
+            </View>
+          </>
+        ) : null}
+
+        <BackToDashboard
+          modalVisible={modalVisible}
+          handleGoToDashboard={() => HandelGoToDashboard()}
+        />
+
+        <Modal
+          transparent={true}
+          animationType="slide"
+          visible={showMonthPicker}
+          onRequestClose={() => showPickerMonthAndYear(false)}
+        >
+          <View style={styles.modalContainer}>
+            <View style={{
+              position: 'relative',
+              left: -170,
+            }} >
+              <MonthPicker
+                onChange={onValueChangeMonthPicker}
+                value={monthYear}
+                locale="en"
+              />
+              <Button title="Done" onPress={() => showPickerMonthAndYear(false)} />
+            </View>
+          </View>
+        </Modal>
 
       </ScrollView>
       {openPPModal &&
@@ -1732,7 +1824,7 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: Theme.GhostWhite,
-    
+
 
   },
   text: {

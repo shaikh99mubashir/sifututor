@@ -2,6 +2,7 @@ import { Modal, View, Text, TouchableOpacity,StyleSheet, Image } from 'react-nat
 import React from 'react'
 import { Theme } from '../../constant/theme';
 import CustomButton from '../CustomButton';
+import VerifyIcon from '../../SVGs/VerifyIcon';
 
 const BackToDashboard = ({modalVisible, handleGoToDashboard}:any) => {
   return (
@@ -15,15 +16,22 @@ const BackToDashboard = ({modalVisible, handleGoToDashboard}:any) => {
           <View
             style={[
               styles.modalContainer,
-              { padding: 30, marginHorizontal: 40 },
+              { paddingVertical: 50, marginHorizontal: 40, },
             ]}>
+            <VerifyIcon width={60} height={60}/>
+            <View style={{margin:15}}/>
             <Text
-              style={styles.textType3}>
+              style={[styles.textType3,{fontSize:27,fontFamily: 'Circular Std Bold',}]}>
+             Congratulations
+            </Text>
+            <View style={{margin:5}}/>
+            <Text
+              style={[styles.textType3,{fontSize:16}]}>
               You have been Verified!
             </Text>
             {/* <Image source={require('../../Assets/Images/verified.png')} /> */}
             <View style={{width:'70%', marginTop:20}}>
-            <CustomButton btnTitle='Go To Dashboard' height={45}fontSize={18} onPress={handleGoToDashboard}/>
+            <CustomButton btnTitle='Close' height={45}fontSize={18} onPress={handleGoToDashboard}/>
             </View>
             {/* <View
               style={{
@@ -71,7 +79,7 @@ const styles = StyleSheet.create({
         // justifyContent: 'center',
         backgroundColor: '#fff',
         borderColor: Theme.gray,
-        borderRadius: 10,
+        borderRadius: 18,
         paddingHorizontal: 10,
         borderWidth: 1,
       },

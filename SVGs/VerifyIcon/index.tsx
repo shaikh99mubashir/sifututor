@@ -1,8 +1,8 @@
 import React from 'react';
 import Svg, { G, Path, Defs, ClipPath, Rect } from 'react-native-svg';
 
-const VerifyIcon = () => (
-  <Svg width="18" height="18" viewBox="0 0 18 18" fill="none">
+const VerifyIcon = ({width,height}:any) => (
+  <Svg width={width ? width : '18'} height={height? height:'18'} viewBox="0 0 18 18" fill="none">
     <G clipPath="url(#clip0_97_1150)">
       <Path
         fillRule="evenodd"

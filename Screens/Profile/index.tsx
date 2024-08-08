@@ -12,6 +12,7 @@ import {
   ActivityIndicator,
   Modal,
   Dimensions,
+  KeyboardAvoidingView,
 } from 'react-native';
 import React, { useEffect, useState, useContext } from 'react';
 import Header from '../../Component/Header';
@@ -497,6 +498,7 @@ const Profile = ({ navigation }: any) => {
 
 
   return (
+    <KeyboardAvoidingView behavior="height">
     <View style={{ backgroundColor: Theme.GhostWhite, height: '100%' }}>
       <Header title="Profile" navigation={navigation} backBtn />
       <ScrollView showsVerticalScrollIndicator={false} nestedScrollEnabled>
@@ -583,7 +585,7 @@ const Profile = ({ navigation }: any) => {
                 height: 60
               }}>
               <TextInput
-                editable
+                editable={false}
                 onChangeText={text => setEmail(text)}
                 placeholder={tutorDetail?.email}
                 style={{ color: 'black', fontFamily: 'Circular Std Book',
@@ -747,7 +749,7 @@ const Profile = ({ navigation }: any) => {
                 height: 60
               }}>
               <TextInput
-                editable
+                editable={false}
                 style={{
                   color: 'black', fontFamily: 'Circular Std Book',
                   fontSize: 16,
@@ -881,6 +883,7 @@ const Profile = ({ navigation }: any) => {
 
       {/* <CustomLoader visible={loading} /> */}
     </View>
+    </KeyboardAvoidingView>
   );
 };
 

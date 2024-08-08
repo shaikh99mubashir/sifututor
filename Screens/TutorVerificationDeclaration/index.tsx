@@ -47,7 +47,7 @@ const TutorVerificationDeclaration = ({navigation}: any) => {
       console.log("declaration",formData);
       
 
-      const { data } = await axios.post(`${Base_Uri}api/tutor/declaration`, formData);
+      const { data } = await axios.post(`${Base_Uri}api/tutor/declaration`, formData,{timeout:9000});
       Toast.show({
         type: 'success',
         text1: 'Success',
@@ -59,9 +59,9 @@ const TutorVerificationDeclaration = ({navigation}: any) => {
     } catch (error) {
       Toast.show({
         type: 'error',
-        text1: 'Error',
-        text2: 'Network Error',
-        position: 'bottom'
+        text1: 'Network Error',
+        text2: `${error}`,
+        position: 'bottom',
       });
       setLoading(false);
     }

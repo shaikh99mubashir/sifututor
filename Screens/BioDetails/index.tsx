@@ -33,8 +33,8 @@ const BioDetails = ({ navigation }: any) => {
   const [loading, setLoading] = useState(false);
   const context = useContext(TutorDetailsContext);
   let tutorDetails = context?.tutorDetails;
-  console.log("context",context);
-  
+  console.log("context", context);
+
   console.log('tutorDetails bio detail---->', tutorDetails.full_name);
   const [tutorBioDetails, setTutorBioDetails] = useState<TutorBioDetails>({
     fullName: tutorDetails?.full_name,
@@ -47,8 +47,25 @@ const BioDetails = ({ navigation }: any) => {
 
   const [errors, setErrors] = useState<Errors>({});
 
+  const formatIcNumber = (value: string) => {
+    const digitsOnly = value.replace(/\D/g, '');
+
+    if (digitsOnly.length <= 6) {
+      return digitsOnly;
+    } else if (digitsOnly.length <= 8) {
+      return `${digitsOnly.slice(0, 6)}-${digitsOnly.slice(6)}`;
+    } else {
+      return `${digitsOnly.slice(0, 6)}-${digitsOnly.slice(6, 8)}-${digitsOnly.slice(8, 12)}`;
+    }
+  };
+
   const handleInputChange = (name: keyof TutorBioDetails, value: string) => {
-    setTutorBioDetails(prevState => ({ ...prevState, [name]: value }));
+    let formattedValue = value;
+
+    if (name === 'icNumber') {
+      formattedValue = formatIcNumber(value);
+    }
+    setTutorBioDetails(prevState => ({ ...prevState, [name]: formattedValue }));
     setErrors(prevState => ({ ...prevState, [name]: '' }));
   };
 
@@ -82,6 +99,13 @@ const BioDetails = ({ navigation }: any) => {
     if (!tutorBioDetails.icNumber.trim()) {
       newErrors.icNumber = 'IC Number is required';
       valid = false;
+    } else if (
+      tutorBioDetails.icNumber.length !== 14 ||
+      !/^\d{6}-\d{2}-\d{4}$/.test(tutorBioDetails.icNumber)
+    ) {
+      newErrors.icNumber =
+        'Enter a correct IC Number in the format xxxxxx-xx-xxxx';
+        valid = false;
     }
 
     if (!tutorBioDetails.residentialAddress.trim()) {
@@ -148,9 +172,9 @@ const BioDetails = ({ navigation }: any) => {
 
 
   return (
-    <View style={{ backgroundColor: Theme.GhostWhite, height: '100%' }}>
-      <Header title={'Bio Details'} backBtn navigation={navigation} />
-      <KeyboardAvoidingView behavior="height">
+    <KeyboardAvoidingView behavior="height">
+      <View style={{ backgroundColor: Theme.GhostWhite, height: '100%' }}>
+        <Header title={'Bio Details'} backBtn navigation={navigation} />
         <ScrollView showsVerticalScrollIndicator={false} nestedScrollEnabled>
           <View style={{ paddingHorizontal: 25 }}>
             <View style={{ margin: 10 }}></View>
@@ -216,9 +240,9 @@ const BioDetails = ({ navigation }: any) => {
             <View style={{ margin: 10 }}></View>
           </View>
         </ScrollView>
-      </KeyboardAvoidingView>
-      {/* <CustomLoader visible={loading}/> */}
-    </View>
+        {/* <CustomLoader visible={loading}/> */}
+      </View>
+    </KeyboardAvoidingView>
   );
 };
 

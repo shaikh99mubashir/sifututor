@@ -49,6 +49,7 @@ const LatestNews = ({ latestNewsData, navigation }: any) => {
               marginVertical: 10,
               gap: 2,
               marginBottom: 40,
+              borderRadius: 10,
             }}>
             <Image
               source={{ uri: item?.headerimage }}
@@ -57,7 +58,7 @@ const LatestNews = ({ latestNewsData, navigation }: any) => {
             />
             <View style={{ marginTop: 3 }}></View>
             <Text style={[styles.textType3, { fontFamily: 'Circular Std Book', fontSize: 13 }]}>
-              {item.subject}
+              {item?.subject.length > 22 ? `${item?.subject.slice(0, 22)}..` : item?.subject}
             </Text>
             <Text
               style={[

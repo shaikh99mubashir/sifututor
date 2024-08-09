@@ -80,7 +80,7 @@ const JobTicketCarousel = ({ jobTicketData, navigation }: any) => {
                             </Text>
                             <Text style={[styles.textType3, { fontSize: 18, textTransform: 'capitalize' }]}>
                                 {/* {item?.subject_name} */}
-                                {item?.subject_name.length > 7 ? `${item?.subject_name.slice(0, 5)}..` : item?.subject_name}
+                                {item?.subject_name.length > 6 ? `${item?.subject_name.slice(0, 5)}..` : item?.subject_name}
                                 
                             </Text>
                         </View>
@@ -91,7 +91,7 @@ const JobTicketCarousel = ({ jobTicketData, navigation }: any) => {
                                 Location
                             </Text>
                             <Text style={[styles.textType3, { fontSize: 18 }]}>
-                                {item?.city.length > 7 ? `${item?.city.slice(0, 5)}..` : item?.city}
+                                {item?.city.length > 6 ? `${item?.city.slice(0, 5)}..` : item?.city}
                                 </Text>
                         </View>
                         <View style={styles.jobTicketImg}>
@@ -101,7 +101,7 @@ const JobTicketCarousel = ({ jobTicketData, navigation }: any) => {
                                 Level
                             </Text>
                             <Text style={[styles.textType3, { fontSize: 18 }]}>
-                                {item?.categoryName.length > 7 ? `${item?.categoryName.slice(0, 7)}..` : item?.categoryName}
+                                {item?.categoryName.length > 6 ? `${item?.categoryName.slice(0, 5)}..` : item?.categoryName}
                                 </Text>
                         </View>
                     </View>

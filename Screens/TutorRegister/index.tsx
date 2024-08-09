@@ -75,11 +75,14 @@ const UpdateProfile = ({ navigation, route }: any) => {
         console.log(formData, 'formData');
         console.log("data.tutorDetailById[0]?.id", data.tutorDetailById[0]?.id);
         axios
-          .post(`${Base_Uri}api/appTutorRegister`, formData, {
-            headers: {
-              'Content-Type': 'multipart/form-data',
-            },
-          })
+          .post(`${Base_Uri}api/appTutorRegister`, formData,
+            {
+              timeout: 120000,
+              headers: {
+                'Content-Type': 'multipart/form-data',
+              },
+            }
+          )
           .then(({ data }) => {
             console.log('data signup===>', data.Msg);
             if (data?.Msg) {

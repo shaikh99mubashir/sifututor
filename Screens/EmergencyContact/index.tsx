@@ -135,12 +135,12 @@ const EmergencyContact = ({ navigation }: any) => {
   };
 
   return (
-        <KeyboardAvoidingView behavior="height">
-    <View style={{ backgroundColor: Theme.GhostWhite, height: '100%' }}>
+    <KeyboardAvoidingView behavior="height">
+      <View style={{ backgroundColor: Theme.GhostWhite, height: '100%' }}>
 
 
-      <Header title={'Emergency Contact'} backBtn navigation={navigation} />
-      <ScrollView showsVerticalScrollIndicator={false} nestedScrollEnabled>
+        <Header title={'Emergency Contact'} backBtn navigation={navigation} />
+        <ScrollView showsVerticalScrollIndicator={false} nestedScrollEnabled>
           <View style={{ paddingHorizontal: 25 }}>
             <View style={{ margin: 10 }}></View>
             <View>
@@ -184,10 +184,10 @@ const EmergencyContact = ({ navigation }: any) => {
             />
             <View style={{ margin: 10 }}></View>
           </View>
-      </ScrollView>
-      {/* <CustomLoader visible={loading}/> */}
-    </View>
-        </KeyboardAvoidingView>
+        </ScrollView>
+        {/* <CustomLoader visible={loading}/> */}
+      </View>
+    </KeyboardAvoidingView>
   );
 };
 

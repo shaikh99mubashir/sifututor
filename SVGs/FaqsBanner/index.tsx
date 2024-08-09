@@ -1,14 +1,14 @@
 import * as React from "react"
 import { Dimensions } from "react-native"
 import Svg, { G, Rect, Path, Defs, ClipPath } from "react-native-svg"
-/* SVGR has dropped some elements not supported by react-native-svg: filter */
 
 function FaqsBanner() {
   return (
     <Svg
-      width={Dimensions.get('screen').width/1.04}
-      height={202}
-      viewBox="0 0 400 202"
+      width={Dimensions.get('screen').width/1.03}
+      height={210}
+      // height={Dimensions.get('screen').height}
+      viewBox="0 0 400 200"
       fill="none"
     >
       <G filter="url(#filter0_d_294_1025)">

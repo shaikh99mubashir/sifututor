@@ -608,7 +608,7 @@ function AddClass({navigation}: any) {
     console.log('classesss', classesss);
 
     axios
-      .post(`${Base_Uri}api/addMultipleClasses`, classesss)
+      .post(`${Base_Uri}api/addMultipleClasses`, classesss,{timeout:9000})
       .then(res => {
         setLoading(false);
         if (res?.data?.message?.includes('slot')) {

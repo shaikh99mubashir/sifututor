@@ -218,7 +218,8 @@ const Profile = ({ navigation }: any) => {
           setLoading(false);
           let { response } = data;
           let { tutorImage } = response;
-          console.log('response', response);
+          console.log("response if",response);
+          
 
           setImage(tutorImage);
           tutorDetail.tutorImage = tutorImage;
@@ -226,8 +227,7 @@ const Profile = ({ navigation }: any) => {
           setUri('');
           setType('');
           setName('');
-
-          console.log('image', image);
+        
 
           if (image) {
             imageUrl = image;
@@ -236,12 +236,9 @@ const Profile = ({ navigation }: any) => {
           } else {
             imageUrl = `${Base_Uri}public/tutorImage/${tutorDetail?.tutorImage}`;
           }
-          console.log('imageUrl', imageUrl);
           getTutorDetails()
-          // ToastAndroid.show(
-          //   'Successfully Update Tutor Details',
-          //   ToastAndroid.SHORT,
-          // );
+          navigation.navigate('More')
+
           Toast.show({
             type: 'info',
             // text1: 'Request timeout:',
@@ -293,6 +290,18 @@ const Profile = ({ navigation }: any) => {
         .then(({ data }) => {
           setLoading(false);
           let { response } = data;
+          console.log("response else profile",response);
+          if (response?.ic_error == 'IC already exsists') {
+            Toast.show({
+              type: 'error',
+              text1: 'Error',
+              text2: data.ic_error,
+              position: 'bottom',
+            });
+            setLoading(false);
+          }
+          else{
+          
           setTutorDetail({
             ...tutorDetail,
             displayName: tutorDetail.displayName,
@@ -300,16 +309,15 @@ const Profile = ({ navigation }: any) => {
             nric: tutorDetail.nric,
             age: tutorDetail.age,
           });
-          // ToastAndroid.show(
-          //   'Successfully Update Tutor Details',
-          //   ToastAndroid.SHORT,
-          // );
+          navigation.navigate('More')
           Toast.show({
             type: 'info',
             // text1: 'Request timeout:',
-            text2:  `Tutor Details update unsuccessfull`,
+            text2:  `Tutor Details update successfull`,
             position:'bottom'
           });
+          setLoading(false);
+        }
         })
         .catch(error => {
           setLoading(false);
@@ -452,7 +460,7 @@ const Profile = ({ navigation }: any) => {
       .then(({ data }) => {
         let { tutorDetailById } = data;
         let tutorDetails = tutorDetailById[0];
-        console.log('tutorDetails', tutorDetails);
+        // console.log('tutorDetails', tutorDetails);
         setTutorImage(tutorDetails.tutorImage)
         setLoading(false)
       })
@@ -749,7 +757,7 @@ const Profile = ({ navigation }: any) => {
                 height: 60
               }}>
               <TextInput
-                editable={false}
+                // editable={false}
                 style={{
                   color: 'black', fontFamily: 'Circular Std Book',
                   fontSize: 16,

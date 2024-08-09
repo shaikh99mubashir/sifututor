@@ -7,6 +7,7 @@ import {
     TextInput,
     TouchableOpacity,
     ScrollView,
+    TouchableWithoutFeedback,
 } from 'react-native';
 import React, { useState } from 'react';
 import { Theme } from '../../constant/theme';
@@ -56,8 +57,13 @@ const MultiSelectDropDown = (props: any) => {
             searchFunc(text, search);
         }
     };
-
+    const closeDropdown = () => {
+        if (serviceDD) {
+            handleDropdownToggle(); // Close dropdown
+        }
+    };
     return (
+        <TouchableWithoutFeedback onPress={closeDropdown}>
         <View>
             <View style={{ borderRadius: 12, overflow: 'hidden', marginVertical: 5 }}>
                 {ddTitle && (
@@ -241,6 +247,7 @@ const MultiSelectDropDown = (props: any) => {
                 </View>
             )}
         </View>
+        </TouchableWithoutFeedback>
     );
 };
 

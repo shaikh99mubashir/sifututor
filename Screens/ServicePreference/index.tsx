@@ -7,6 +7,8 @@ import {
   View,
   Alert,
   KeyboardAvoidingView,
+  TouchableWithoutFeedback,
+  Keyboard,
 } from 'react-native';
 import React, { useContext, useState } from 'react';
 import { Theme } from '../../constant/theme';
@@ -166,8 +168,8 @@ const ServicePreference = ({ navigation }: any) => {
     } catch (error: any) {
       Toast.show({
         type: 'error',
-        text1: 'Error',
-        text2: 'Network Error',
+        text1: `${error.response.status}`,
+        text2:  `${error.message}`,
         position: 'bottom',
       });
 
@@ -187,107 +189,123 @@ const ServicePreference = ({ navigation }: any) => {
   const [openDropdown, setOpenDropdown] = useState<string | null>(null);
 
   const handleDropdownToggle = (key: string) => {
-    setOpenDropdown(prev => (prev === key ? null : key));
+    // setOpenDropdown(prev => (prev === key ? null : key));
+    if (openDropdown === key) {
+      setOpenDropdown(null); // Close dropdown if it's already open
+    } else {
+      setOpenDropdown(key); // Open the specified dropdown
+    }
+  };
+
+  const closeAllDropdowns = () => {
+    setOpenDropdown(null); // Close all dropdowns
   };
 
   return (
-    <View style={{ backgroundColor: Theme.GhostWhite, height: '100%' }}>
-      <KeyboardAvoidingView behavior="height">
-        <ScrollView showsVerticalScrollIndicator={false} nestedScrollEnabled>
-          <Header title={'Service Preference'} backBtn navigation={navigation} />
-          <View style={{ paddingHorizontal: 25 }}>
-            <View style={{ margin: 10 }}></View>
-            <View>
-              <MultiSelectDropDown
-                key="category"
-                setSelectedSubject={(value: any) => handleDropdownChange(value, 'category')}
-                search={"category"}
-                dataShow={5}
-                searchData={searchCategoryData}
-                searchFunc={(text: string) => handleSearchData(text, 'category')}
-                selectedSubject={selectedCategory}
-                ddTitle="Level"
-                headingStyle={{ color: Theme.black }}
-                dropdownPlace={filterCategory ? filterCategory : "Select Level"}
-                dropdownContainerStyle={{ paddingVertical: 15 }}
-                subject={category}
-                categoryShow={"subject"}
-                serviceDD={openDropdown === "category"}
-                handleDropdownToggle={() => handleDropdownToggle("category")}
-              />
-              {errors.selectedCategory && (
-                <Text style={{ color: 'red' }}>{errors.selectedCategory}</Text>
-              )}
-
-              <MultiSelectDropDown
-                key="mode"
-                setSelectedSubject={(value: any) => handleDropdownChange(value, 'mode')}
-                selectedSubject={mode}
-                ddTitle="Mode of Tutoring"
-                dropdownPlace={'Select Mode'}
-                subject={modeOfTutoringOptions}
-                categoryShow={'subject'}
-                headingStyle={{ color: Theme.black, textTransform: 'none' }}
-                serviceDD={openDropdown === "mode"}
-                handleDropdownToggle={() => handleDropdownToggle("mode")}
-              />
-              {errors.mode && <Text style={{ color: 'red' }}>{errors.mode}</Text>}
-
-              <MultiSelectDropDown
-                key="city"
-                ddTitle="Preferable Tutoring Location"
-                search={"city"}
-                searchData={searchCityData}
-                searchFunc={(text: string) => handleSearchData(text, 'city')}
-                setSelectedSubject={(value: any) => handleDropdownChange(value, 'city')}
-                selectedSubject={selectedCity}
-                headingStyle={{ color: Theme.black }}
-                dropdownPlace={filterCity ? filterCity : "Select City"}
-                dropdownContainerStyle={{ paddingVertical: 15 }}
-                subject={city}
-                categoryShow={"subject"}
-                serviceDD={openDropdown === "city"}
-                handleDropdownToggle={() => handleDropdownToggle("city")}
-              />
-              {errors.selectedCity && <Text style={{ color: 'red' }}>{errors.selectedCity}</Text>}
-
-              <View style={{ margin: 3 }}></View>
-              <View
-                style={[
-                  styles.textAreaContainer,
-                  {
-                    marginTop: 5,
-                    borderRadius: 10,
-                    marginHorizontal: 2,
-                  },
-                ]}>
-                <TextInput
-                  style={{
-                    height: 120,
-                    justifyContent: 'flex-start',
-                    color: Theme.black,
-                  }}
-                  placeholder="Teaching Experience"
-                  value={servicePreference.teachingExperience}
-                  placeholderTextColor={Theme.gray}
-                  numberOfLines={10}
-                  multiline={true}
-                  onChangeText={(text: string) => handleInputChange('teachingExperience', text)}
+    <TouchableWithoutFeedback onPress={() => {
+      closeAllDropdowns();
+    }}>
+      <View style={{ backgroundColor: Theme.GhostWhite, height: '100%' }}>
+        <KeyboardAvoidingView behavior="height">
+          <ScrollView showsVerticalScrollIndicator={false} nestedScrollEnabled>
+            <Header title={'Service Preference'} backBtn navigation={navigation} />
+            <View style={{ paddingHorizontal: 25 }}>
+              <View style={{ margin: 10 }}></View>
+              <View>
+                <MultiSelectDropDown
+                  key="category"
+                  setSelectedSubject={(value: any) => handleDropdownChange(value, 'category')}
+                  search={"category"}
+                  dataShow={5}
+                  searchData={searchCategoryData}
+                  searchFunc={(text: string) => handleSearchData(text, 'category')}
+                  selectedSubject={selectedCategory}
+                  ddTitle="Level"
+                  headingStyle={{ color: Theme.black }}
+                  dropdownPlace={filterCategory ? filterCategory : "Select Level"}
+                  dropdownContainerStyle={{ paddingVertical: 15 }}
+                  subject={category}
+                  categoryShow={"subject"}
+                  serviceDD={openDropdown === "category"}
+                  handleDropdownToggle={() => handleDropdownToggle("category")}
                 />
-              </View>
-              {errors.teachingExperience && (
-                <Text style={{ color: 'red' }}>{errors.teachingExperience}</Text>
-              )}
+                {errors.selectedCategory && (
+                  <Text style={{ color: 'red' }}>{errors.selectedCategory}</Text>
+                )}
 
-              <View style={{ marginTop: 20 }}>
-                <CustomButton loading={loading} onPress={handleSave} btnTitle="Save" />
+                <MultiSelectDropDown
+                  key="mode"
+                  setSelectedSubject={(value: any) => handleDropdownChange(value, 'mode')}
+                  selectedSubject={mode}
+                  ddTitle="Mode of Tutoring"
+                  dropdownPlace={'Select Mode'}
+                  subject={modeOfTutoringOptions}
+                  categoryShow={'subject'}
+                  headingStyle={{ color: Theme.black, textTransform: 'none' }}
+                  serviceDD={openDropdown === "mode"}
+                  handleDropdownToggle={() => handleDropdownToggle("mode")}
+                />
+                {errors.mode && <Text style={{ color: 'red' }}>{errors.mode}</Text>}
+
+                <MultiSelectDropDown
+                  key="city"
+                  ddTitle="Preferable Tutoring Location"
+                  search={"city"}
+                  searchData={searchCityData}
+                  searchFunc={(text: string) => handleSearchData(text, 'city')}
+                  setSelectedSubject={(value: any) => handleDropdownChange(value, 'city')}
+                  selectedSubject={selectedCity}
+                  headingStyle={{ color: Theme.black }}
+                  dropdownPlace={filterCity ? filterCity : "Select City"}
+                  dropdownContainerStyle={{ paddingVertical: 15 }}
+                  subject={city}
+                  categoryShow={"subject"}
+                  serviceDD={openDropdown === "city"}
+                  handleDropdownToggle={() => handleDropdownToggle("city")}
+                />
+                {errors.selectedCity && <Text style={{ color: 'red' }}>{errors.selectedCity}</Text>}
+
+                <View style={{ margin: 3 }}></View>
+                <View
+                  style={[
+                    styles.textAreaContainer,
+                    {
+                      marginTop: 5,
+                      borderRadius: 10,
+                      marginHorizontal: 2,
+                    },
+                  ]}>
+                  <TextInput
+                    style={{
+                      height: 120,
+                      justifyContent: 'flex-start',
+                      color: Theme.black,
+                    }}
+                    placeholder="Teaching Experience"
+                    value={servicePreference.teachingExperience}
+                    placeholderTextColor={Theme.gray}
+                    numberOfLines={10}
+                    multiline={true}
+                    onChangeText={(text: string) => handleInputChange('teachingExperience', text)}
+                    onFocus={() => {
+                      closeAllDropdowns();
+                    }}
+                  />
+                </View>
+                {errors.teachingExperience && (
+                  <Text style={{ color: 'red' }}>{errors.teachingExperience}</Text>
+                )}
+
+                <View style={{ marginTop: 20 }}>
+                  <CustomButton loading={loading} onPress={handleSave} btnTitle="Save" />
+                </View>
               </View>
             </View>
-          </View>
-        </ScrollView>
-        {/* {loading && <CustomLoader />} */}
-      </KeyboardAvoidingView>
-    </View>
+          </ScrollView>
+          {/* {loading && <CustomLoader />} */}
+        </KeyboardAvoidingView>
+      </View>
+    </TouchableWithoutFeedback>
   );
 };
 
@@ -296,6 +314,6 @@ export default ServicePreference;
 const styles = StyleSheet.create({
   textAreaContainer: {
     backgroundColor: Theme.white,
-    padding: 10,
+    padding: 20,
   },
 });

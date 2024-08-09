@@ -58,7 +58,6 @@ const Header = (Props: any) => {
     }
   }
 
-  console.log("recordsFilter====>",recordsFilter);
   
   const [filterApplied, setFilterApplied] = useState<{ tab0: boolean; tab1: boolean; recordsFilter: boolean }>({
     tab0: false,
@@ -125,7 +124,6 @@ const Header = (Props: any) => {
           setIsClassRecordFilter(false);
         }
       } else {
-        console.log("recordsFilter else ");
         setIsClassRecordFilter(false);
       }
     } catch (error) {

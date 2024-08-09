@@ -297,7 +297,8 @@ function JobTicket({ navigation, route }: any) {
       let myMode = mode.subject ?? 'noFilter';
       let myState = state.id ?? 'noFilter';
       let myCity = city.id ?? 'noFilter';
-
+      console.log("tutorDetails?.tutorId",tutorDetails?.tutorId);
+      
       axios
         .get(`${Base_Uri}ticketsAPI/${tutorDetails?.tutorId}`)
         .then(({ data }) => {
@@ -437,8 +438,14 @@ function JobTicket({ navigation, route }: any) {
       eventName: 'App\\Events\\TicketCreated',
       callback: (data: any) => {
         console.log('Event received:', data);
-        checkTutorStatus();
+        // checkTutorStatus();
         getTicketsData();
+        Toast.show({
+          type: 'info',
+          // text1: 'Request timeout:',
+          text2: `TicketCreated`,
+          position: 'bottom'
+        });
       }
     });
 

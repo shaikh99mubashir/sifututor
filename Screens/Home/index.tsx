@@ -677,6 +677,12 @@ function Home({ navigation, route }: any) {
           getTutorSubjects();
           getCancelledHours();
           getAssignedTicket();
+          Toast.show({
+            type: 'info',
+            // text1: 'Request timeout:',
+            text2: `Update Home`,
+            position: 'bottom'
+          });
         }
       },
     });
@@ -1205,7 +1211,6 @@ function Home({ navigation, route }: any) {
     // if(isVerified){
     //   setModalVisible(true)
     // }
-    console.log('tutorId', tutorId);
 
     axios
       .get(`${Base_Uri}getTutorDetailByID/${tutorId}`)
@@ -1246,15 +1251,23 @@ function Home({ navigation, route }: any) {
             })
             .catch((error: any) => {
               console.log('errror========>', error);
+              Toast.show({
+                type: 'info',
+                // text1: 'Request timeout:',
+                text2: `Network Error update_dashboard_status`,
+                position: 'bottom'
+              });
             });
           return;
         }
       })
       .catch(error => {
-        // ToastAndroid.show(
-        //   'Internal Server Error getTutorDetailByID ',
-        //   ToastAndroid.SHORT,
-        // );
+        Toast.show({
+          type: 'info',
+          // text1: 'Request timeout:',
+          text2: `Network Error in Verify Tutor`,
+          position: 'bottom'
+        });
       });
   };
 
@@ -1270,6 +1283,13 @@ function Home({ navigation, route }: any) {
       callback: (data: any) => {
         console.log('Event received:', data);
         checkTutorStatus();
+        Toast.show({
+          type: 'info',
+          // text1: 'Request timeout:',
+          text2: `Verify Tutor`,
+          position: 'bottom'
+        });
+
       }
     });
 
@@ -1358,12 +1378,15 @@ function Home({ navigation, route }: any) {
           <TouchableOpacity
             activeOpacity={0.8}
             onPress={() => navigation.navigate('TutorVerificationProcess')}
-            style={{ alignItems: 'center', paddingHorizontal: 25,}}>
-            <View style={{ margin: 6 }}></View>
+            style={{ alignItems: 'center', paddingHorizontal: 0,}}>
+            {/* <View style={{ margin: 6 }}></View> */}
             <Image
               source={require('../../Assets/Images/Banner.png')}
               resizeMode="contain"
-              style={{ width: Dimensions.get('screen').width / 1.14 }}
+              style={{ width: Dimensions.get('window').width / 1.14, 
+                height:Dimensions.get('window').width /1.9,
+
+              }}
             />
           </TouchableOpacity>
         }

@@ -33,17 +33,19 @@ const BioDetails = ({ navigation }: any) => {
   const [loading, setLoading] = useState(false);
   const context = useContext(TutorDetailsContext);
   let tutorDetails = context?.tutorDetails;
-  console.log("context", context);
 
-  console.log('tutorDetails bio detail---->', tutorDetails.full_name);
+  // console.log('tutorDetails bio detail---->', tutorDetails.full_name);
   const [tutorBioDetails, setTutorBioDetails] = useState<TutorBioDetails>({
     fullName: tutorDetails?.full_name,
     phoneNumber: tutorDetails?.phoneNumber,
     email: tutorDetails?.email,
-    icNumber: '',
+    icNumber: tutorDetails?.nric == null ? '' : tutorDetails?.nric,
     residentialAddress: '',
     postalCode: '',
   });
+
+  // console.log("tutorBioDetails", tutorBioDetails);
+
 
   const [errors, setErrors] = useState<Errors>({});
 
@@ -105,7 +107,7 @@ const BioDetails = ({ navigation }: any) => {
     ) {
       newErrors.icNumber =
         'Enter a correct IC Number in the format xxxxxx-xx-xxxx';
-        valid = false;
+      valid = false;
     }
 
     if (!tutorBioDetails.residentialAddress.trim()) {
@@ -149,20 +151,34 @@ const BioDetails = ({ navigation }: any) => {
 
     try {
       const { data } = await axios.post(`${Base_Uri}api/tutor/bio-details`, formData);
-      Toast.show({
-        type: 'success',
-        text1: 'Success',
-        text2: data.msg,
-        position: 'bottom',
-      });
-      setLoading(false);
-      navigation.navigate('TutorVerificationProcess');
+      console.log("data", data);
+      if (data?.ic_error == 'IC already exsists') {
+        Toast.show({
+          type: 'error',
+          text1: 'Error',
+          text2: data.ic_error,
+          position: 'bottom',
+        });
+        setLoading(false);
+      }
+      else {
+        Toast.show({
+          type: 'success',
+          text1: 'Success',
+          text2: data.msg,
+          position: 'bottom',
+        });
+        setLoading(false);
+        navigation.navigate('TutorVerificationProcess');
+      }
+
+
     } catch (error) {
-      console.log('error', error);
+      // console.log('error', error);
       Toast.show({
         type: 'error',
         text1: 'Error',
-        text2: 'Network Error',
+        text2:  `${error}`,
         position: 'bottom',
       });
       setLoading(false);
@@ -208,10 +224,11 @@ const BioDetails = ({ navigation }: any) => {
               <InputText
                 label="IC Number"
                 placeholder="Enter IC Number"
-                value={tutorBioDetails.icNumber}
+                value={tutorDetails?.nric == null ? tutorBioDetails.icNumber : tutorDetails?.nric}
                 onChangeText={(value: string) => handleInputChange('icNumber', value)}
                 keyboardType="numeric"
                 error={errors.icNumber}
+                editable={tutorDetails?.nric == null ? true : false}
               />
               <View style={{ margin: 10 }}></View>
               <InputText

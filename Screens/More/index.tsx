@@ -189,6 +189,7 @@ function More({ navigation }: any) {
     <View style={{ backgroundColor: Theme.GhostWhite, height: '100%' }}>
       <Header title="Profile" navigation={navigation} containerStyle={{ paddingHorizontal: 25, }} />
       <ScrollView showsVerticalScrollIndicator={false} nestedScrollEnabled>
+
         <View style={{ paddingHorizontal: 25 }}>
           {/* Profile */}
           <View style={{ margin: 10 }}></View>
@@ -224,15 +225,8 @@ function More({ navigation }: any) {
           <TouchableOpacity
               onPress={() => navigation.navigate('FAQs')}
               activeOpacity={0.8}>
-          <View style={{ paddingHorizontal: 25, justifyContent: 'center', alignItems: 'center', }}>
-            {/* <Image
-              source={require('../../Assets/Images/FAQBanner.png')}
-              resizeMode="contain"
-              style={{ width: Dimensions.get('screen').width / 1.04 }}
-            /> */}
-
+          <View style={{ paddingHorizontal: 0, justifyContent: 'center', alignItems: 'center', }}>
             <FaqsBanner/>
-     
           </View>
           </TouchableOpacity>
           {/*  */}

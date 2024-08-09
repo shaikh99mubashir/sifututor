@@ -68,11 +68,12 @@ const JobTicketCarousel = ({ jobTicketData, navigation }: any) => {
                     <View
                         style={{
                             display: 'flex',
-                            justifyContent: 'space-around',
+                            justifyContent: 'space-between',
                             flexDirection: 'row',
                             marginVertical: 20,
+                            marginHorizontal: 30,
                         }}>
-                        <View style={styles.jobTicketImg}>
+                        <View style={[styles.jobTicketImg,{ width:'33%', }]}>
                             {/* <Image source={require('../../Assets/Images/JTSub.png')} /> */}
                             <JBSubject/>
                             <Text style={[styles.textType3, { color: Theme.DustyGrey }]}>
@@ -80,28 +81,28 @@ const JobTicketCarousel = ({ jobTicketData, navigation }: any) => {
                             </Text>
                             <Text style={[styles.textType3, { fontSize: 18, textTransform: 'capitalize' }]}>
                                 {/* {item?.subject_name} */}
-                                {item?.subject_name.length > 6 ? `${item?.subject_name.slice(0, 5)}..` : item?.subject_name}
+                                {item?.subject_name.length > 10 ? `${item?.subject_name.slice(0, 10)}` : item?.subject_name}
                                 
                             </Text>
                         </View>
-                        <View style={styles.jobTicketImg}>
+                        <View style={[styles.jobTicketImg,{ width:'33%',}]}>
                             {/* <Image source={require('../../Assets/Images/JTLoc.png')} /> */}
                             <JBCity/>
                             <Text style={[styles.textType3, { color: Theme.DustyGrey }]}>
                                 Location
                             </Text>
                             <Text style={[styles.textType3, { fontSize: 18 }]}>
-                                {item?.city.length > 6 ? `${item?.city.slice(0, 5)}..` : item?.city}
+                                {item?.city.length > 10 ? `${item?.city.slice(0, 10)}` : item?.city}
                                 </Text>
                         </View>
-                        <View style={styles.jobTicketImg}>
+                        <View style={[styles.jobTicketImg,{ width:'33%'}]}>
                             {/* <Image source={require('../../Assets/Images/JTLevel.png')} /> */}
                             <JBLevel/>
                             <Text style={[styles.textType3, { color: Theme.DustyGrey }]}>
                                 Level
                             </Text>
                             <Text style={[styles.textType3, { fontSize: 18 }]}>
-                                {item?.categoryName.length > 6 ? `${item?.categoryName.slice(0, 5)}..` : item?.categoryName}
+                                {item?.categoryName.length > 10 ? `${item?.categoryName.slice(0, 10)}` : item?.categoryName}
                                 </Text>
                         </View>
                     </View>
